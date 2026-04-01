@@ -1,4 +1,4 @@
-## **RLUSD Stablecoin Payments for Institutions (Course RUSD-001)**
+# **RLUSD Stablecoin Payments for Institutions (Course RUSD-001)**
 
 This comprehensive 1-day, intermediate-level course is designed to onboard institutional partners to the **RLUSD (Ripple USD)** ecosystem. It covers technical implementation, regulatory compliance, and liquidity management using **Bootcamp Mode** for intensive delivery.
 
@@ -73,7 +73,7 @@ This work is licensed under the **Creative Commons Attribution 4.0 International
 
 ---
 
-*Created with ❤️ by Courseware Studio to support the future of institutional finance.*
+*Created by Courseware Studio to support the future of institutional finance.*
 
 ---
 
