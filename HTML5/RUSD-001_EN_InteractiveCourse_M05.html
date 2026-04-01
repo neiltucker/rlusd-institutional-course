@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organizational Readiness and Cost-Efficiency Assessment — RLUSD Stablecoin Payments for Institutions</title>
+<style>
+/* === RESET & BASE === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #1a1a2e; background: #f8f9fa; line-height: 1.65; display: flex; flex-direction: column; min-height: 100vh;
+}
+
+/* === HEADER === */
+.course-header {
+  background: #1a1a2e; color: #fff; padding: 0.75rem 1.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+  position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.header-left { display: flex; align-items: center; gap: 1rem; }
+.course-number { font-size: 0.8rem; opacity: 0.7; font-family: monospace; }
+.course-title { font-size: 0.95rem; font-weight: 600; }
+.header-right { display: flex; align-items: center; gap: 1.5rem; font-size: 0.85rem; }
+.module-label { opacity: 0.8; }
+.progress-text { font-weight: 600; color: #6ee7b7; }
+.print-btn {
+  background: transparent; border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.85); font-size: 0.78rem; padding: 0.3rem 0.75rem;
+  border-radius: 3px; cursor: pointer; font-family: inherit;
+  transition: background 0.15s, border-color 0.15s; white-space: nowrap;
+}
+.print-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
+
+/* === LAYOUT === */
+.layout { display: flex; flex: 1; min-height: 0; }
+
+/* === SIDEBAR === */
+.sidebar {
+  width: 280px; background: #fff; border-right: 1px solid #e5e7eb;
+  display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+  position: sticky; top: 52px; height: calc(100vh - 52px);
+}
+.sidebar-header { padding: 1.25rem 1rem 0.75rem; display: flex; justify-content: space-between; align-items: start; }
+.sidebar-header h2 { font-size: 1rem; font-weight: 700; color: #1a1a2e; line-height: 1.3; }
+.sidebar-toggle { display: none; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #6b7280; }
+.progress-bar { height: 3px; background: #e5e7eb; margin: 0 1rem 0.5rem; border-radius: 2px; }
+.progress-fill { height: 100%; background: #3b82f6; border-radius: 2px; width: 0; transition: width 0.4s ease; }
+.nav-list { list-style: none; padding: 0.25rem 0.5rem 1rem; flex: 1; overflow-y: auto; }
+.nav-btn {
+  width: 100%; text-align: left; background: none; border: none; padding: 0.6rem 0.75rem;
+  display: flex; align-items: center; gap: 0.6rem; border-radius: 0.5rem;
+  cursor: pointer; font-size: 0.85rem; color: #4b5563; transition: all 0.15s;
+}
+.nav-btn:hover { background: #f3f4f6; color: #1a1a2e; }
+.nav-btn.active { background: #eff6ff; color: #2563eb; font-weight: 600; }
+.nav-btn.visited .nav-check { display: inline; }
+.nav-icon { font-size: 1rem; flex-shrink: 0; }
+.nav-label { flex: 1; }
+.nav-check { display: none; color: #22c55e; font-size: 0.8rem; flex-shrink: 0; }
+
+/* === MAIN CONTENT === */
+.content { flex: 1; padding: 2rem 3rem 2rem 2.5rem; max-width: 860px; min-height: calc(100vh - 52px); }
+.screen { display: none; animation: fadeIn 0.25s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* === NAV BUTTONS === */
+.nav-buttons {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;
+}
+.screen-counter { font-size: 0.85rem; color: #9ca3af; }
+.btn {
+  padding: 0.6rem 1.4rem; border-radius: 0.5rem; font-size: 0.9rem; font-weight: 600;
+  border: none; cursor: pointer; transition: all 0.15s;
+}
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn-primary { background: #2563eb; color: #fff; }
+.btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+.btn-secondary { background: #f3f4f6; color: #4b5563; }
+.btn-secondary:hover:not(:disabled) { background: #e5e7eb; }
+
+/* === LANDING SCREEN === */
+.screen-landing { text-align: center; padding: 3rem 0; }
+.screen-landing h1 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; }
+.screen-landing h2 { font-size: 2rem; font-weight: 800; color: #1a1a2e; margin-top: 0.25rem; }
+.objectives-box {
+  text-align: left; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.75rem;
+  padding: 1.5rem; margin: 2rem auto; max-width: 580px;
+}
+.objectives-box h3 { font-size: 1rem; margin-bottom: 0.5rem; color: #1e40af; }
+.objectives-box ul { margin-top: 0.5rem; padding-left: 1.25rem; }
+.objectives-box li { margin-bottom: 0.4rem; font-size: 0.92rem; color: #1e3a5f; }
+.start-hint { margin-top: 2rem; color: #9ca3af; font-size: 0.9rem; }
+
+/* === LESSON SCREEN === */
+.screen-lesson h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; color: #1a1a2e; }
+.lesson-content { font-size: 0.95rem; line-height: 1.75; }
+.lesson-content h3 { font-size: 1.15rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #1a1a2e; }
+.lesson-content h4 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
+.lesson-content p { margin-bottom: 0.75rem; }
+.lesson-content ul, .lesson-content ol { margin: 0.5rem 0 1rem 1.25rem; }
+.lesson-content li { margin-bottom: 0.3rem; }
+.lesson-content code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.88rem; }
+.lesson-content pre { background: #1e293b; color: #e2e8f0; padding: 1rem 1.25rem; border-radius: 0.5rem; overflow-x: auto; margin: 1rem 0; }
+.lesson-content pre code { background: none; padding: 0; color: inherit; }
+.lesson-content blockquote { border-left: 3px solid #3b82f6; padding: 0.5rem 1rem; background: #f8fafc; margin: 1rem 0; border-radius: 0 0.5rem 0.5rem 0; }
+.lesson-content table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+.lesson-content th, .lesson-content td { padding: 0.6rem 0.75rem; border: 1px solid #e5e7eb; text-align: left; }
+.lesson-content th { background: #f8fafc; font-weight: 600; }
+
+/* === MEDIA === */
+.media-block { margin: 1.5rem 0; text-align: center; }
+.media-caption { font-size: 0.82rem; color: #6b7280; margin-top: 0.5rem; font-style: italic; }
+.media-placeholder { background: #f8fafc; border: 2px dashed #d1d5db; border-radius: 0.5rem; padding: 2rem; }
+.placeholder-icon { font-size: 2rem; }
+
+/* === KEY POINTS === */
+.key-points {
+  background: #fefce8; border: 1px solid #fde68a; border-radius: 0.75rem;
+  padding: 1.25rem; margin-top: 1.5rem;
+}
+.key-points h4 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+.key-points ul { padding-left: 1.25rem; }
+.key-points li { font-size: 0.9rem; margin-bottom: 0.3rem; color: #713f12; }
+
+/* === LAB === */
+.screen-lab h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.lab-header { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+.lab-objective { font-size: 0.92rem; color: #166534; margin-top: 0.5rem; }
+.lab-meta { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.75rem; }
+.lab-meta-item { font-size: 0.82rem; color: #15803d; font-weight: 500; }
+.lab-prereqs { margin-top: 0.75rem; font-size: 0.85rem; color: #166534; }
+.lab-prereqs ul { margin: 0.25rem 0 0 1.25rem; padding: 0; }
+.lab-prereqs li { margin-bottom: 0.15rem; }
+.lab-procedures h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; color: #1e293b; }
+.lab-step { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+.lab-step-header { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.5rem; }
+.lab-step-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; min-width: 28px; background: #2563eb; color: #fff; font-size: 0.82rem; font-weight: 700; border-radius: 50%; }
+.lab-step-instruction { font-weight: 600; color: #1e293b; font-size: 0.95rem; line-height: 1.5; padding-top: 2px; }
+.lab-step-detail { font-size: 0.9rem; line-height: 1.7; color: #475569; margin-top: 0.25rem; padding-left: 2.8rem; }
+.lab-step-detail code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; }
+.lab-step-detail pre { background: #1e293b; color: #e2e8f0; padding: 0.75rem 1rem; border-radius: 0.5rem; overflow-x: auto; margin: 0.5rem 0; font-size: 0.85rem; }
+.lab-step-detail pre code { background: none; padding: 0; color: inherit; }
+.lab-expected-output { margin: 0.5rem 0 0 2.8rem; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 0.5rem; padding: 0.75rem 1rem; }
+.lab-expected-label { font-size: 0.78rem; font-weight: 700; color: #0369a1; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.35rem; }
+.lab-expected-output pre { background: #0c4a6e; color: #e0f2fe; padding: 0.5rem 0.75rem; border-radius: 0.375rem; margin: 0.25rem 0 0; font-size: 0.82rem; overflow-x: auto; }
+.lab-expected-output pre code { background: none; padding: 0; color: inherit; }
+.lab-verification { display: flex; align-items: flex-start; gap: 0.5rem; margin: 0.5rem 0 0 2.8rem; padding: 0.6rem 0.75rem; background: #fefce8; border: 1px solid #fde68a; border-radius: 0.5rem; font-size: 0.85rem; color: #854d0e; }
+.lab-verification-icon { font-size: 1rem; line-height: 1.3; }
+.lab-troubleshooting { margin-top: 1.5rem; }
+.lab-troubleshooting h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; color: #1e293b; }
+.lab-trouble-item { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.5rem; margin-bottom: 0.5rem; }
+.lab-trouble-item summary { padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 500; color: #b45309; cursor: pointer; list-style: none; }
+.lab-trouble-item summary::before { content: '▸ '; font-weight: 700; }
+.lab-trouble-item[open] summary::before { content: '▾ '; }
+.lab-trouble-solution { padding: 0 1rem 0.75rem; font-size: 0.87rem; color: #475569; line-height: 1.6; }
+.lab-trouble-solution code { background: #f1f5f9; padding: 0.1rem 0.3rem; border-radius: 0.2rem; font-size: 0.84rem; }
+.lab-challenge { margin-top: 1.5rem; background: #faf5ff; border: 2px dashed #c4b5fd; border-radius: 0.75rem; padding: 1.25rem; }
+.lab-challenge h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; color: #6b21a8; }
+.lab-challenge-intro { font-size: 0.82rem; color: #7c3aed; margin-bottom: 0.75rem; font-style: italic; }
+.lab-challenge-body { font-size: 0.9rem; line-height: 1.65; color: #581c87; }
+.lab-challenge-body code { background: #ede9fe; padding: 0.1rem 0.3rem; border-radius: 0.2rem; font-size: 0.84rem; }
+.lab-steps { font-size: 0.95rem; line-height: 1.75; }
+.lab-steps ol { padding-left: 1.25rem; }
+.lab-steps li { margin-bottom: 0.5rem; }
+.lab-steps code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.88rem; }
+.lab-steps pre { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin: 0.75rem 0; }
+.lab-steps pre code { background: none; padding: 0; color: inherit; }
+.lab-check { margin-top: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 0.5rem; }
+.lab-check.completed { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.checkbox-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.92rem; }
+.checkbox-label input { width: 1.1rem; height: 1.1rem; accent-color: #22c55e; }
+
+/* === QUIZ === */
+.screen-quiz h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.quiz-intro { font-size: 0.92rem; color: #6b7280; margin-bottom: 1.5rem; }
+.quiz-question { background: #fff; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; }
+.quiz-question h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; margin-bottom: 0.5rem; }
+.question-text { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.75rem; }
+.options { display: flex; flex-direction: column; gap: 0.5rem; }
+.option-label {
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.75rem;
+  border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; transition: all 0.15s;
+}
+.option-label:hover { border-color: #93c5fd; background: #eff6ff; }
+.option-label input { accent-color: #2563eb; }
+.option-label.correct { background: #f0fdf4; border-color: #86efac; }
+.option-label.incorrect { background: #fef2f2; border-color: #fca5a5; }
+.feedback { margin-top: 0.5rem; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.88rem; display: none; }
+.feedback.show { display: block; }
+.feedback.correct { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.feedback.incorrect { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.quiz-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+.quiz-results {
+  margin-top: 1.5rem; padding: 1.25rem; border-radius: 0.75rem; display: none;
+  text-align: center; font-size: 1.1rem; font-weight: 700;
+}
+.quiz-results.show { display: block; }
+.quiz-results.pass { background: #f0fdf4; color: #166534; border: 2px solid #86efac; }
+.quiz-results.fail { background: #fefce8; color: #854d0e; border: 2px solid #fde68a; }
+
+/* === SUMMARY === */
+.screen-summary h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+.summary-content { font-size: 0.95rem; line-height: 1.75; margin-bottom: 1.5rem; }
+.objectives-review { background: #f8fafc; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+.objectives-review h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+.objectives-checklist { list-style: none; }
+.objectives-checklist li { margin-bottom: 0.5rem; }
+.completion-box { text-align: center; padding: 2rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0; }
+.completion-icon { font-size: 3rem; }
+.completion-box h3 { margin-top: 0.5rem; color: #166534; }
+
+/* === FOOTER === */
+.course-footer {
+  background: #1a1a2e; color: #9ca3af; padding: 0.75rem 1.5rem;
+  display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;
+}
+.trial-badge { background: #2563eb; color: #fff; padding: 0.2rem 0.6rem; border-radius: 0.25rem; font-size: 0.72rem; }
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .sidebar { position: fixed; left: -280px; top: 52px; height: calc(100vh - 52px); z-index: 90; transition: left 0.25s; box-shadow: 2px 0 12px rgba(0,0,0,0.15); }
+  .sidebar.open { left: 0; }
+  .sidebar-toggle { display: block; }
+  .content { padding: 1.5rem 1rem; }
+  .course-header { padding: 0.6rem 1rem; }
+  .header-left .course-title { font-size: 0.85rem; }
+}
+
+/* === PRINT === */
+@media print {
+  /* Hide all interactive chrome */
+  .sidebar, .nav-buttons, .course-header, .course-footer,
+  .sidebar-toggle, .quiz-actions, .lab-check, .print-btn { display: none !important; }
+
+  /* Full-width content, no padding waste */
+  body  { background: #fff !important; color: #000 !important; font-size: 11pt; line-height: 1.55; }
+  .layout { display: block !important; }
+  .content { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+
+  /* Show all screens sequentially with page breaks */
+  .screen { display: block !important; animation: none !important; opacity: 1 !important; transform: none !important; page-break-after: always; break-after: page; }
+  .screen:last-child { page-break-after: avoid; break-after: avoid; }
+
+  /* Headings */
+  h1, h2 { page-break-after: avoid; break-after: avoid; font-size: 14pt; }
+  h3, h4  { page-break-after: avoid; break-after: avoid; font-size: 12pt; }
+
+  /* Keep steps and quiz questions together */
+  .lab-step, .quiz-question { page-break-inside: avoid; break-inside: avoid; }
+
+  /* Code blocks — preserve formatting, avoid splitting */
+  pre { white-space: pre-wrap; word-break: break-word; page-break-inside: avoid; break-inside: avoid;
+        background: #f5f5f5 !important; color: #000 !important; border: 1px solid #ccc;
+        padding: 0.5rem 0.75rem; font-size: 9pt; }
+  code { background: #f5f5f5 !important; color: #000 !important; font-size: 9pt; }
+
+  /* AI images — scale to fit, never split */
+  .media-block { page-break-inside: avoid; break-inside: avoid; text-align: center; }
+  .media-block svg, .media-block img { max-width: 100% !important; height: auto !important; }
+
+  /* Key points — keep together */
+  .key-points { page-break-inside: avoid; break-inside: avoid;
+                background: #fefce8 !important; border: 1px solid #ccc; }
+
+  /* Remove link underlines and interactive colours */
+  a { color: #000 !important; text-decoration: none !important; }
+
+  /* Quiz — show correct answer indicator in print */
+  .option-label.correct { background: #f0fff0 !important; font-weight: 600; }
+  .feedback.correct { display: block !important; }
+
+  /* Objectives box */
+  .objectives-box { background: #f0f8ff !important; border: 1px solid #ccc !important; }
+
+  /* Page margins */
+  @page { margin: 18mm 15mm; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<header class="course-header">
+  <div class="header-left">
+    <span class="course-number">RUSD-001</span>
+    <span class="course-title">RLUSD Stablecoin Payments for Institutions</span>
+  </div>
+  <div class="header-right">
+    <span class="module-label">Module 5 of 5</span>
+    <span class="progress-text"><span id="progressPercent">0</span>% complete</span>
+    <button class="print-btn" onclick="window.print()" title="Print or save this module as PDF">&#128424; Print / Save as PDF</button>
+  </div>
+</header>
+
+<!-- ====== LAYOUT ====== -->
+<div class="layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Organizational Readiness and Cost-Efficiency Assessment</h2>
+      <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <ul class="nav-list">
+      <li><button class="nav-btn active" onclick="goTo(0)" id="nav-0">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Welcome</span>
+        <span class="nav-check" id="check-0">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(1)" id="nav-1">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Introduction to Organizational Readiness Assessment</span>
+        <span class="nav-check" id="check-1">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(2)" id="nav-2">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Technical and Operational Readiness Frameworks</span>
+        <span class="nav-check" id="check-2">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(3)" id="nav-3">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Compliance and Strategic Readiness</span>
+        <span class="nav-check" id="check-3">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(4)" id="nav-4">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Cost-Benefit Analysis and ROI Modeling</span>
+        <span class="nav-check" id="check-4">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(5)" id="nav-5">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Risk Assessment and Mitigation Strategies</span>
+        <span class="nav-check" id="check-5">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(6)" id="nav-6">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Pilot Program Design and Stakeholder Engagement</span>
+        <span class="nav-check" id="check-6">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(7)" id="nav-7">
+        <span class="nav-icon">🔬</span>
+        <span class="nav-label">Conducting a Comprehensive RLUSD Readiness and Cost-Efficiency Assessment</span>
+        <span class="nav-check" id="check-7">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(8)" id="nav-8">
+        <span class="nav-icon">📝</span>
+        <span class="nav-label">Knowledge Check</span>
+        <span class="nav-check" id="check-8">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(9)" id="nav-9">
+        <span class="nav-icon">🎯</span>
+        <span class="nav-label">Summary</span>
+        <span class="nav-check" id="check-9">✓</span>
+      </button></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="content" id="content">
+
+    <!-- Screen 0: Welcome -->
+    <section class="screen active" id="screen-0" data-index="0">
+      
+      <div class="screen-landing">
+        <h1>Module 5</h1>
+        <h2>Organizational Readiness and Cost-Efficiency Assessment</h2>
+        
+        <div class="objectives-box">
+          <h3>🎯 Learning Objectives</h3>
+          <p>After completing this module, you will be able to:</p>
+          <ul>
+            <li>Assess organizational technical readiness for stablecoin payment integration</li>
+            <li>Evaluate operational and compliance maturity for enterprise stablecoin adoption</li>
+            <li>Perform cost-benefit analysis comparing traditional and stablecoin payment methods</li>
+            <li>Develop a roadmap for pilot implementation and scaling of stablecoin payments</li>
+          </ul>
+        </div>
+        <p class="start-hint">Click <strong>Next →</strong> to begin.</p>
+      </div>
+    </section>
+
+    <!-- Screen 1: Introduction to Organizational Readiness Assessment -->
+    <section class="screen" id="screen-1" data-index="1">
+      <div class="screen-lesson"><h2>Introduction to Organizational Readiness Assessment</h2><div class="lesson-content"><p>A thorough readiness assessment identifies gaps before they become obstacles. It provides the data needed to build realistic implementation roadmaps—including cost baselines, risk scores, stakeholder capability maturity, and technical integration complexity—enabling informed decisions about budget allocation, timeline expectations, and phasing strategy. Organizations that skip this step often encounter unexpected technical debt, compliance issues, or operational bottlenecks that delay ROI.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/5/mod05_fig01.png" alt="Four pillars supporting a platform representing organizational readiness: technical infrastructure, operational processes, compliance frameworks, and strategic alignment" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Four pillars supporting a platform representing organizational readiness: technical infrastructure, operational processes, compliance frameworks, and strategic alignment</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Readiness spans technical, operational, compliance, and strategic dimensions</li>
+          <li>Assessment identifies gaps and informs realistic implementation planning</li>
+          <li>Cross-functional involvement builds organizational commitment</li>
+          <li>Skipping assessment leads to unexpected obstacles and delayed ROI</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 2: Technical and Operational Readiness Frameworks -->
+    <section class="screen" id="screen-2" data-index="2">
+      <div class="screen-lesson"><h2>Technical and Operational Readiness Frameworks</h2><div class="lesson-content"><h2>Technical Readiness Criteria</h2>
+<p>Technical readiness assessment examines your institution&#39;s infrastructure across several key areas:</p>
+<p><strong>API Integration Capabilities</strong>: Your systems must support RESTful APIs or equivalent protocols to communicate with stablecoin issuers, exchanges, and blockchain networks. Evaluate your middleware architecture, API gateway capabilities, and integration patterns.</p>
+<p><strong>Wallet Infrastructure</strong>: Assess your ability to securely generate, store, and manage cryptographic keys. This includes evaluating Hardware Security Module (HSM) availability, key management policies, and multi-signature wallet capabilities for institutional-grade security.</p>
+<p><strong>Real-Time Processing</strong>: Stablecoin settlements occur 24/7 in near real-time. Your core banking or treasury management systems must handle continuous transaction processing, immediate balance updates, and automated reconciliation without batch processing delays.</p>
+<p><strong>Data Infrastructure</strong>: Blockchain transactions generate immutable audit trails. Evaluate your data lake or warehouse capacity to ingest, store, and query blockchain transaction data for compliance reporting and business intelligence.</p>
+<h2>Operational Readiness Dimensions</h2>
+<p>Operational readiness focuses on people, processes, and procedures:</p>
+<p><strong>Treasury Operations</strong>: Traditional treasury operates on banking hours with T+1 or T+2 settlement. Stablecoins require 24/7 monitoring capabilities, weekend liquidity management, and real-time cash positioning. Assess whether your treasury team structure and tools support this shift.</p>
+<p><strong>Reconciliation Processes</strong>: Blockchain transactions provide cryptographic proof of settlement, but your accounting systems must reconcile on-chain activity with internal ledgers. Evaluate automation capabilities and exception handling workflows.</p>
+<p><strong>Vendor Management</strong>: Stablecoin operations involve new vendor relationships—wallet providers, node operators, liquidity providers. Assess your procurement processes, vendor due diligence frameworks, and service level agreement (SLA) management.</p>
+<p><strong>Business Continuity</strong>: What happens if a blockchain network experiences downtime or congestion? Your operational playbook must include fallback mechanisms, alternative settlement rails, and crisis communication protocols.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/5/mod05_fig02.png" alt="Technical infrastructure showing servers, security modules, and data streams flowing into a blockchain network, with operational teams monitoring dashboards around the clock" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Technical infrastructure showing servers, security modules, and data streams flowing into a blockchain network, with operational teams monitoring dashboards around the clock</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Technical readiness covers API integration, wallet infrastructure, real-time processing, and data management</li>
+          <li>Operational readiness requires 24/7 treasury operations and automated reconciliation</li>
+          <li>Vendor management frameworks must accommodate new digital asset service providers</li>
+          <li>Business continuity plans must address blockchain-specific failure scenarios</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 3: Compliance and Strategic Readiness -->
+    <section class="screen" id="screen-3" data-index="3">
+      <div class="screen-lesson"><h2>Compliance and Strategic Readiness</h2><div class="lesson-content"><h2>Compliance Readiness Assessment</h2>
+<p>Regulatory compliance forms a critical pillar of stablecoin readiness:</p>
+<p><strong>AML/KYC Capabilities</strong>: Your compliance infrastructure must perform customer due diligence on counterparties receiving stablecoin payments. Assess whether your KYC systems can validate digital wallet ownership, screen against sanctions lists in real-time, and maintain audit trails linking blockchain addresses to verified entities.</p>
+<p><strong>Regulatory Reporting</strong>: Different jurisdictions impose varying reporting requirements for digital asset transactions. Evaluate your ability to generate reports in required formats, calculate cost basis for tax purposes, and demonstrate compliance with emerging stablecoin regulations.</p>
+<p><strong>Risk Management Framework</strong>: Stablecoins introduce new risk categories—smart contract risk, de-pegging risk, custodial risk. Your risk management framework must identify, measure, monitor, and mitigate these exposures. Assess whether your risk committee structure and policies encompass digital assets.</p>
+<p><strong>Governance Structure</strong>: Who approves stablecoin transactions? What are authorization limits? How do you handle key person risk for wallet access? Establish clear governance policies before going live.</p>
+<h2>Strategic Readiness Evaluation</h2>
+<p>Strategic readiness ensures alignment between stablecoin adoption and business objectives:</p>
+<p><strong>Executive Sponsorship</strong>: Stablecoin initiatives require C-suite commitment to succeed. Assess whether you have a clear executive sponsor who understands the technology, champions the initiative, and can secure resources.</p>
+<p><strong>Business Case Alignment</strong>: Connect stablecoin adoption to measurable business outcomes—reduced payment costs, faster settlement, new market access, improved working capital. Vague or purely exploratory objectives rarely sustain long-term commitment.</p>
+<p><strong>Change Management Readiness</strong>: Stablecoin adoption disrupts established workflows. Evaluate your organization&#39;s change management capabilities, training infrastructure, and cultural openness to new payment technologies.</p>
+<p><strong>Success Metrics Definition</strong>: Define clear KPIs before launch—transaction volume targets, cost savings thresholds, settlement time improvements. Without defined success criteria, pilot programs drift without clear outcomes.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/5/mod05_fig03.png" alt="Compliance checkpoint with regulatory frameworks, risk assessment scales, and executive leadership reviewing strategic roadmap documents" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Compliance checkpoint with regulatory frameworks, risk assessment scales, and executive leadership reviewing strategic roadmap documents</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Compliance readiness encompasses AML/KYC, regulatory reporting, and digital asset risk management</li>
+          <li>Governance policies must clearly define authorization, custody, and accountability for stablecoin operations</li>
+          <li>Executive sponsorship and business case alignment drive strategic readiness</li>
+          <li>Defined success metrics prevent pilot programs from drifting without clear outcomes</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 4: Cost-Benefit Analysis and ROI Modeling -->
+    <section class="screen" id="screen-4" data-index="4">
+      <div class="screen-lesson"><h2>Cost-Benefit Analysis and ROI Modeling</h2><div class="lesson-content"><p><strong>Implementation Costs</strong>: Estimate one-time costs including technology integration (API development, wallet infrastructure), compliance program setup (policy development, system upgrades), staff training, and external consulting or legal fees. Cost varies significantly by existing infrastructure maturity: organizations with modern API architecture and cloud infrastructure may achieve deployment in $80,000-$150,000; institutions requiring legacy system integration, extensive HSM implementation, or significant compliance infrastructure buildout may invest $300,000-$500,000 or higher. Costs also scale with transaction volume expectations and regulatory jurisdiction complexity.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/5/mod05_fig04.png" alt="Before and after comparison showing traditional payment costs with multiple fees and delays versus streamlined stablecoin payments with reduced costs and instant settlement" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Before and after comparison showing traditional payment costs with multiple fees and delays versus streamlined stablecoin payments with reduced costs and instant settlement</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Baseline current payment costs across fees, FX spreads, and trapped liquidity</li>
+          <li>Implementation costs typically range $100K-$500K for enterprise deployments</li>
+          <li>Direct savings from reduced fees often exceed $1M annually for high-volume payers</li>
+          <li>Settlement speed improvements release trapped capital, quantified using WACC</li>
+          <li>12-18 month payback periods are common for institutional stablecoin adoption</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 5: Risk Assessment and Mitigation Strategies -->
+    <section class="screen" id="screen-5" data-index="5">
+      <div class="screen-lesson"><h2>Risk Assessment and Mitigation Strategies</h2><div class="lesson-content"><h2>Identifying Stablecoin-Specific Risks</h2>
+<p>Stablecoin adoption introduces risk categories that require explicit mitigation:</p>
+<p><strong>De-Pegging Risk</strong>: While quality stablecoins like RLUSD maintain robust 1:1 backing, market stress can temporarily push prices away from parity. Mitigation strategies include: setting maximum transaction sizes during volatile periods, maintaining diversified stablecoin holdings across multiple issuers, and establishing price monitoring alerts that trigger manual review before large transactions.</p>
+<p><strong>Custodial and Key Management Risk</strong>: Loss of private keys means permanent loss of funds—there is no password recovery. Mitigation requires: institutional-grade custody solutions with multi-signature wallets, geographic distribution of key material across HSMs, clear succession planning for key holders, and regular disaster recovery testing.</p>
+<p><strong>Smart Contract Risk</strong>: RLUSD and payment protocols run on smart contracts that could contain bugs or vulnerabilities. Mitigation includes: reviewing third-party security audits before integration, using time-tested protocols rather than experimental ones, maintaining contingency funds for potential exploit scenarios, and purchasing smart contract insurance where available.</p>
+<p><strong>Regulatory Risk</strong>: Stablecoin regulations continue to evolve globally. Mitigation strategies: engage proactive regulatory monitoring services, participate in industry working groups, maintain flexible technical architecture that can adapt to new requirements, and establish relationships with multiple stablecoin issuers in case regulatory actions impact specific tokens.</p>
+<h2>Operational Risk Mitigation</h2>
+<p><strong>Transaction Irreversibility</strong>: Blockchain transactions cannot be reversed like traditional payment rails. Mitigation requires: multi-party approval workflows for large transactions, address whitelisting to prevent typos, test transactions before full-value transfers, and maintaining comprehensive transaction logs for audit purposes.</p>
+<p><strong>Blockchain Network Congestion</strong>: During periods of high activity, transaction fees can spike and confirmation times extend. Mitigation includes: maintaining multiple blockchain network integrations for redundancy, setting dynamic fee strategies that adjust to network conditions, and establishing service level expectations with customers about potential delays.</p>
+<p><strong>Vendor Concentration</strong>: Over-reliance on a single stablecoin issuer, custody provider, or liquidity source creates single points of failure. Mitigation requires: multi-vendor strategies across critical services, contractual service level agreements with penalty clauses, and regular vendor performance reviews.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/5/mod05_fig05.png" alt="Risk mitigation shields protecting digital assets from various threat vectors, with multiple layers of security controls and redundancy mechanisms" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Risk mitigation shields protecting digital assets from various threat vectors, with multiple layers of security controls and redundancy mechanisms</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>De-pegging risk requires price monitoring alerts and transaction size limits during volatility</li>
+          <li>Custodial risk mitigation demands multi-signature wallets and geographic key distribution</li>
+          <li>Smart contract risk is reduced through security audits and tested protocols</li>
+          <li>Transaction irreversibility requires multi-party approval workflows and address whitelisting</li>
+          <li>Vendor concentration risk necessitates multi-provider strategies across critical services</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 6: Pilot Program Design and Stakeholder Engagement -->
+    <section class="screen" id="screen-6" data-index="6">
+      <div class="screen-lesson"><h2>Pilot Program Design and Stakeholder Engagement</h2><div class="lesson-content"><h2>Designing Effective Pilot Programs</h2>
+<p>Successful pilot programs follow structured frameworks:</p>
+<p><strong>Scope Definition</strong>: Start narrow and expand based on results. A typical pilot focuses on a single payment corridor (e.g., USD to EUR settlements with a specific subsidiary), limited transaction volume ($100K-$500K monthly), and defined duration (90-180 days). This bounded scope allows learning while limiting risk exposure.</p>
+<p><strong>Success Criteria</strong>: Define quantitative metrics before launch: minimum transaction volume to demonstrate viability, maximum acceptable cost per transaction, target settlement time (e.g., under 5 minutes for 95% of transactions), and system uptime requirements (e.g., 99.5%). Also establish qualitative criteria: user satisfaction scores from treasury staff, successful completion of regulatory reporting, and achievement of compliance milestones.</p>
+<p><strong>Parallel Operation Strategy</strong>: Run stablecoin payments parallel to traditional rails during pilots. This provides backup if issues arise and enables direct cost and performance comparisons. Gradually shift volume as confidence builds.</p>
+<p><strong>Learning Documentation</strong>: Establish structured capture of lessons learned—technical challenges encountered, workarounds developed, unexpected benefits discovered, and stakeholder feedback. This documentation informs scaling decisions and helps build organizational knowledge.</p>
+<h2>Stakeholder Engagement Framework</h2>
+<p>Broad stakeholder buy-in determines pilot success:</p>
+<p><strong>Executive Engagement</strong>: Secure C-suite sponsorship early. CFOs care about cost savings and working capital improvements. CTOs focus on technical risk and integration complexity. Chief Compliance Officers need regulatory assurance. Tailor messaging to each executive&#39;s priorities using data from your readiness assessment and ROI model.</p>
+<p><strong>Cross-Functional Collaboration</strong>: Form a steering committee including treasury operations, IT infrastructure, information security, compliance, legal, and business unit representatives. Weekly meetings during pilot programs maintain alignment and rapid issue resolution.</p>
+<p><strong>Change Management</strong>: Treasury staff may resist new workflows. Conduct hands-on training sessions, provide detailed documentation, and establish responsive support channels. Celebrate early wins to build momentum.</p>
+<p><strong>External Stakeholder Communication</strong>: Coordinate with banking partners, auditors, and regulators. Proactive communication prevents surprises and builds confidence in your governance approach. Some institutions conduct regulatory sandbox programs before full deployment.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/5/mod05_fig06.png" alt="Phased roadmap showing pilot program progression from small-scale testing to full enterprise deployment, with stakeholder engagement at each stage" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Phased roadmap showing pilot program progression from small-scale testing to full enterprise deployment, with stakeholder engagement at each stage</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Pilot programs should start with narrow scope: single corridor, limited volume, 90-180 day duration</li>
+          <li>Define both quantitative metrics (cost, speed, volume) and qualitative criteria (satisfaction, compliance) before launch</li>
+          <li>Parallel operation with traditional rails provides backup and enables direct comparison</li>
+          <li>Cross-functional steering committees maintain alignment across treasury, IT, compliance, and legal</li>
+          <li>Change management and training are critical for treasury staff adoption and success</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 7: Conducting a Comprehensive RLUSD Readiness and Cost-Efficiency Assessment -->
+    <section class="screen" id="screen-7" data-index="7">
+      
+      <div class="screen-lab">
+        <div class="lab-header">
+          <h2>🔬 Conducting a Comprehensive RLUSD Readiness and Cost-Efficiency Assessment</h2>
+          <p class="lab-objective"><strong>Objective:</strong> Complete a structured organizational readiness assessment for RLUSD stablecoin integration, perform comparative cost analysis between traditional and stablecoin payment methods, and develop a pilot implementation roadmap with measurable success criteria</p>
+          <div class="lab-meta"><span class="lab-meta-item">⏱ Estimated time: 45 minutes</span><span class="lab-meta-item">💻 Platform: Windows with web browser and spreadsheet application</span></div>
+          <div class="lab-prereqs">
+            <strong>Prerequisites:</strong>
+            <ul><li>Windows 10 or later</li><li>Microsoft Excel or Google Sheets access</li><li>Web browser (Chrome, Edge, or Firefox)</li><li>Internet connection</li><li>Notepad or text editor</li><li>Access to Ripple documentation at https://ripple.com</li></ul>
+          </div></div><div class="lab-procedures"><h3>Procedures</h3>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">1</span>
+            <span class="lab-step-instruction">Create a lab working directory and download the RLUSD readiness assessment template</span>
+          </div><div class="lab-step-detail"><p>Create a dedicated folder for this lab exercise:</p>
+<ol>
+<li>Press <code>Windows Key + E</code> to open File Explorer</li>
+<li>Navigate to your Documents folder</li>
+<li>Right-click in the empty space, select <strong>New &gt; Folder</strong></li>
+<li>Name the folder <code>RLUSD_Readiness_Assessment</code></li>
+<li>Open your web browser and navigate to the Ripple documentation</li>
+<li>Go to <a href="https://ripple.com/solutions/">https://ripple.com/solutions/</a></li>
+<li>Create a new text file in your working directory named <code>readiness_checklist.txt</code></li>
+</ol>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A new folder named RLUSD_Readiness_Assessment appears in your Documents folder containing a blank readiness_checklist.txt file</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Open the folder and verify the text file exists and can be opened in Notepad</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">2</span>
+            <span class="lab-step-instruction">Research RLUSD technical requirements using Ripple API documentation</span>
+          </div><div class="lab-step-detail"><p>Navigate to the Ripple API documentation to identify technical integration requirements:</p>
+<ol>
+<li>Open your browser and go to <a href="https://xrpl.org/docs.html">https://xrpl.org/docs.html</a></li>
+<li>In the left navigation menu, expand <strong>References</strong></li>
+<li>Click on <strong>API Conventions</strong></li>
+<li>Scroll to the <strong>WebSocket API</strong> section</li>
+<li>Review the connection requirements and authentication methods</li>
+<li>Open a new tab and navigate to <a href="https://xrpl.org/get-started.html">https://xrpl.org/get-started.html</a></li>
+<li>Click on <strong>Choose a Network</strong> in the Getting Started section</li>
+<li>Review the Mainnet, Testnet, and Devnet specifications</li>
+<li>Document the following in your <code>readiness_checklist.txt</code> file:</li>
+</ol>
+<pre><code>TECHNICAL READINESS ASSESSMENT
+================================
+
+API Integration Requirements:
+- WebSocket or JSON-RPC endpoint capability: [ ]
+- TLS 1.2 or higher support: [ ]
+- Network connectivity to XRPL nodes: [ ]
+
+Wallet Infrastructure:
+- Secure key management system: [ ]
+- Multi-signature capability: [ ]
+- Hardware security module (HSM) integration: [ ]
+
+Development Environment:
+- Testnet access for development: [ ]
+- API testing tools available: [ ]
+- Monitoring and logging infrastructure: [ ]
+</code></pre>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>The readiness_checklist.txt file contains a structured technical requirements section with checkboxes for each capability. The XRPL documentation displays network specifications including node endpoints, transaction costs, and network identifiers.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Open readiness_checklist.txt and confirm all nine technical requirement items are listed with checkbox placeholders [ ]</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">3</span>
+            <span class="lab-step-instruction">Create a compliance and operational readiness matrix in Excel</span>
+          </div><div class="lab-step-detail"><p>Build a comprehensive readiness assessment spreadsheet:</p>
+<ol>
+<li>Open Microsoft Excel (or Google Sheets)</li>
+<li>Create a new blank workbook</li>
+<li>Save it as <code>RLUSD_Readiness_Matrix.xlsx</code> in your RLUSD_Readiness_Assessment folder</li>
+<li>In cell A1, type: <strong>Readiness Dimension</strong></li>
+<li>In cell B1, type: <strong>Requirement</strong></li>
+<li>In cell C1, type: <strong>Current State</strong></li>
+<li>In cell D1, type: <strong>Gap</strong></li>
+<li>In cell E1, type: <strong>Priority</strong></li>
+<li>In cell F1, type: <strong>Action Required</strong></li>
+<li>Format row 1 as bold with dark background and white text</li>
+<li>Set column widths: A=25, B=35, C=20, D=15, E=15, F=40</li>
+<li>Enter the following compliance requirements starting in row 2:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Readiness Dimension</th>
+<th>Requirement</th>
+<th>Current State</th>
+<th>Gap</th>
+<th>Priority</th>
+<th>Action Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Compliance</td>
+<td>AML/KYC procedures documented</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Compliance</td>
+<td>Transaction monitoring system</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Compliance</td>
+<td>Regulatory reporting capability</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Compliance</td>
+<td>Customer due diligence process</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Operational</td>
+<td>24/7 treasury operations</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Operational</td>
+<td>Liquidity management procedures</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Operational</td>
+<td>Reconciliation processes</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Operational</td>
+<td>Incident response plan</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Strategic</td>
+<td>Executive sponsorship secured</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Strategic</td>
+<td>Business case approved</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Strategic</td>
+<td>Success metrics defined</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>An Excel spreadsheet with a professionally formatted header row and 11 data rows covering compliance, operational, and strategic readiness dimensions. All columns are properly sized and the header row is visually distinct.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Save the file and verify it contains exactly 12 rows (1 header + 11 requirements) with all six columns populated with headers</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">4</span>
+            <span class="lab-step-instruction">Document current payment processing costs using a structured template</span>
+          </div><div class="lab-step-detail"><p>Create a baseline cost analysis for traditional payment methods:</p>
+<ol>
+<li>In Excel, create a new sheet by clicking the <strong>+</strong> button at the bottom</li>
+<li>Rename the new sheet to <strong>Cost_Analysis</strong> (right-click the sheet tab, select Rename)</li>
+<li>In the Cost_Analysis sheet, create the following structure starting in cell A1:</li>
+</ol>
+<pre><code>A1: TRADITIONAL PAYMENT COSTS (Annual)
+A3: Cost Category
+B3: Cross-Border Wire
+C3: SWIFT Payment
+D3: Correspondent Banking
+E3: Total Annual
+
+A4: Transaction Fees
+A5: FX Conversion Spread
+A6: Correspondent Bank Fees
+A7: Processing Delays (Opportunity Cost)
+A8: Reconciliation Labor
+A9: Failed Transaction Costs
+A10: Compliance/Reporting Overhead
+A11: TOTAL COSTS
+</code></pre>
+<ol start="4">
+<li>Format cells A1, A3:E3, and A11:E11 as bold</li>
+<li>In cells B4 through D10, enter sample values representing percentages or fixed costs</li>
+<li>In cell E4, enter formula: <code>=SUM(B4:D4)</code></li>
+<li>Copy this formula down through E10</li>
+<li>In cell E11, enter formula: <code>=SUM(E4:E10)</code></li>
+<li>Format all currency cells with Currency formatting (USD, 2 decimal places)</li>
+</ol>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A new Cost_Analysis worksheet tab appears at the bottom of the Excel file. The worksheet contains a structured table with cost categories in rows and payment methods in columns, with formulas calculating row and column totals.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Click on cell E11 and verify the formula bar shows =SUM(E4:E10). Change any value in column B and verify that E11 automatically recalculates.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">5</span>
+            <span class="lab-step-instruction">Research and document RLUSD transaction costs from Ripple documentation</span>
+          </div><div class="lab-step-detail"><p>Gather accurate cost data for RLUSD stablecoin payments:</p>
+<ol>
+<li>Navigate to <a href="https://xrpl.org/transaction-cost.html">https://xrpl.org/transaction-cost.html</a> in your browser</li>
+<li>Review the <strong>Transaction Cost</strong> section to understand the base reserve and transaction fee structure</li>
+<li>Note the current transaction cost (typically 0.00001 XRP, though the page shows the exact current amount)</li>
+<li>Navigate to <a href="https://ripple.com/solutions/crypto-liquidity/">https://ripple.com/solutions/crypto-liquidity/</a> to research On-Demand Liquidity pricing concepts</li>
+<li>Return to your Excel Cost_Analysis sheet</li>
+<li>In cell A13, type: <strong>RLUSD PAYMENT COSTS (Annual)</strong></li>
+<li>Starting in A15, create this structure:</li>
+</ol>
+<pre><code>A15: Cost Category
+B15: RLUSD Payment
+C15: Cost Savings vs. Traditional
+
+A16: Transaction Fees (XRPL)
+A17: FX Conversion (if applicable)
+A18: Liquidity Provider Fee
+A19: Processing Delays (Opportunity Cost)
+A20: Reconciliation Labor
+A21: Failed Transaction Costs
+A22: Compliance/Reporting Overhead
+A23: TOTAL COSTS
+</code></pre>
+<ol start="8">
+<li>Format the header rows (A13, A15:C15, A23:C23) as bold</li>
+<li>In cell B16, enter: <code>10.00</code> (representing $10 annual XRPL fees for typical institutional volume)</li>
+<li>In cells B17-B22, enter estimated RLUSD costs (typically 50-90% lower than traditional methods)</li>
+<li>In cell C16, enter formula: <code>=E4-B16</code> to calculate savings</li>
+<li>Copy the formula from C16 down through C22</li>
+<li>In cell B23, enter: <code>=SUM(B16:B22)</code></li>
+<li>In cell C23, enter: <code>=E11-B23</code></li>
+</ol>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>The Cost_Analysis sheet now contains two sections: traditional payment costs in rows 1-11 and RLUSD payment costs in rows 13-23. Cell C23 shows the total annual cost savings. The XRPL documentation page displays the current transaction cost structure and reserve requirements.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Verify that cell C23 shows a positive number representing savings. Click on C23 and confirm the formula bar shows =E11-B23</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">6</span>
+            <span class="lab-step-instruction">Calculate ROI metrics and payback period</span>
+          </div><div class="lab-step-detail"><p>Create financial metrics to support the business case:</p>
+<ol>
+<li>In the Excel Cost_Analysis sheet, scroll to cell A25</li>
+<li>Create the following ROI calculation section:</li>
+</ol>
+<pre><code>A25: ROI ANALYSIS
+A27: Implementation Costs (One-Time)
+A28: Integration Development
+B28: 50000
+A29: Testing &amp; QA
+B29: 15000
+A30: Training
+B30: 10000
+A31: Compliance Review
+B31: 25000
+A32: TOTAL IMPLEMENTATION
+B32: =SUM(B28:B31)
+
+A34: Annual Recurring Costs
+A35: API/Node Access Fees
+B35: 5000
+A36: Monitoring &amp; Maintenance
+B36: 12000
+A37: TOTAL ANNUAL RECURRING
+B37: =SUM(B35:B36)
+
+A39: Financial Metrics
+A40: Annual Gross Savings
+B40: =C23
+A41: Annual Net Savings
+B41: =B40-B37
+A42: Payback Period (Months)
+B42: =(B32/B41)*12
+A43: 3-Year ROI (%)
+B43: =((B41*3-B32)/B32)*100
+</code></pre>
+<ol start="3">
+<li>Format cells A25, A27, A34, A39 as bold and larger font (14pt)</li>
+<li>Format all cells in column B with currency or number formatting as appropriate</li>
+<li>Format cell B42 to show 1 decimal place</li>
+<li>Format cell B43 as percentage with 1 decimal place</li>
+</ol>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>The worksheet displays a complete ROI analysis section showing implementation costs totaling $100,000, annual recurring costs, and calculated metrics including payback period (typically 6-12 months) and 3-year ROI (typically 200-400%).</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Click cell B43 and verify it shows a percentage value. Change the value in B28 to 60000 and confirm that B32, B42, and B43 all automatically recalculate.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">7</span>
+            <span class="lab-step-instruction">Assess technical integration complexity using XRPL test tools</span>
+          </div><div class="lab-step-detail"><p>Evaluate the technical learning curve using Ripple&#39;s interactive tools:</p>
+<ol>
+<li>Open a new browser tab and navigate to <a href="https://xrpl.org/resources/dev-tools/websocket-api-tool">https://xrpl.org/resources/dev-tools/websocket-api-tool</a></li>
+<li>This is the WebSocket API Tool for testing XRPL connections</li>
+<li>In the <strong>WebSocket URL</strong> dropdown, select <strong>Testnet Public Server</strong> (wss://s.altnet.rippletest.net:51233)</li>
+<li>Click the <strong>Connect</strong> button</li>
+<li>Observe the connection status indicator (should turn green)</li>
+<li>In the <strong>Request</strong> section, select <strong>account_info</strong> from the method dropdown</li>
+<li>In the account field, enter: <code>rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY</code> (Testnet faucet account)</li>
+<li>Click <strong>Send Request</strong></li>
+<li>Review the JSON response in the <strong>Response</strong> section</li>
+<li>Open your readiness_checklist.txt file and add:</li>
+</ol>
+<pre><code>
+TECHNICAL INTEGRATION ASSESSMENT
+=================================
+Date Tested: [current date]
+
+API Connectivity Test:
+- Successfully connected to XRPL Testnet: YES/NO
+- Response time: [observe from tool]
+- JSON parsing complexity: LOW/MEDIUM/HIGH
+
+Integration Effort Estimate:
+- API complexity level: BEGINNER-FRIENDLY
+- Documentation quality: COMPREHENSIVE
+- Example code availability: EXTENSIVE
+- Estimated integration timeline: 4-8 weeks
+</code></pre>
+<ol start="11">
+<li>Save the readiness_checklist.txt file</li>
+</ol>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>The WebSocket API Tool shows a green connected status. The response panel displays a JSON object containing account information including sequence number, balance, and flags. Your readiness_checklist.txt file documents the successful API test.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> The Response section should show &quot;status&quot;: &quot;success&quot; in the JSON output. The account_data object should contain fields like Account, Balance, Flags, and Sequence.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">8</span>
+            <span class="lab-step-instruction">Create a risk assessment matrix for RLUSD implementation</span>
+          </div><div class="lab-step-detail"><p>Document potential risks and mitigation strategies:</p>
+<ol>
+<li>In your Excel workbook, create a new sheet named <strong>Risk_Assessment</strong></li>
+<li>Create the following table structure starting in cell A1:</li>
+</ol>
+<pre><code>A1: Risk Category
+B1: Specific Risk
+C1: Likelihood (1-5)
+D1: Impact (1-5)
+E1: Risk Score
+F1: Mitigation Strategy
+G1: Owner
+</code></pre>
+<ol start="3">
+<li>Format row 1 as bold with background color</li>
+<li>Enter the following risk items in rows 2-9:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Risk Category</th>
+<th>Specific Risk</th>
+<th>Likelihood</th>
+<th>Impact</th>
+<th>Risk Score</th>
+<th>Mitigation Strategy</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Technical</td>
+<td>API integration errors</td>
+<td>3</td>
+<td>3</td>
+<td></td>
+<td>Comprehensive testing on Testnet</td>
+<td></td>
+</tr>
+<tr>
+<td>Technical</td>
+<td>Key management breach</td>
+<td>2</td>
+<td>5</td>
+<td></td>
+<td>HSM implementation, multi-sig</td>
+<td></td>
+</tr>
+<tr>
+<td>Operational</td>
+<td>Staff lacks expertise</td>
+<td>4</td>
+<td>3</td>
+<td></td>
+<td>Training program, phased rollout</td>
+<td></td>
+</tr>
+<tr>
+<td>Operational</td>
+<td>Liquidity management</td>
+<td>3</td>
+<td>4</td>
+<td></td>
+<td>Establish clear policies, monitoring</td>
+<td></td>
+</tr>
+<tr>
+<td>Compliance</td>
+<td>Regulatory uncertainty</td>
+<td>3</td>
+<td>4</td>
+<td></td>
+<td>Legal review, gradual scaling</td>
+<td></td>
+</tr>
+<tr>
+<td>Compliance</td>
+<td>AML/KYC gaps</td>
+<td>2</td>
+<td>5</td>
+<td></td>
+<td>Enhanced monitoring, compliance audit</td>
+<td></td>
+</tr>
+<tr>
+<td>Market</td>
+<td>RLUSD price volatility</td>
+<td>1</td>
+<td>3</td>
+<td></td>
+<td>Stablecoin nature mitigates this</td>
+<td></td>
+</tr>
+<tr>
+<td>Strategic</td>
+<td>Stakeholder resistance</td>
+<td>3</td>
+<td>3</td>
+<td></td>
+<td>Change management, pilot success</td>
+<td></td>
+</tr>
+</tbody></table>
+<ol start="5">
+<li>In cell E2, enter formula: <code>=C2*D2</code></li>
+<li>Copy the formula down through E9</li>
+<li>Add conditional formatting to column E: Select E2:E9, click <strong>Home &gt; Conditional Formatting &gt; Color Scales &gt; Red-Yellow-Green</strong></li>
+</ol>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A risk assessment matrix with 8 identified risks spanning technical, operational, compliance, market, and strategic categories. The Risk Score column displays calculated values (1-25 range) with color-coded cells showing relative risk levels.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Change the Likelihood value in C2 to 5 and verify that E2 automatically recalculates to 15 and the cell color updates accordingly.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">9</span>
+            <span class="lab-step-instruction">Design a pilot program roadmap with measurable success criteria</span>
+          </div><div class="lab-step-detail"><p>Create a phased implementation plan:</p>
+<ol>
+<li>Create a new Excel sheet named <strong>Pilot_Roadmap</strong></li>
+<li>Set up a project timeline structure starting in cell A1:</li>
+</ol>
+<pre><code>A1: RLUSD PILOT PROGRAM ROADMAP
+
+A3: Phase
+B3: Duration
+C3: Key Activities
+D3: Success Criteria
+E3: Go/No-Go Decision Point
+
+A4: Phase 0: Preparation
+B4: 2 weeks
+C4: - Secure executive approval
+     - Form cross-functional team
+     - Set up Testnet environment
+D4: - Business case approved
+     - Team assigned
+     - Testnet wallet created
+E4: Proceed to Phase 1?
+
+A6: Phase 1: Technical Pilot
+B6: 4 weeks
+C6: - Develop API integration
+     - Implement wallet infrastructure
+     - Execute test transactions
+     - Security audit
+D6: - 100 successful test transactions
+     - Zero security vulnerabilities
+     - API uptime &gt;99.5%
+E6: Proceed to Phase 2?
+
+A8: Phase 2: Limited Production
+B8: 6 weeks
+C8: - Onboard 3-5 trusted counterparties
+     - Process real transactions
+     - Monitor performance
+     - Gather feedback
+D8: - 95% transaction success rate
+     - Settlement time &lt;5 seconds
+     - Zero compliance issues
+     - Positive partner feedback
+E8: Proceed to Phase 3?
+
+A10: Phase 3: Controlled Expansion
+B10: 8 weeks
+C10: - Expand to 10-15 counterparties
+      - Increase transaction volume
+      - Optimize processes
+      - Document lessons learned
+D10: - Transaction volume 100+ per week
+      - Cost savings ≥30% vs traditional
+      - 90% partner satisfaction
+      - Compliance audit passed
+E10: Proceed to Full Rollout?
+</code></pre>
+<ol start="3">
+<li>Merge cells appropriately for multi-line content in columns C and D</li>
+<li>Format headers in bold</li>
+<li>Add borders to all cells in the table</li>
+<li>Apply alternating row colors for better readability</li>
+</ol>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A detailed four-phase pilot roadmap spanning 20 weeks total, with each phase showing duration, specific activities, quantifiable success criteria, and decision gates. The timeline progresses from preparation through technical pilot, limited production, and controlled expansion.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Verify that each phase has at least 3 specific success criteria and that all success criteria are measurable (contain numbers or clear pass/fail conditions).</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">10</span>
+            <span class="lab-step-instruction">Document stakeholder communication and change management plan</span>
+          </div><div class="lab-step-detail"><p>Create a structured change management approach:</p>
+<ol>
+<li>Open your readiness_checklist.txt file</li>
+<li>Add the following section at the end:</li>
+</ol>
+<pre><code>
+STAKEHOLDER ENGAGEMENT PLAN
+============================
+
+Key Stakeholder Groups:
+
+1. Executive Leadership
+   - Communication frequency: Monthly steering committee
+   - Key messages: ROI, strategic value, competitive advantage
+   - Success metrics: Cost savings %, transaction volume growth
+   - Concerns to address: Risk, regulatory compliance, investment required
+
+2. Treasury Operations Team
+   - Communication frequency: Weekly during pilot, bi-weekly after
+   - Key messages: Process improvements, efficiency gains, training support
+   - Success metrics: Settlement speed, reconciliation time, error rates
+   - Concerns to address: Learning curve, system reliability, workflow changes
+
+3. Compliance &amp; Legal
+   - Communication frequency: Bi-weekly, ad-hoc as needed
+   - Key messages: Regulatory framework, monitoring capabilities, audit trail
+   - Success metrics: Compliance adherence rate, reporting accuracy
+   - Concerns to address: Regulatory uncertainty, AML/KYC processes
+
+4. IT &amp; Security
+   - Communication frequency: Weekly during implementation
+   - Key messages: Architecture design, security controls, monitoring
+   - Success metrics: System uptime, security incidents, API performance
+   - Concerns to address: Integration complexity, key management, disaster recovery
+
+5. Finance &amp; Accounting
+   - Communication frequency: Monthly
+   - Key messages: Accounting treatment, reporting requirements, reconciliation
+   - Success metrics: Reconciliation accuracy, reporting timeliness
+   - Concerns to address: Accounting standards, valuation, audit requirements
+
+Change Management Activities:
+- [ ] Kick-off meeting with all stakeholders
+- [ ] Training needs assessment completed
+- [ ] Training materials developed
+- [ ] Pilot team identified and onboarded
+- [ ] Success metrics dashboard created
+- [ ] Regular status reporting established
+- [ ] Feedback mechanism implemented
+- [ ] Lessons learned documentation process
+</code></pre>
+<ol start="3">
+<li>Save the file</li>
+</ol>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>The readiness_checklist.txt file now contains a comprehensive stakeholder engagement plan with five distinct stakeholder groups, each with specific communication frequencies, key messages, success metrics, and concerns to be addressed. Eight change management activities are listed with checkboxes.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Open the file and verify it contains all five stakeholder groups and all eight change management activity checkboxes.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">11</span>
+            <span class="lab-step-instruction">Create a comprehensive readiness scorecard</span>
+          </div><div class="lab-step-detail"><p>Build a final assessment summary dashboard:</p>
+<ol>
+<li>Return to your Excel workbook and create a new sheet named <strong>Readiness_Scorecard</strong></li>
+<li>Create a scorecard structure:</li>
+</ol>
+<pre><code>A1: ORGANIZATIONAL READINESS SCORECARD FOR RLUSD IMPLEMENTATION
+
+A3: Dimension
+B3: Weight
+C3: Current Score (0-10)
+D3: Weighted Score
+E3: Status
+
+A4: Technical Readiness
+B4: 25%
+C4: [enter score 0-10]
+D4: =B4*C4
+E4: =IF(C4&gt;=7,&quot;Ready&quot;,IF(C4&gt;=4,&quot;Needs Work&quot;,&quot;Not Ready&quot;))
+
+A5: Operational Readiness
+B5: 20%
+C5: [enter score 0-10]
+D5: =B5*C5
+E5: =IF(C5&gt;=7,&quot;Ready&quot;,IF(C5&gt;=4,&quot;Needs Work&quot;,&quot;Not Ready&quot;))
+
+A6: Compliance Readiness
+B6: 25%
+C6: [enter score 0-10]
+D6: =B6*C6
+E6: =IF(C6&gt;=7,&quot;Ready&quot;,IF(C6&gt;=4,&quot;Needs Work&quot;,&quot;Not Ready&quot;))
+
+A7: Strategic Readiness
+B7: 15%
+C7: [enter score 0-10]
+D7: =B7*C7
+E7: =IF(C7&gt;=7,&quot;Ready&quot;,IF(C7&gt;=4,&quot;Needs Work&quot;,&quot;Not Ready&quot;))
+
+A8: Financial Readiness
+B8: 15%
+C8: [enter score 0-10]
+D8: =B8*C8
+E8: =IF(C8&gt;=7,&quot;Ready&quot;,IF(C8&gt;=4,&quot;Needs Work&quot;,&quot;Not Ready&quot;))
+
+A10: OVERALL READINESS SCORE
+D10: =SUM(D4:D8)
+E10: =IF(D10&gt;=7,&quot;READY TO PROCEED&quot;,IF(D10&gt;=4,&quot;PROCEED WITH CAUTION&quot;,&quot;NOT READY&quot;))
+</code></pre>
+<ol start="3">
+<li>Format row 1 as title (merge A1:E1, center, 16pt bold)</li>
+<li>Format row 3 as header (bold, background color)</li>
+<li>Format column B as percentages</li>
+<li>Format columns C and D with 1 decimal place</li>
+<li>In column C (rows 4-8), enter preliminary scores based on your assessment work (suggest: 6-8 range)</li>
+<li>Apply conditional formatting to column E: green for &quot;Ready&quot;, yellow for &quot;Needs Work&quot;, red for &quot;Not Ready&quot;</li>
+<li>Make row 10 stand out with bold text and borders</li>
+</ol>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A professional scorecard showing five readiness dimensions with weights totaling 100%. Each dimension shows a current score (0-10), weighted contribution, and color-coded status. The overall readiness score at the bottom aggregates all weighted scores and provides a final recommendation.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Verify that changing any score in column C automatically updates the weighted score in column D, the status in column E, and the overall readiness score in D10. The sum of column B should equal 100%.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">12</span>
+            <span class="lab-step-instruction">Generate an executive summary document</span>
+          </div><div class="lab-step-detail"><p>Create a final summary document for leadership review:</p>
+<ol>
+<li>Open a new Notepad document</li>
+<li>Save it as <code>Executive_Summary.txt</code> in your RLUSD_Readiness_Assessment folder</li>
+<li>Type the following executive summary template:</li>
+</ol>
+<pre><code>EXECUTIVE SUMMARY: RLUSD STABLECOIN READINESS ASSESSMENT
+==========================================================
+
+Date: [Current Date]
+Prepared by: [Your Name]
+
+1. ASSESSMENT OVERVIEW
+This readiness assessment evaluates our organization&#39;s capability to implement Ripple USD (RLUSD) stablecoin payments for institutional cross-border transactions.
+
+2. KEY FINDINGS
+
+Overall Readiness Score: [from Readiness_Scorecard D10]
+Recommendation: [from Readiness_Scorecard E10]
+
+Strengths:
+- [Based on highest-scoring dimensions]
+- [Technical API testing successful on XRPL Testnet]
+- [Cost-benefit analysis shows significant savings potential]
+
+Gaps:
+- [Based on lowest-scoring dimensions]
+- [From your Risk_Assessment sheet]
+- [From your Readiness_Matrix]
+
+3. FINANCIAL IMPACT
+
+Traditional Payment Costs (Annual): $[from Cost_Analysis E11]
+Projected RLUSD Costs (Annual): $[from Cost_Analysis B23]
+Annual Cost Savings: $[from Cost_Analysis C23]
+
+Implementation Investment: $[from Cost_Analysis B32]
+Payback Period: [from Cost_Analysis B42] months
+3-Year ROI: [from Cost_Analysis B43]%
+
+4. RISK SUMMARY
+
+High-Risk Items (Score ≥15):
+[List from Risk_Assessment sheet where E column ≥15]
+
+Mitigation Priority:
+[Top 3 mitigation strategies from Risk_Assessment]
+
+5. RECOMMENDED NEXT STEPS
+
+Immediate (0-30 days):
+- Address critical gaps identified in Readiness Matrix
+- Secure executive sponsorship and budget approval
+- Form cross-functional implementation team
+
+Short-term (1-3 months):
+- Execute Phase 0 and Phase 1 of Pilot Roadmap
+- Complete technical integration on Testnet
+- Conduct compliance review
+
+Mid-term (3-6 months):
+- Launch limited production pilot (Phase 2)
+- Onboard initial counterparty partners
+- Monitor and optimize performance
+
+6. SUCCESS CRITERIA FOR PILOT
+[Copy from Pilot_Roadmap Phase 2 and 3 success criteria]
+
+7. STAKEHOLDER ENGAGEMENT
+Key stakeholders identified: 5 groups
+Communication plan: Established
+Change management activities: 8 planned
+
+8. CONCLUSION
+[Based on overall readiness score, provide clear go/no-go recommendation with conditions]
+</code></pre>
+<ol start="4">
+<li>Fill in all bracketed placeholders with actual data from your Excel workbook</li>
+<li>Save the completed document</li>
+</ol>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A comprehensive executive summary document (2-3 pages when printed) that synthesizes all assessment findings, financial analysis, risks, and recommendations into a format suitable for C-level review. All placeholders are replaced with specific numbers and findings from the analysis.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Open the Executive_Summary.txt file and verify that no bracketed placeholders remain. All financial figures should match exactly with the corresponding Excel cells.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">13</span>
+            <span class="lab-step-instruction">Create a presentation-ready one-page summary</span>
+          </div><div class="lab-step-detail"><p>Design a visual dashboard summary for stakeholder presentations:</p>
+<ol>
+<li>Return to Excel and create a new sheet named <strong>Dashboard</strong></li>
+<li>Create a visual summary layout:</li>
+</ol>
+<pre><code>Merge A1:F2 and enter: RLUSD IMPLEMENTATION READINESS DASHBOARD
+
+A4: READINESS SCORES          A9: FINANCIAL IMPACT
+Copy the scorecard table      B10: Traditional Costs:
+from Readiness_Scorecard      B11: RLUSD Costs:
+                               B12: Annual Savings:
+                               B13: Implementation:
+                               B14: Payback Period:
+                               B15: 3-Year ROI:
+
+                               [Link to Cost_Analysis values]
+
+A17: TOP RISKS                 D17: PILOT TIMELINE
+List top 3-4 risks from        Show 4-phase roadmap
+Risk_Assessment with           with durations
+highest scores                 Total: 20 weeks
+
+A24: RECOMMENDATION
+Merge A24:F25
+Enter clear GO/NO-GO recommendation based on Overall Readiness Score
+Include 2-3 key conditions or prerequisites
+</code></pre>
+<ol start="3">
+<li>Use cell formatting to create visual hierarchy:<ul>
+<li>Title in A1:F2 - 18pt bold, centered, colored background</li>
+<li>Section headers - 12pt bold, colored backgrounds</li>
+<li>Data - 10pt, clear fonts</li>
+</ul>
+</li>
+<li>Add borders around each section to create distinct &quot;cards&quot;</li>
+<li>Use conditional formatting colors to highlight key metrics</li>
+<li>Link all numerical values to source sheets using formulas like <code>=Cost_Analysis!E11</code></li>
+</ol>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A single-sheet dashboard that presents all critical information at a glance. The layout uses merged cells, colors, borders, and formatting to create a professional presentation-quality summary. All values dynamically link to source data sheets.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Change a value in the Cost_Analysis sheet and verify that the corresponding linked value in the Dashboard sheet updates automatically. Print preview the Dashboard sheet to confirm it fits on a single page.</span>
+          </div></div></div>
+        <div class="lab-troubleshooting">
+          <h3>⚠️ Troubleshooting</h3>
+          <details class="lab-trouble-item">
+            <summary>Excel formulas show #VALUE! or #REF! errors in the ROI Analysis section</summary>
+            <div class="lab-trouble-solution"><p>This typically occurs when a cell referenced in a formula is empty or contains text instead of a number. Click on the cell showing the error and examine the formula in the formula bar. Verify that all referenced cells (like B28, B29, etc.) contain numeric values, not text. If a cell is empty, enter 0 or an estimated value. Also ensure you haven&#39;t accidentally deleted rows that formulas reference - if you see #REF!, you&#39;ll need to recreate the formula with correct cell references.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>Cannot connect to XRPL Testnet WebSocket API Tool - connection status stays red or shows error</summary>
+            <div class="lab-trouble-solution"><p>First, check your internet connection by loading another webpage. If internet works, the Testnet server may be temporarily down. Try these steps: (1) Select a different Testnet server from the WebSocket URL dropdown menu, such as wss://testnet.xrpl-labs.com, (2) Check if your corporate firewall is blocking WebSocket connections on port 51233 - you may need to use a personal device or request firewall exceptions from IT, (3) Clear your browser cache and cookies, then refresh the page, (4) Try a different browser - Chrome and Firefox typically have the best WebSocket support.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>The Readiness_Scorecard shows incorrect overall score or status recommendations don't make sense</summary>
+            <div class="lab-trouble-solution"><p>Review the formulas in column D and ensure they multiply the Weight (column B) by the Current Score (column C). The weights in column B should be formatted as percentages but calculated as decimals (25% = 0.25). If you entered weights as whole numbers (25 instead of 0.25), your weighted scores will be too high. Either re-enter weights as decimals (0.25, 0.20, etc.) or modify the formulas to divide by 100: =B4*C4/100. Also verify that column B weights sum to exactly 1.0 (or 100% if displayed as percentages). If they sum to more or less, adjust the weights proportionally.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>Risk Assessment conditional formatting doesn't show color gradient or shows incorrect colors</summary>
+            <div class="lab-trouble-solution"><p>The color scale conditional formatting may not be applied correctly. Select the range E2:E9 again, then click Home &gt; Conditional Formatting &gt; Manage Rules. If you see a rule for that range, delete it. Then reapply: select E2:E9, click Conditional Formatting &gt; Color Scales, and choose the Red-Yellow-Green Color Scale option (should be in the top row). If colors still don&#39;t appear, verify that column E contains only numbers (not text or formulas returning errors). Click on each cell in column E and confirm the formula bar shows a number or a formula that evaluates to a number.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>Can't find specific sections in XRPL documentation or Ripple website has different layout than described</summary>
+            <div class="lab-trouble-solution"><p>Website layouts change periodically. If you can&#39;t find the exact navigation path mentioned: (1) Use the search function on xrpl.org - search for &#39;transaction cost&#39; or &#39;WebSocket API&#39; to find relevant pages directly, (2) For the main documentation hub, navigate directly to <a href="https://xrpl.org/docs.html">https://xrpl.org/docs.html</a> and browse the left sidebar, (3) For the WebSocket API Tool, go directly to <a href="https://xrpl.org/resources/dev-tools/websocket-api-tool">https://xrpl.org/resources/dev-tools/websocket-api-tool</a>, (4) If Ripple.com content has moved, use their site search or navigate to <a href="https://ripple.com/solutions/">https://ripple.com/solutions/</a> to find information about institutional payment solutions. The specific URLs provided in the lab should remain stable even if navigation menus change.</p>
+</div>
+          </details></div>
+        <div class="lab-challenge">
+          <h3>🏆 Comparative Multi-Corridor Cost Analysis with Scaling Projections</h3>
+          <p class="lab-challenge-intro">Apply what you learned — complete this task without step-by-step guidance.</p>
+          <div class="lab-challenge-body"><p>Expand your cost-benefit analysis to evaluate RLUSD implementation across multiple payment corridors with different volumes and regulatory requirements.</p>
+<p><strong>Your task:</strong> Create a comprehensive multi-corridor analysis that demonstrates the business case for RLUSD at various transaction volume levels.</p>
+<p><strong>Requirements:</strong></p>
+<ol>
+<li><p><strong>Identify three distinct payment corridors</strong> your organization uses (e.g., USD→EUR, USD→GBP, USD→MXN) with different characteristics:</p>
+<ul>
+<li>Different transaction volumes (high, medium, low)</li>
+<li>Different regulatory complexity levels</li>
+<li>Different traditional payment costs (SWIFT, correspondent banking, etc.)</li>
+</ul>
+</li>
+<li><p><strong>Build a scaling model</strong> in Excel that shows:</p>
+<ul>
+<li>Cost per transaction at volumes of 10, 50, 100, 500, and 1000 transactions per month</li>
+<li>Break-even points for each corridor</li>
+<li>Marginal cost curves comparing traditional vs. RLUSD methods</li>
+</ul>
+</li>
+<li><p><strong>Identify corridor-specific risk factors</strong> that might affect adoption:</p>
+<ul>
+<li>Regulatory differences between jurisdictions</li>
+<li>Liquidity availability for each currency pair</li>
+<li>Counterparty readiness in each region</li>
+</ul>
+</li>
+<li><p><strong>Create a prioritization framework</strong> that ranks corridors for pilot implementation based on:</p>
+<ul>
+<li>Potential cost savings (weighted 35%)</li>
+<li>Implementation complexity (weighted 25%)</li>
+<li>Strategic importance (weighted 20%)</li>
+<li>Risk level (weighted 20%)</li>
+</ul>
+</li>
+<li><p><strong>Develop a phased rollout strategy</strong> showing:</p>
+<ul>
+<li>Which corridor to pilot first and why</li>
+<li>Sequencing of subsequent corridors</li>
+<li>Resource allocation across corridors</li>
+<li>Timeline for achieving 80% corridor coverage</li>
+</ul>
+</li>
+</ol>
+<p><strong>Deliverable:</strong> An Excel workbook with a dedicated sheet for each corridor, a comparison dashboard showing all three corridors side-by-side, and a written recommendation (in a new text file) explaining your prioritization logic and rollout sequence. Your analysis should demonstrate clear financial modeling skills and strategic thinking about risk-adjusted implementation planning.</p>
+<p><strong>Bonus challenge:</strong> Research actual transaction volumes and costs for your chosen corridors using industry reports or your own organization&#39;s data (if available). Incorporate real-world SWIFT fees, FX spreads, and settlement times to make your analysis as realistic as possible.</p>
+</div>
+        </div>
+        <div class="lab-check">
+          <label class="checkbox-label">
+            <input type="checkbox" onchange="this.closest('.lab-check').classList.toggle('completed', this.checked)">
+            <span>I have completed this lab exercise</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 8: Knowledge Check -->
+    <section class="screen" id="screen-8" data-index="8">
+      
+      <div class="screen-quiz">
+        <h2>📝 Knowledge Check</h2>
+        <p class="quiz-intro">Test your understanding of the material covered in this module. Select the best answer for each question.</p>
+        <div id="quizForm">
+          <div class="quiz-question" id="qq-0">
+            <h4>Question 1</h4>
+            <p class="question-text">Which dimension of organizational readiness specifically evaluates your institution's ability to handle 24/7 settlement and real-time cash positioning?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q0" value="A">
+                <span class="option-text">A) Technical readiness</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q0" value="B">
+                <span class="option-text">B) Operational readiness</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q0" value="C">
+                <span class="option-text">C) Compliance readiness</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q0" value="D">
+                <span class="option-text">D) Strategic readiness</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-0"></div>
+          </div>
+          <div class="quiz-question" id="qq-1">
+            <h4>Question 2</h4>
+            <p class="question-text">In a cost-benefit analysis for stablecoin adoption, how should the benefit of faster settlement be quantified?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q1" value="A">
+                <span class="option-text">A) By calculating the reduction in wire transfer fees only</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q1" value="B">
+                <span class="option-text">B) By measuring the opportunity cost of released trapped capital using WACC</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q1" value="C">
+                <span class="option-text">C) By counting the number of hours saved in reconciliation</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q1" value="D">
+                <span class="option-text">D) By estimating the reduction in FX conversion spreads</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-1"></div>
+          </div>
+          <div class="quiz-question" id="qq-2">
+            <h4>Question 3</h4>
+            <p class="question-text">What is the primary mitigation strategy for transaction irreversibility risk in blockchain payments?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q2" value="A">
+                <span class="option-text">A) Purchasing smart contract insurance</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q2" value="B">
+                <span class="option-text">B) Using dynamic fee strategies during network congestion</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q2" value="C">
+                <span class="option-text">C) Implementing multi-party approval workflows and address whitelisting</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q2" value="D">
+                <span class="option-text">D) Maintaining multiple blockchain network integrations</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-2"></div>
+          </div>
+          <div class="quiz-question" id="qq-3">
+            <h4>Question 4</h4>
+            <p class="question-text">For an effective pilot program, what is the recommended typical duration?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q3" value="A">
+                <span class="option-text">A) 30-60 days</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q3" value="B">
+                <span class="option-text">B) 90-180 days</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q3" value="C">
+                <span class="option-text">C) 12-18 months</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q3" value="D">
+                <span class="option-text">D) 24-36 months</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-3"></div>
+          </div>
+          <div class="quiz-question" id="qq-4">
+            <h4>Question 5</h4>
+            <p class="question-text">What is a typical payback period for enterprise stablecoin payment implementations?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q4" value="A">
+                <span class="option-text">A) 3-6 months</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q4" value="B">
+                <span class="option-text">B) 12-18 months</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q4" value="C">
+                <span class="option-text">C) 24-36 months</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q4" value="D">
+                <span class="option-text">D) 48-60 months</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-4"></div>
+          </div>
+          <div class="quiz-question" id="qq-5">
+            <h4>Question 6</h4>
+            <p class="question-text">Which risk category is specifically mitigated by maintaining relationships with multiple stablecoin issuers?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q5" value="A">
+                <span class="option-text">A) Smart contract risk</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q5" value="B">
+                <span class="option-text">B) Custodial and key management risk</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q5" value="C">
+                <span class="option-text">C) Regulatory risk</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q5" value="D">
+                <span class="option-text">D) Transaction irreversibility risk</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-5"></div>
+          </div>
+          <div class="quiz-question" id="qq-6">
+            <h4>Question 7</h4>
+            <p class="question-text">What is the recommended strategy during pilot programs to provide backup and enable direct performance comparisons?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q6" value="A">
+                <span class="option-text">A) Increase transaction volume gradually over time</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q6" value="B">
+                <span class="option-text">B) Run stablecoin payments parallel to traditional rails</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q6" value="C">
+                <span class="option-text">C) Focus on a single payment corridor exclusively</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q6" value="D">
+                <span class="option-text">D) Establish weekly steering committee meetings</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-6"></div>
+          </div>
+          <div class="quiz-question" id="qq-7">
+            <h4>Question 8</h4>
+            <p class="question-text">In compliance readiness assessment, what capability is essential for linking blockchain addresses to verified entities?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q7" value="A">
+                <span class="option-text">A) Smart contract auditing tools</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q7" value="B">
+                <span class="option-text">B) Multi-signature wallet infrastructure</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q7" value="C">
+                <span class="option-text">C) KYC systems that validate digital wallet ownership</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q7" value="D">
+                <span class="option-text">D) Dynamic fee calculation algorithms</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-7"></div>
+          </div>
+          <div class="quiz-actions">
+            <button type="button" class="btn btn-primary quiz-submit-btn" onclick="gradeQuiz()">Submit Answers</button>
+            <button type="button" class="btn btn-secondary" onclick="resetQuiz()">Reset</button>
+          </div>
+          <div class="quiz-results" id="quizResults"></div>
+        </div>
+      </div><script>window.__quizAnswers = ["B","B","C","B","B","C","B","C"]; window.__quizExplanations = ["Operational readiness examines processes, workflows, and team capabilities including the ability to manage 24/7 settlement, weekend liquidity management, and real-time cash positioning—all of which differ significantly from traditional banking-hours treasury operations.","Settlement speed improvements release capital that was previously trapped in transit. The financial benefit is quantified by calculating the opportunity cost of this released capital using the organization's weighted average cost of capital (WACC), representing what that money could earn if available for investment or debt reduction.","Since blockchain transactions cannot be reversed like traditional payment rails, the primary mitigation is prevention through multi-party approval workflows for large transactions and address whitelisting to prevent errors. These controls catch mistakes before irreversible transactions are executed.","A typical pilot program runs for 90-180 days. This duration is long enough to gather meaningful data across different scenarios and volumes, identify operational challenges, and measure performance against success criteria, while being short enough to maintain focus and limit risk exposure.","Many institutional stablecoin deployments achieve payback periods of 12-18 months. This is calculated by dividing total implementation costs (typically $100K-$500K) by annual net benefits, which for high-volume payers can exceed $1 million in direct cost savings plus settlement speed benefits.","Regulatory risk mitigation includes maintaining flexible technical architecture and establishing relationships with multiple stablecoin issuers. This ensures that if regulatory actions impact a specific token or issuer, the institution can pivot to alternative stablecoins without disrupting payment operations.","Parallel operation strategy involves running stablecoin payments alongside traditional payment rails during pilot programs. This provides backup if issues arise, enables direct cost and performance comparisons between methods, and allows gradual volume shifts as confidence builds.","Compliance readiness requires KYC systems capable of validating digital wallet ownership, screening against sanctions lists in real-time, and maintaining audit trails that link blockchain addresses to verified entities. This ensures the institution knows who it's transacting with, even when payments use pseudonymous blockchain addresses."];</script>
+    </section>
+
+    <!-- Screen 9: Summary -->
+    <section class="screen" id="screen-9" data-index="9">
+      
+      <div class="screen-summary">
+        <h2>🎯 Module Summary</h2>
+        <div class="summary-content"><p>This module provided comprehensive frameworks for assessing organizational readiness across technical, operational, compliance, and strategic dimensions. You learned to build cost-benefit analyses that quantify both direct savings and settlement speed benefits, identify and mitigate stablecoin-specific risks including de-pegging and custodial challenges, and design effective pilot programs with clear success criteria. Successful stablecoin adoption requires cross-functional stakeholder engagement, structured change management, and phased implementation that balances innovation with risk management. With typical payback periods of 12-18 months and annual savings exceeding $1 million for high-volume institutions, a rigorous readiness assessment provides the foundation for successful deployment and measurable ROI.</p>
+</div>
+        
+        <div class="objectives-review">
+          <h3>Learning Objectives — Review</h3>
+          <ul class="objectives-checklist">
+            
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Assess organizational technical readiness for stablecoin payment integration</span>
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Evaluate operational and compliance maturity for enterprise stablecoin adoption</span>
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Perform cost-benefit analysis comparing traditional and stablecoin payment methods</span>
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Develop a roadmap for pilot implementation and scaling of stablecoin payments</span>
+              </label>
+            </li>
+          </ul>
+        </div>
+        <div class="completion-box">
+          <div class="completion-icon">🎉</div>
+          <h3>Module Complete!</h3>
+          <p>You have completed all sections of this module.</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" id="prevBtn" onclick="prev()">← Previous</button>
+      <span class="screen-counter" id="screenCounter">1 / 10</span>
+      <button class="btn btn-primary" id="nextBtn" onclick="next()">Next →</button>
+    </div>
+  </main>
+
+</div>
+
+<!-- ====== FOOTER ====== -->
+<footer class="course-footer">
+  <span></span>
+  
+</footer>
+
+
+<script>
+(function() {
+  const TOTAL = 10;
+  let current = 0;
+  const visited = new Set([0]);
+
+  function update() {
+    // Screens
+    document.querySelectorAll('.screen').forEach((el, i) => {
+      el.classList.toggle('active', i === current);
+    });
+
+    // Nav
+    document.querySelectorAll('.nav-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === current);
+      btn.classList.toggle('visited', visited.has(i) && i !== current);
+    });
+    document.querySelectorAll('.nav-check').forEach((el, i) => {
+      el.style.display = visited.has(i) && i !== current ? 'inline' : 'none';
+    });
+
+    // Buttons
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').textContent = current === TOTAL - 1 ? 'Finish ✓' : 'Next →';
+    document.getElementById('screenCounter').textContent = (current + 1) + ' / ' + TOTAL;
+
+    // Progress
+    const pct = Math.round((visited.size / TOTAL) * 100);
+    document.getElementById('progressPercent').textContent = pct;
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    // Scroll to top of content
+    document.getElementById('content').scrollTop = 0;
+    window.scrollTo(0, 0);
+  }
+
+  window.goTo = function(i) {
+    if (i >= 0 && i < TOTAL) { current = i; visited.add(i); update(); }
+  };
+  window.next = function() {
+    if (current < TOTAL - 1) { current++; visited.add(current); update(); }
+  };
+  window.prev = function() {
+    if (current > 0) { current--; update(); }
+  };
+  window.toggleSidebar = function() {
+    document.getElementById('sidebar').classList.toggle('open');
+  };
+
+  // Quiz grading
+  window.gradeQuiz = function() {
+    const answers = window.__quizAnswers || [];
+    const explanations = window.__quizExplanations || [];
+    let correct = 0;
+
+    answers.forEach((ans, i) => {
+      const selected = document.querySelector('input[name="q' + i + '"]:checked');
+      const fb = document.getElementById('fb-' + i);
+      const questionDiv = document.getElementById('qq-' + i);
+      const labels = questionDiv.querySelectorAll('.option-label');
+
+      labels.forEach(l => l.classList.remove('correct', 'incorrect'));
+
+      if (selected) {
+        const userAns = selected.value;
+        const isCorrect = userAns === ans;
+        if (isCorrect) {
+          correct++;
+          selected.closest('.option-label').classList.add('correct');
+          fb.className = 'feedback show correct';
+          fb.textContent = '✓ Correct!' + (explanations[i] ? ' ' + explanations[i] : '');
+        } else {
+          selected.closest('.option-label').classList.add('incorrect');
+          // Highlight correct answer
+          labels.forEach(l => {
+            const inp = l.querySelector('input');
+            if (inp && inp.value === ans) l.classList.add('correct');
+          });
+          fb.className = 'feedback show incorrect';
+          fb.textContent = '✗ Incorrect. The correct answer is ' + ans + '.' + (explanations[i] ? ' ' + explanations[i] : '');
+        }
+      } else {
+        fb.className = 'feedback show incorrect';
+        fb.textContent = 'No answer selected. The correct answer is ' + ans + '.';
+      }
+    });
+
+    const pct = Math.round((correct / answers.length) * 100);
+    const results = document.getElementById('quizResults');
+    results.className = 'quiz-results show ' + (pct >= 80 ? 'pass' : 'fail');
+    results.textContent = 'Score: ' + correct + '/' + answers.length + ' (' + pct + '%)' +
+      (pct >= 80 ? ' — Passed! ✓' : ' — Review the material and try again.');
+  };
+
+  window.resetQuiz = function() {
+    document.querySelectorAll('#quizForm input[type="radio"]').forEach(el => { el.checked = false; });
+    document.querySelectorAll('.feedback').forEach(el => { el.className = 'feedback'; });
+    document.querySelectorAll('.option-label').forEach(el => { el.classList.remove('correct', 'incorrect'); });
+    document.getElementById('quizResults').className = 'quiz-results';
+  };
+
+  // Initial state
+  update();
+})();
+</script>
+
+</body>
+</html>

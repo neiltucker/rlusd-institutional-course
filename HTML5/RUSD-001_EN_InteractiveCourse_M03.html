@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compliance Frameworks and Regulatory Expectations — RLUSD Stablecoin Payments for Institutions</title>
+<style>
+/* === RESET & BASE === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #1a1a2e; background: #f8f9fa; line-height: 1.65; display: flex; flex-direction: column; min-height: 100vh;
+}
+
+/* === HEADER === */
+.course-header {
+  background: #1a1a2e; color: #fff; padding: 0.75rem 1.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+  position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.header-left { display: flex; align-items: center; gap: 1rem; }
+.course-number { font-size: 0.8rem; opacity: 0.7; font-family: monospace; }
+.course-title { font-size: 0.95rem; font-weight: 600; }
+.header-right { display: flex; align-items: center; gap: 1.5rem; font-size: 0.85rem; }
+.module-label { opacity: 0.8; }
+.progress-text { font-weight: 600; color: #6ee7b7; }
+.print-btn {
+  background: transparent; border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.85); font-size: 0.78rem; padding: 0.3rem 0.75rem;
+  border-radius: 3px; cursor: pointer; font-family: inherit;
+  transition: background 0.15s, border-color 0.15s; white-space: nowrap;
+}
+.print-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
+
+/* === LAYOUT === */
+.layout { display: flex; flex: 1; min-height: 0; }
+
+/* === SIDEBAR === */
+.sidebar {
+  width: 280px; background: #fff; border-right: 1px solid #e5e7eb;
+  display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+  position: sticky; top: 52px; height: calc(100vh - 52px);
+}
+.sidebar-header { padding: 1.25rem 1rem 0.75rem; display: flex; justify-content: space-between; align-items: start; }
+.sidebar-header h2 { font-size: 1rem; font-weight: 700; color: #1a1a2e; line-height: 1.3; }
+.sidebar-toggle { display: none; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #6b7280; }
+.progress-bar { height: 3px; background: #e5e7eb; margin: 0 1rem 0.5rem; border-radius: 2px; }
+.progress-fill { height: 100%; background: #3b82f6; border-radius: 2px; width: 0; transition: width 0.4s ease; }
+.nav-list { list-style: none; padding: 0.25rem 0.5rem 1rem; flex: 1; overflow-y: auto; }
+.nav-btn {
+  width: 100%; text-align: left; background: none; border: none; padding: 0.6rem 0.75rem;
+  display: flex; align-items: center; gap: 0.6rem; border-radius: 0.5rem;
+  cursor: pointer; font-size: 0.85rem; color: #4b5563; transition: all 0.15s;
+}
+.nav-btn:hover { background: #f3f4f6; color: #1a1a2e; }
+.nav-btn.active { background: #eff6ff; color: #2563eb; font-weight: 600; }
+.nav-btn.visited .nav-check { display: inline; }
+.nav-icon { font-size: 1rem; flex-shrink: 0; }
+.nav-label { flex: 1; }
+.nav-check { display: none; color: #22c55e; font-size: 0.8rem; flex-shrink: 0; }
+
+/* === MAIN CONTENT === */
+.content { flex: 1; padding: 2rem 3rem 2rem 2.5rem; max-width: 860px; min-height: calc(100vh - 52px); }
+.screen { display: none; animation: fadeIn 0.25s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* === NAV BUTTONS === */
+.nav-buttons {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;
+}
+.screen-counter { font-size: 0.85rem; color: #9ca3af; }
+.btn {
+  padding: 0.6rem 1.4rem; border-radius: 0.5rem; font-size: 0.9rem; font-weight: 600;
+  border: none; cursor: pointer; transition: all 0.15s;
+}
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn-primary { background: #2563eb; color: #fff; }
+.btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+.btn-secondary { background: #f3f4f6; color: #4b5563; }
+.btn-secondary:hover:not(:disabled) { background: #e5e7eb; }
+
+/* === LANDING SCREEN === */
+.screen-landing { text-align: center; padding: 3rem 0; }
+.screen-landing h1 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; }
+.screen-landing h2 { font-size: 2rem; font-weight: 800; color: #1a1a2e; margin-top: 0.25rem; }
+.objectives-box {
+  text-align: left; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.75rem;
+  padding: 1.5rem; margin: 2rem auto; max-width: 580px;
+}
+.objectives-box h3 { font-size: 1rem; margin-bottom: 0.5rem; color: #1e40af; }
+.objectives-box ul { margin-top: 0.5rem; padding-left: 1.25rem; }
+.objectives-box li { margin-bottom: 0.4rem; font-size: 0.92rem; color: #1e3a5f; }
+.start-hint { margin-top: 2rem; color: #9ca3af; font-size: 0.9rem; }
+
+/* === LESSON SCREEN === */
+.screen-lesson h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; color: #1a1a2e; }
+.lesson-content { font-size: 0.95rem; line-height: 1.75; }
+.lesson-content h3 { font-size: 1.15rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #1a1a2e; }
+.lesson-content h4 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
+.lesson-content p { margin-bottom: 0.75rem; }
+.lesson-content ul, .lesson-content ol { margin: 0.5rem 0 1rem 1.25rem; }
+.lesson-content li { margin-bottom: 0.3rem; }
+.lesson-content code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.88rem; }
+.lesson-content pre { background: #1e293b; color: #e2e8f0; padding: 1rem 1.25rem; border-radius: 0.5rem; overflow-x: auto; margin: 1rem 0; }
+.lesson-content pre code { background: none; padding: 0; color: inherit; }
+.lesson-content blockquote { border-left: 3px solid #3b82f6; padding: 0.5rem 1rem; background: #f8fafc; margin: 1rem 0; border-radius: 0 0.5rem 0.5rem 0; }
+.lesson-content table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+.lesson-content th, .lesson-content td { padding: 0.6rem 0.75rem; border: 1px solid #e5e7eb; text-align: left; }
+.lesson-content th { background: #f8fafc; font-weight: 600; }
+
+/* === MEDIA === */
+.media-block { margin: 1.5rem 0; text-align: center; }
+.media-caption { font-size: 0.82rem; color: #6b7280; margin-top: 0.5rem; font-style: italic; }
+.media-placeholder { background: #f8fafc; border: 2px dashed #d1d5db; border-radius: 0.5rem; padding: 2rem; }
+.placeholder-icon { font-size: 2rem; }
+
+/* === KEY POINTS === */
+.key-points {
+  background: #fefce8; border: 1px solid #fde68a; border-radius: 0.75rem;
+  padding: 1.25rem; margin-top: 1.5rem;
+}
+.key-points h4 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+.key-points ul { padding-left: 1.25rem; }
+.key-points li { font-size: 0.9rem; margin-bottom: 0.3rem; color: #713f12; }
+
+/* === LAB === */
+.screen-lab h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.lab-header { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+.lab-objective { font-size: 0.92rem; color: #166534; margin-top: 0.5rem; }
+.lab-meta { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.75rem; }
+.lab-meta-item { font-size: 0.82rem; color: #15803d; font-weight: 500; }
+.lab-prereqs { margin-top: 0.75rem; font-size: 0.85rem; color: #166534; }
+.lab-prereqs ul { margin: 0.25rem 0 0 1.25rem; padding: 0; }
+.lab-prereqs li { margin-bottom: 0.15rem; }
+.lab-procedures h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; color: #1e293b; }
+.lab-step { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+.lab-step-header { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.5rem; }
+.lab-step-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; min-width: 28px; background: #2563eb; color: #fff; font-size: 0.82rem; font-weight: 700; border-radius: 50%; }
+.lab-step-instruction { font-weight: 600; color: #1e293b; font-size: 0.95rem; line-height: 1.5; padding-top: 2px; }
+.lab-step-detail { font-size: 0.9rem; line-height: 1.7; color: #475569; margin-top: 0.25rem; padding-left: 2.8rem; }
+.lab-step-detail code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; }
+.lab-step-detail pre { background: #1e293b; color: #e2e8f0; padding: 0.75rem 1rem; border-radius: 0.5rem; overflow-x: auto; margin: 0.5rem 0; font-size: 0.85rem; }
+.lab-step-detail pre code { background: none; padding: 0; color: inherit; }
+.lab-expected-output { margin: 0.5rem 0 0 2.8rem; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 0.5rem; padding: 0.75rem 1rem; }
+.lab-expected-label { font-size: 0.78rem; font-weight: 700; color: #0369a1; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.35rem; }
+.lab-expected-output pre { background: #0c4a6e; color: #e0f2fe; padding: 0.5rem 0.75rem; border-radius: 0.375rem; margin: 0.25rem 0 0; font-size: 0.82rem; overflow-x: auto; }
+.lab-expected-output pre code { background: none; padding: 0; color: inherit; }
+.lab-verification { display: flex; align-items: flex-start; gap: 0.5rem; margin: 0.5rem 0 0 2.8rem; padding: 0.6rem 0.75rem; background: #fefce8; border: 1px solid #fde68a; border-radius: 0.5rem; font-size: 0.85rem; color: #854d0e; }
+.lab-verification-icon { font-size: 1rem; line-height: 1.3; }
+.lab-troubleshooting { margin-top: 1.5rem; }
+.lab-troubleshooting h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; color: #1e293b; }
+.lab-trouble-item { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.5rem; margin-bottom: 0.5rem; }
+.lab-trouble-item summary { padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 500; color: #b45309; cursor: pointer; list-style: none; }
+.lab-trouble-item summary::before { content: '▸ '; font-weight: 700; }
+.lab-trouble-item[open] summary::before { content: '▾ '; }
+.lab-trouble-solution { padding: 0 1rem 0.75rem; font-size: 0.87rem; color: #475569; line-height: 1.6; }
+.lab-trouble-solution code { background: #f1f5f9; padding: 0.1rem 0.3rem; border-radius: 0.2rem; font-size: 0.84rem; }
+.lab-challenge { margin-top: 1.5rem; background: #faf5ff; border: 2px dashed #c4b5fd; border-radius: 0.75rem; padding: 1.25rem; }
+.lab-challenge h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; color: #6b21a8; }
+.lab-challenge-intro { font-size: 0.82rem; color: #7c3aed; margin-bottom: 0.75rem; font-style: italic; }
+.lab-challenge-body { font-size: 0.9rem; line-height: 1.65; color: #581c87; }
+.lab-challenge-body code { background: #ede9fe; padding: 0.1rem 0.3rem; border-radius: 0.2rem; font-size: 0.84rem; }
+.lab-steps { font-size: 0.95rem; line-height: 1.75; }
+.lab-steps ol { padding-left: 1.25rem; }
+.lab-steps li { margin-bottom: 0.5rem; }
+.lab-steps code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.88rem; }
+.lab-steps pre { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin: 0.75rem 0; }
+.lab-steps pre code { background: none; padding: 0; color: inherit; }
+.lab-check { margin-top: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 0.5rem; }
+.lab-check.completed { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.checkbox-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.92rem; }
+.checkbox-label input { width: 1.1rem; height: 1.1rem; accent-color: #22c55e; }
+
+/* === QUIZ === */
+.screen-quiz h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.quiz-intro { font-size: 0.92rem; color: #6b7280; margin-bottom: 1.5rem; }
+.quiz-question { background: #fff; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; }
+.quiz-question h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; margin-bottom: 0.5rem; }
+.question-text { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.75rem; }
+.options { display: flex; flex-direction: column; gap: 0.5rem; }
+.option-label {
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.75rem;
+  border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; transition: all 0.15s;
+}
+.option-label:hover { border-color: #93c5fd; background: #eff6ff; }
+.option-label input { accent-color: #2563eb; }
+.option-label.correct { background: #f0fdf4; border-color: #86efac; }
+.option-label.incorrect { background: #fef2f2; border-color: #fca5a5; }
+.feedback { margin-top: 0.5rem; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.88rem; display: none; }
+.feedback.show { display: block; }
+.feedback.correct { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.feedback.incorrect { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.quiz-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+.quiz-results {
+  margin-top: 1.5rem; padding: 1.25rem; border-radius: 0.75rem; display: none;
+  text-align: center; font-size: 1.1rem; font-weight: 700;
+}
+.quiz-results.show { display: block; }
+.quiz-results.pass { background: #f0fdf4; color: #166534; border: 2px solid #86efac; }
+.quiz-results.fail { background: #fefce8; color: #854d0e; border: 2px solid #fde68a; }
+
+/* === SUMMARY === */
+.screen-summary h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+.summary-content { font-size: 0.95rem; line-height: 1.75; margin-bottom: 1.5rem; }
+.objectives-review { background: #f8fafc; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+.objectives-review h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+.objectives-checklist { list-style: none; }
+.objectives-checklist li { margin-bottom: 0.5rem; }
+.completion-box { text-align: center; padding: 2rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0; }
+.completion-icon { font-size: 3rem; }
+.completion-box h3 { margin-top: 0.5rem; color: #166534; }
+
+/* === FOOTER === */
+.course-footer {
+  background: #1a1a2e; color: #9ca3af; padding: 0.75rem 1.5rem;
+  display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;
+}
+.trial-badge { background: #2563eb; color: #fff; padding: 0.2rem 0.6rem; border-radius: 0.25rem; font-size: 0.72rem; }
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .sidebar { position: fixed; left: -280px; top: 52px; height: calc(100vh - 52px); z-index: 90; transition: left 0.25s; box-shadow: 2px 0 12px rgba(0,0,0,0.15); }
+  .sidebar.open { left: 0; }
+  .sidebar-toggle { display: block; }
+  .content { padding: 1.5rem 1rem; }
+  .course-header { padding: 0.6rem 1rem; }
+  .header-left .course-title { font-size: 0.85rem; }
+}
+
+/* === PRINT === */
+@media print {
+  /* Hide all interactive chrome */
+  .sidebar, .nav-buttons, .course-header, .course-footer,
+  .sidebar-toggle, .quiz-actions, .lab-check, .print-btn { display: none !important; }
+
+  /* Full-width content, no padding waste */
+  body  { background: #fff !important; color: #000 !important; font-size: 11pt; line-height: 1.55; }
+  .layout { display: block !important; }
+  .content { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+
+  /* Show all screens sequentially with page breaks */
+  .screen { display: block !important; animation: none !important; opacity: 1 !important; transform: none !important; page-break-after: always; break-after: page; }
+  .screen:last-child { page-break-after: avoid; break-after: avoid; }
+
+  /* Headings */
+  h1, h2 { page-break-after: avoid; break-after: avoid; font-size: 14pt; }
+  h3, h4  { page-break-after: avoid; break-after: avoid; font-size: 12pt; }
+
+  /* Keep steps and quiz questions together */
+  .lab-step, .quiz-question { page-break-inside: avoid; break-inside: avoid; }
+
+  /* Code blocks — preserve formatting, avoid splitting */
+  pre { white-space: pre-wrap; word-break: break-word; page-break-inside: avoid; break-inside: avoid;
+        background: #f5f5f5 !important; color: #000 !important; border: 1px solid #ccc;
+        padding: 0.5rem 0.75rem; font-size: 9pt; }
+  code { background: #f5f5f5 !important; color: #000 !important; font-size: 9pt; }
+
+  /* AI images — scale to fit, never split */
+  .media-block { page-break-inside: avoid; break-inside: avoid; text-align: center; }
+  .media-block svg, .media-block img { max-width: 100% !important; height: auto !important; }
+
+  /* Key points — keep together */
+  .key-points { page-break-inside: avoid; break-inside: avoid;
+                background: #fefce8 !important; border: 1px solid #ccc; }
+
+  /* Remove link underlines and interactive colours */
+  a { color: #000 !important; text-decoration: none !important; }
+
+  /* Quiz — show correct answer indicator in print */
+  .option-label.correct { background: #f0fff0 !important; font-weight: 600; }
+  .feedback.correct { display: block !important; }
+
+  /* Objectives box */
+  .objectives-box { background: #f0f8ff !important; border: 1px solid #ccc !important; }
+
+  /* Page margins */
+  @page { margin: 18mm 15mm; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<header class="course-header">
+  <div class="header-left">
+    <span class="course-number">RUSD-001</span>
+    <span class="course-title">RLUSD Stablecoin Payments for Institutions</span>
+  </div>
+  <div class="header-right">
+    <span class="module-label">Module 3 of 5</span>
+    <span class="progress-text"><span id="progressPercent">0</span>% complete</span>
+    <button class="print-btn" onclick="window.print()" title="Print or save this module as PDF">&#128424; Print / Save as PDF</button>
+  </div>
+</header>
+
+<!-- ====== LAYOUT ====== -->
+<div class="layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Compliance Frameworks and Regulatory Expectations</h2>
+      <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <ul class="nav-list">
+      <li><button class="nav-btn active" onclick="goTo(0)" id="nav-0">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Welcome</span>
+        <span class="nav-check" id="check-0">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(1)" id="nav-1">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">The Regulatory Landscape for Stablecoin Payments</span>
+        <span class="nav-check" id="check-1">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(2)" id="nav-2">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">AML/KYC Requirements for Stablecoin Transactions</span>
+        <span class="nav-check" id="check-2">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(3)" id="nav-3">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Regional Regulatory Frameworks: US, EU, and APAC</span>
+        <span class="nav-check" id="check-3">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(4)" id="nav-4">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Compliance Controls for Institutional Payment Flows</span>
+        <span class="nav-check" id="check-4">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(5)" id="nav-5">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Reporting and Audit Trail Requirements</span>
+        <span class="nav-check" id="check-5">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(6)" id="nav-6">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Risk Management and Regulatory Alignment Strategies</span>
+        <span class="nav-check" id="check-6">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(7)" id="nav-7">
+        <span class="nav-icon">🔬</span>
+        <span class="nav-label">Evaluating Compliance Controls for RLUSD Cross-Border Payment Workflows</span>
+        <span class="nav-check" id="check-7">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(8)" id="nav-8">
+        <span class="nav-icon">📝</span>
+        <span class="nav-label">Knowledge Check</span>
+        <span class="nav-check" id="check-8">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(9)" id="nav-9">
+        <span class="nav-icon">🎯</span>
+        <span class="nav-label">Summary</span>
+        <span class="nav-check" id="check-9">✓</span>
+      </button></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="content" id="content">
+
+    <!-- Screen 0: Welcome -->
+    <section class="screen active" id="screen-0" data-index="0">
+      
+      <div class="screen-landing">
+        <h1>Module 3</h1>
+        <h2>Compliance Frameworks and Regulatory Expectations</h2>
+        
+        <div class="objectives-box">
+          <h3>🎯 Learning Objectives</h3>
+          <p>After completing this module, you will be able to:</p>
+          <ul>
+            <li>Apply AML/KYC and regulatory compliance frameworks to stablecoin payment workflows</li>
+            <li>Identify jurisdiction-specific regulatory expectations for stablecoin issuance and use</li>
+            <li>Evaluate compliance controls for on-ramp, settlement, and off-ramp processes</li>
+            <li>Design compliant institutional workflows for cross-border stablecoin payments</li>
+          </ul>
+        </div>
+        <p class="start-hint">Click <strong>Next →</strong> to begin.</p>
+      </div>
+    </section>
+
+    <!-- Screen 1: The Regulatory Landscape for Stablecoin Payments -->
+    <section class="screen" id="screen-1" data-index="1">
+      <div class="screen-lesson"><h2>The Regulatory Landscape for Stablecoin Payments</h2><div class="lesson-content"><p>Stablecoins occupy a unique position in the financial regulatory landscape. Depending on jurisdiction and design, they may be classified as e-money (EU MiCA), payment instruments (Singapore PS Act), securities (US SEC analysis), or commodities (US CFTC analysis). For financial institutions, understanding this fragmented regulatory environment is critical to deploying compliant stablecoin payment solutions.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/3/mod03_fig01.png" alt="Conceptual illustration showing a global map with interconnected financial hubs, regulatory documents, and digital payment pathways, representing the complex multi-jurisdictional regulatory landscape for stablecoin payments" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Conceptual illustration showing a global map with interconnected financial hubs, regulatory documents, and digital payment pathways, representing the complex multi-jurisdictional regulatory landscape for stablecoin payments</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Stablecoins face multi-layered regulatory scrutiny across jurisdictions</li>
+          <li>Compliance failures carry significant legal, financial, and reputational risks</li>
+          <li>Institutions must apply traditional AML/KYC standards to stablecoin transactions</li>
+          <li>Regulatory frameworks are evolving and require adaptive compliance approaches</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 2: AML/KYC Requirements for Stablecoin Transactions -->
+    <section class="screen" id="screen-2" data-index="2">
+      <div class="screen-lesson"><h2>AML/KYC Requirements for Stablecoin Transactions</h2><div class="lesson-content"><h2>AML/KYC Requirements for Stablecoin Transactions</h2>
+<p>Anti-Money Laundering (AML) and Know Your Customer (KYC) requirements form the foundation of compliant stablecoin payment operations. These controls help institutions identify parties to transactions, detect suspicious activity, and prevent illicit financial flows.</p>
+<h3>Core KYC Components</h3>
+<p>Financial institutions must implement comprehensive KYC programs for stablecoin users:</p>
+<p><strong>Customer Identification Program (CIP)</strong>: Verify the identity of individuals and entities before establishing relationships. For corporate clients, this includes beneficial ownership identification and verification of legal entity status.</p>
+<p><strong>Customer Due Diligence (CDD)</strong>: Understand the nature and purpose of customer relationships. This includes assessing expected transaction patterns, source of funds, and business activities.</p>
+<p><strong>Enhanced Due Diligence (EDD)</strong>: Apply heightened scrutiny for high-risk customers, including politically exposed persons (PEPs), customers from high-risk jurisdictions, or those engaging in complex transaction patterns.</p>
+<h3>Transaction Monitoring Obligations</h3>
+<p>Institutions must monitor stablecoin transactions for:</p>
+<ul>
+<li><strong>Suspicious activity</strong>: Unusual patterns, structuring, or behavior inconsistent with customer profiles</li>
+<li><strong>Sanctions screening</strong>: Real-time checks against OFAC, UN, EU, and other sanctions lists</li>
+<li><strong>Threshold reporting</strong>: Large currency transactions and cross-border transfers exceeding regulatory thresholds</li>
+<li><strong>Red flag detection</strong>: Indicators of money laundering, terrorist financing, or fraud</li>
+</ul>
+<h3>Travel Rule Compliance</h3>
+<p>The Financial Action Task Force (FATF) Travel Rule requires institutions to share originator and beneficiary information for cryptocurrency transfers exceeding specified thresholds (typically USD/EUR 1,000). This creates technical and operational challenges for blockchain-based payments, requiring institutions to implement secure information-sharing mechanisms between counterparties.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/3/mod03_fig02.png" alt="Illustrated workflow showing the customer onboarding and transaction monitoring process for stablecoin payments, with identity verification, risk assessment, and ongoing monitoring stages" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Illustrated workflow showing the customer onboarding and transaction monitoring process for stablecoin payments, with identity verification, risk assessment, and ongoing monitoring stages</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>KYC programs must verify customer identities and assess risk profiles before onboarding</li>
+          <li>Transaction monitoring systems must detect suspicious patterns and screen against sanctions lists</li>
+          <li>The Travel Rule requires sharing customer information for qualifying stablecoin transfers</li>
+          <li>Enhanced due diligence applies to high-risk customers and transaction patterns</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 3: Regional Regulatory Frameworks: US, EU, and APAC -->
+    <section class="screen" id="screen-3" data-index="3">
+      <div class="screen-lesson"><h2>Regional Regulatory Frameworks: US, EU, and APAC</h2><div class="lesson-content"><h2>Regional Regulatory Frameworks: US, EU, and APAC</h2>
+<p>Regulatory approaches to stablecoins vary significantly across major jurisdictions, creating complexity for institutions operating cross-border payment systems.</p>
+<h3>United States Framework</h3>
+<p>The US applies a multi-agency regulatory approach:</p>
+<p><strong>Federal Banking Regulators</strong>: The OCC, Federal Reserve, and FDIC provide guidance on bank involvement with stablecoins, addressing reserve requirements, risk management, and permissible activities.</p>
+<p><strong>Securities and Exchange Commission (SEC)</strong>: Evaluates whether stablecoins meet the definition of securities under the Howey Test, potentially subjecting them to securities regulations.</p>
+<p><strong>Commodity Futures Trading Commission (CFTC)</strong>: May regulate certain stablecoins as commodities, particularly those used in derivatives markets.</p>
+<p><strong>FinCEN</strong>: Enforces Bank Secrecy Act (BSA) obligations, requiring money services businesses dealing in stablecoins to register and implement AML programs.</p>
+<p>State-level money transmitter licenses may also apply, creating a patchwork of compliance obligations across 50 jurisdictions.</p>
+<h3>European Union Approach</h3>
+<p>The EU has established comprehensive stablecoin regulation through the Markets in Crypto-Assets Regulation (MiCA), which entered force in 2023:</p>
+<ul>
+<li><strong>E-money token classification</strong>: Stablecoins pegged to fiat currencies are regulated as e-money, requiring issuers to hold e-money institution licenses</li>
+<li><strong>Reserve requirements</strong>: Issuers must maintain 1:1 reserves in segregated, non-interest-bearing accounts, audited quarterly</li>
+<li><strong>Transparency obligations</strong>: Regular disclosure of reserve composition, redemption rights, and stress testing results</li>
+<li><strong>Operational resilience</strong>: Requirements for business continuity, incident response, and cyber security standards</li>
+<li><strong>Systemic significance thresholds</strong>: Stablecoins exceeding €500 million in outstanding value face enhanced supervision, governance reviews, and potential restrictions</li>
+<li><strong>Governance and authorization</strong>: Issuers must demonstrate fit-and-proper persons, independent risk committees, and strong controls over redemptions and interest accrual</li>
+</ul>
+<p>MiCA provides regulatory clarity and a harmonized framework across EU member states, reducing fragmentation.</p>
+<h3>Asia-Pacific Considerations</h3>
+<p>APAC jurisdictions vary widely:</p>
+<p><strong>Singapore</strong>: The Monetary Authority of Singapore (MAS) regulates stablecoins as digital payment tokens under the Payment Services Act (2019), requiring payment institution licenses, customer fund segregation, and AML compliance under the Notice on Prevention of Money Laundering and Countering the Financing of Terrorism.</p>
+<p><strong>Hong Kong</strong>: The Hong Kong Monetary Authority (HKMA) proposes a licensing regime for stablecoin issuers with operational resilience, reserve adequacy, and prudential requirements similar to e-money institutions.</p>
+<p><strong>Japan</strong>: The Financial Services Agency (FSA) treats stablecoins as crypto assets under the Payment Services Act (2017), requiring registration, security audits, and segregation of customer funds.</p>
+<p>Institutions must conduct jurisdiction-specific analysis for each market they serve and maintain compliance with the most restrictive applicable framework when operating cross-border.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/3/mod03_fig03.png" alt="Visual comparison of regulatory frameworks across three major regions (US, EU, APAC) showing different regulatory structures and approaches to stablecoin oversight" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Visual comparison of regulatory frameworks across three major regions (US, EU, APAC) showing different regulatory structures and approaches to stablecoin oversight</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>The US applies fragmented multi-agency regulation with overlapping federal and state requirements</li>
+          <li>The EU's MiCA framework provides comprehensive harmonized stablecoin regulation</li>
+          <li>APAC jurisdictions vary widely in their regulatory approaches and maturity</li>
+          <li>Cross-border operations require compliance with multiple concurrent regulatory regimes</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 4: Compliance Controls for Institutional Payment Flows -->
+    <section class="screen" id="screen-4" data-index="4">
+      <div class="screen-lesson"><h2>Compliance Controls for Institutional Payment Flows</h2><div class="lesson-content"><h2>Compliance Controls for Institutional Payment Flows</h2>
+<p>Institutions must implement layered compliance controls throughout the stablecoin payment lifecycle, from on-ramp to settlement to off-ramp.</p>
+<h3>On-Ramp Controls</h3>
+<p>The on-ramp process converts fiat currency to stablecoins and requires:</p>
+<p><strong>Source of Funds Verification</strong>: Document and verify the legitimate origin of funds being converted to stablecoins. For institutional clients, this includes reviewing audited financial statements and transaction histories.</p>
+<p><strong>Counterparty Due Diligence</strong>: Vet exchanges, liquidity providers, and other intermediaries facilitating the conversion. Assess their regulatory compliance, security controls, and reputation.</p>
+<p><strong>Transaction Limits and Velocity Checks</strong>: Implement thresholds appropriate to customer risk profiles, preventing sudden unusual activity.</p>
+<h3>Settlement and In-Transit Controls</h3>
+<p>Once stablecoins are in circulation:</p>
+<p><strong>Real-Time Sanctions Screening</strong>: Screen wallet addresses and transaction counterparties against sanctions lists before execution. Blockchain analytics tools can identify exposure to high-risk addresses.</p>
+<p><strong>Transaction Monitoring Rules</strong>: Deploy behavioral analytics to detect structuring, layering, or other money laundering typologies adapted for blockchain environments.</p>
+<p><strong>Smart Contract Risk Assessment</strong>: Review and audit smart contracts governing stablecoin transfers to ensure they don&#39;t introduce compliance gaps or operational risks.</p>
+<h3>Off-Ramp Controls</h3>
+<p>Converting stablecoins back to fiat requires:</p>
+<p><strong>Redemption Verification</strong>: Confirm the beneficial owner of stablecoins being redeemed matches the original purchaser or has legitimate transfer documentation.</p>
+<p><strong>Destination Account Screening</strong>: Verify receiving bank accounts are properly owned and not associated with sanctioned entities or high-risk jurisdictions.</p>
+<p><strong>Reconciliation and Record-Keeping</strong>: Maintain complete audit trails linking on-ramp, settlement, and off-ramp activities for regulatory examination and suspicious activity reporting.</p>
+<h3>Technology Enablers</h3>
+<p>Modern compliance technology includes blockchain analytics platforms, automated sanctions screening APIs, machine learning-based transaction monitoring, and distributed ledger-native audit tools that provide transparency without compromising privacy.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/3/mod03_fig04.png" alt="Illustrated three-stage institutional payment flow showing compliance control points at on-ramp, settlement, and off-ramp phases with security checkpoints and verification steps" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Illustrated three-stage institutional payment flow showing compliance control points at on-ramp, settlement, and off-ramp phases with security checkpoints and verification steps</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>On-ramp controls verify fund sources and vet counterparties before conversion to stablecoins</li>
+          <li>In-transit monitoring includes real-time sanctions screening and behavioral analytics</li>
+          <li>Off-ramp controls verify redemption legitimacy and destination account compliance</li>
+          <li>Technology solutions enable automated compliance at blockchain transaction speeds</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 5: Reporting and Audit Trail Requirements -->
+    <section class="screen" id="screen-5" data-index="5">
+      <div class="screen-lesson"><h2>Reporting and Audit Trail Requirements</h2><div class="lesson-content"><h2>Reporting and Audit Trail Requirements</h2>
+<p>Regulatory compliance demands comprehensive documentation and reporting capabilities that create transparency for supervisors while maintaining operational efficiency.</p>
+<h3>Suspicious Activity Reporting (SAR)</h3>
+<p>Institutions must file SARs when they detect transactions or patterns that suggest:</p>
+<ul>
+<li>Money laundering or terrorist financing</li>
+<li>Fraud or identity theft</li>
+<li>Violations of sanctions or embargoes</li>
+<li>Structuring to evade reporting thresholds</li>
+<li>Other unusual activity inconsistent with legitimate business purposes</li>
+</ul>
+<p>SARs must be filed within specific timeframes (typically 30 days of detection) and include detailed narratives, supporting documentation, and transaction specifics. Blockchain-based transactions require institutions to include wallet addresses, transaction hashes, and blockchain explorer references.</p>
+<h3>Currency Transaction Reports (CTR)</h3>
+<p>Transactions exceeding USD 10,000 (or equivalent) in a single day trigger CTR filing requirements. For stablecoin operations, institutions must:</p>
+<ul>
+<li>Aggregate related transactions to prevent structuring</li>
+<li>Capture complete customer identification information</li>
+<li>Report both on-ramp and off-ramp transactions meeting thresholds</li>
+<li>Maintain systems to track cumulative daily transaction volumes</li>
+</ul>
+<h3>Cross-Border Reporting</h3>
+<p>International stablecoin payments trigger additional obligations:</p>
+<p><strong>SWIFT-Equivalent Messaging</strong>: Institutions must transmit originator and beneficiary information with cross-border transfers, complying with the Travel Rule.</p>
+<p><strong>Foreign Asset Reporting</strong>: Certain cross-border holdings or transactions may trigger FBAR, FATCA, or equivalent reporting obligations.</p>
+<p><strong>Jurisdiction-Specific Disclosures</strong>: Some countries require advance notification or approval for large cross-border cryptocurrency transfers.</p>
+<h3>Audit Trail Preservation</h3>
+<p>Regulators require retention of comprehensive records:</p>
+<ul>
+<li><strong>Transaction records</strong>: Complete details of every stablecoin transfer, including timestamps, amounts, counterparties, and blockchain references</li>
+<li><strong>Customer records</strong>: KYC documentation, risk assessments, and relationship histories (typically 5-7 years post-relationship)</li>
+<li><strong>Communications</strong>: Emails, chat logs, and other communications related to transactions or customer relationships</li>
+<li><strong>System logs</strong>: Access logs, configuration changes, and security events for audit and forensic purposes</li>
+</ul>
+<p>Blockchain&#39;s inherent immutability provides a permanent transaction record, but institutions must still maintain off-chain documentation linking blockchain addresses to real-world identities and business purposes.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/3/mod03_fig05.png" alt="Conceptual visualization of multi-layered record-keeping and reporting systems showing transaction data flowing into regulatory reporting channels and long-term audit trail storage" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Conceptual visualization of multi-layered record-keeping and reporting systems showing transaction data flowing into regulatory reporting channels and long-term audit trail storage</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>SARs must be filed for suspicious stablecoin transactions with blockchain-specific details</li>
+          <li>CTR thresholds apply to both on-ramp and off-ramp conversions exceeding reporting limits</li>
+          <li>Cross-border payments trigger Travel Rule and other international reporting obligations</li>
+          <li>Comprehensive audit trails must link blockchain transactions to customer identities and purposes</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 6: Risk Management and Regulatory Alignment Strategies -->
+    <section class="screen" id="screen-6" data-index="6">
+      <div class="screen-lesson"><h2>Risk Management and Regulatory Alignment Strategies</h2><div class="lesson-content"><h2>Risk Management and Regulatory Alignment Strategies</h2>
+<p>Successful stablecoin compliance programs require proactive risk management frameworks that anticipate regulatory evolution and embed compliance into institutional culture.</p>
+<h3>Compliance Risk Assessment</h3>
+<p>Institutions should conduct regular risk assessments evaluating:</p>
+<p><strong>Inherent Risks</strong>: Identify risks created by stablecoin payment activities, including jurisdictional exposure, transaction volumes, customer types, and product complexity.</p>
+<p><strong>Control Effectiveness</strong>: Evaluate whether existing AML, sanctions, and fraud controls adequately address stablecoin-specific risks.</p>
+<p><strong>Residual Risk</strong>: Determine remaining exposure after controls are applied and assess whether this aligns with institutional risk appetite.</p>
+<p>Risk assessments should inform resource allocation, control enhancements, and strategic decisions about market participation.</p>
+<h3>Governance and Oversight</h3>
+<p>Strong governance structures include:</p>
+<ul>
+<li><strong>Board-level oversight</strong>: Regular reporting to boards or risk committees on compliance metrics, regulatory developments, and emerging risks</li>
+<li><strong>Three lines of defense</strong>: Clear separation between business units (first line), compliance and risk functions (second line), and internal audit (third line)</li>
+<li><strong>Regulatory engagement</strong>: Proactive dialogue with regulators to clarify expectations and demonstrate compliance commitment</li>
+</ul>
+<h3>Compliance Technology Investment</h3>
+<p>Institutions should invest in:</p>
+<p><strong>Blockchain Analytics Platforms</strong>: Tools that trace fund flows, identify high-risk addresses, and provide risk scores for counterparties.</p>
+<p><strong>Automated Screening Solutions</strong>: APIs that perform real-time sanctions and PEP screening integrated directly into transaction workflows.</p>
+<p><strong>RegTech Solutions</strong>: Platforms that automate reporting, maintain audit trails, and provide regulatory change management.</p>
+<h3>Adaptive Compliance Frameworks</h3>
+<p>Given regulatory uncertainty, institutions need frameworks that can quickly adapt:</p>
+<ul>
+<li>Monitor regulatory developments across all operating jurisdictions</li>
+<li>Maintain flexible policies that can accommodate new requirements</li>
+<li>Build scalable compliance infrastructure that grows with transaction volumes</li>
+<li>Develop contingency plans for regulatory restrictions or prohibition scenarios</li>
+<li>Engage with industry associations to shape regulatory outcomes</li>
+</ul>
+<h3>Cultural Embedding</h3>
+<p>Compliance excellence requires embedding awareness throughout the organization through training, clear accountability, tone from the top, and consequences for violations. Stablecoin compliance shouldn&#39;t be viewed as a barrier to innovation but as an enabler of sustainable, scalable operations.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/3/mod03_fig06.png" alt="Organizational ecosystem illustration showing integration of compliance functions across business operations, technology platforms, and governance structures for stablecoin payments" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Organizational ecosystem illustration showing integration of compliance functions across business operations, technology platforms, and governance structures for stablecoin payments</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Regular risk assessments should evaluate inherent risks, control effectiveness, and residual exposure</li>
+          <li>Strong governance includes board oversight, three lines of defense, and proactive regulatory engagement</li>
+          <li>Technology investments in analytics, screening, and RegTech enable scalable compliance</li>
+          <li>Adaptive frameworks allow institutions to respond quickly to regulatory changes and uncertainty</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 7: Evaluating Compliance Controls for RLUSD Cross-Border Payment Workflows -->
+    <section class="screen" id="screen-7" data-index="7">
+      
+      <div class="screen-lab">
+        <div class="lab-header">
+          <h2>🔬 Evaluating Compliance Controls for RLUSD Cross-Border Payment Workflows</h2>
+          <p class="lab-objective"><strong>Objective:</strong> Students will analyze and document compliance requirements for a cross-border RLUSD payment scenario, mapping regulatory controls to each stage of the payment workflow using Ripple documentation and regulatory framework resources.</p>
+          <div class="lab-meta"><span class="lab-meta-item">⏱ Estimated time: 35 minutes</span><span class="lab-meta-item">💻 Platform: Windows computer with web browser and text editor</span></div>
+          <div class="lab-prereqs">
+            <strong>Prerequisites:</strong>
+            <ul><li>Web browser (Chrome, Edge, or Firefox)</li><li>Text editor or word processor (Notepad++, VS Code, or Microsoft Word)</li><li>Internet access to Ripple.com and regulatory reference sites</li><li>Basic understanding of AML/KYC concepts</li></ul>
+          </div></div><div class="lab-procedures"><h3>Procedures</h3>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">1</span>
+            <span class="lab-step-instruction">Navigate to the Ripple USD (RLUSD) documentation and locate the compliance section</span>
+          </div><div class="lab-step-detail"><p>Open your web browser and navigate to:</p>
+<pre><code>https://ripple.com/rlusd
+</code></pre>
+<p>Scroll down to the <strong>Resources</strong> or <strong>Documentation</strong> section. Click on the link to <strong>RLUSD Documentation</strong> or <strong>Technical Documentation</strong>.</p>
+<p>Once on the documentation page, use the navigation menu or search function to locate sections related to:</p>
+<ul>
+<li>Compliance</li>
+<li>Regulatory considerations</li>
+<li>AML/KYC requirements</li>
+<li>Trust and Safety</li>
+</ul>
+<p>If a dedicated compliance section is not immediately visible, use the browser search function (<code>Ctrl+F</code>) to search for terms like &quot;compliance&quot;, &quot;AML&quot;, &quot;KYC&quot;, or &quot;regulatory&quot;.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>You should see documentation pages discussing RLUSD's regulatory approach, compliance controls, or references to regulatory frameworks. The page may include sections on reserve attestations, compliance partnerships, or jurisdictional considerations.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Confirm you have found at least one documentation page or section that discusses compliance, regulatory frameworks, or AML/KYC requirements for RLUSD.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">2</span>
+            <span class="lab-step-instruction">Create a new compliance workflow analysis document</span>
+          </div><div class="lab-step-detail"><p>Open your text editor or word processor and create a new document named:</p>
+<pre><code>RLUSD_Compliance_Analysis.txt
+</code></pre>
+<p>Save it to your Desktop or Documents folder.</p>
+<p>At the top of the document, add the following header structure:</p>
+<pre><code>================================================
+RLUSD CROSS-BORDER PAYMENT COMPLIANCE ANALYSIS
+================================================
+Date: [Today&#39;s Date]
+Analyst: [Your Name]
+Scenario: EUR 50,000 payment from German institution to Singapore beneficiary
+
+PAYMENT WORKFLOW STAGES:
+1. On-Ramp (Fiat to RLUSD)
+2. Cross-Border Settlement (RLUSD transfer)
+3. Off-Ramp (RLUSD to Fiat)
+
+================================================
+</code></pre>
+<p>Save the document.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A new text file with the header structure, saved to your local machine.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Open the file to confirm the header is formatted correctly and the file is saved in an accessible location.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">3</span>
+            <span class="lab-step-instruction">Document AML/KYC requirements for the on-ramp stage</span>
+          </div><div class="lab-step-detail"><p>In your compliance analysis document, add a new section below the header:</p>
+<pre><code>
+ON-RAMP COMPLIANCE CONTROLS (Fiat EUR to RLUSD)
+-------------------------------------------------
+
+Jurisdiction: European Union (Germany)
+Regulatory Framework: [To be completed]
+
+Required AML/KYC Controls:
+- 
+
+Data Collection Requirements:
+- 
+
+Screening Requirements:
+- 
+
+Documentation Requirements:
+- 
+</code></pre>
+<p>Using the Ripple documentation and your knowledge of EU regulatory requirements, fill in each section. Consider:</p>
+<ul>
+<li><strong>Regulatory Framework</strong>: Reference MiCA (Markets in Crypto-Assets Regulation), 5AMLD (5th Anti-Money Laundering Directive), or travel rule requirements</li>
+<li><strong>AML/KYC Controls</strong>: Customer identification, business relationship verification, beneficial ownership identification</li>
+<li><strong>Data Collection</strong>: Legal entity name, registration number, business address, authorized signatories</li>
+<li><strong>Screening</strong>: PEP (Politically Exposed Persons) screening, sanctions list checking, adverse media screening</li>
+<li><strong>Documentation</strong>: Business registration documents, proof of address, authorized signatory identification</li>
+</ul>
+<p>Research EU requirements if needed by searching for &quot;EU MiCA stablecoin requirements&quot; or &quot;5AMLD crypto asset providers&quot;.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A completed on-ramp compliance section with at least 3-4 specific controls listed under each category, referencing EU regulatory frameworks.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Review your entries to ensure they are specific (not generic) and reference actual EU regulatory requirements such as MiCA or 5AMLD.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">4</span>
+            <span class="lab-step-instruction">Access the Ripple Payments API documentation</span>
+          </div><div class="lab-step-detail"><p>Navigate to the Ripple Payments API documentation:</p>
+<pre><code>https://ripple.com/products/ripple-payments/
+</code></pre>
+<p>Scroll to find <strong>Documentation</strong> or <strong>Developer Resources</strong> links. Alternatively, search for &quot;Ripple Payments API documentation&quot; in your browser.</p>
+<p>Once on the API documentation page, look for sections covering:</p>
+<ul>
+<li>Payment submission endpoints</li>
+<li>Compliance data fields</li>
+<li>Transaction metadata</li>
+<li>Beneficiary information requirements</li>
+</ul>
+<p>Locate the API reference for payment initiation or payment creation. Note any fields related to:</p>
+<ul>
+<li><code>compliance_data</code></li>
+<li><code>beneficiary_info</code></li>
+<li><code>originator_info</code></li>
+<li><code>regulatory_reporting</code></li>
+<li><code>purpose_code</code></li>
+</ul>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>You should see API documentation showing REST endpoints for payment submission, with field descriptions that include compliance-related parameters such as beneficiary name, address, or purpose of payment codes.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Confirm you can see at least one API endpoint structure with compliance-related fields. If using interactive documentation, you may see a &quot;Try it&quot; feature.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">5</span>
+            <span class="lab-step-instruction">Document the compliance data fields required for cross-border RLUSD settlement</span>
+          </div><div class="lab-step-detail"><p>Return to your compliance analysis document and add a new section:</p>
+<pre><code>
+CROSS-BORDER SETTLEMENT COMPLIANCE (RLUSD Transfer)
+----------------------------------------------------
+
+Applicable Travel Rule Requirements: YES
+Threshold Amount: EUR 1,000+ (FATF guidance)
+
+Required Originator Information:
+- 
+
+Required Beneficiary Information:
+- 
+
+Transaction Metadata Required:
+- 
+
+Blockchain Transparency Considerations:
+- 
+</code></pre>
+<p>Based on the Ripple API documentation and FATF Travel Rule guidance, complete each section:</p>
+<ul>
+<li><strong>Originator Information</strong>: Name, address (country minimum), account identifier, legal entity identifier where applicable</li>
+<li><strong>Beneficiary Information</strong>: Name, address (country minimum), account identifier</li>
+<li><strong>Transaction Metadata</strong>: Purpose of payment code, date/time, transaction reference, originating institution BIC/LEI</li>
+<li><strong>Blockchain Transparency</strong>: Note that RLUSD transactions on XRPL are publicly visible; consider privacy controls, use of memo fields for reference data (not sensitive PII), institutional wallet identification</li>
+</ul>
+<p>Reference the FATF Travel Rule requirements by searching &quot;FATF Travel Rule virtual assets&quot; if needed.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A completed cross-border settlement section with specific data fields listed, acknowledging Travel Rule requirements for transfers over EUR 1,000.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Ensure your documented fields align with FATF Travel Rule minimum requirements: originator and beneficiary name, account identifier, and address (at minimum country).</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">6</span>
+            <span class="lab-step-instruction">Research Singapore regulatory requirements for the off-ramp stage</span>
+          </div><div class="lab-step-detail"><p>Open a new browser tab and search for:</p>
+<pre><code>Singapore MAS stablecoin regulations digital payment token
+</code></pre>
+<p>or navigate directly to:</p>
+<pre><code>https://www.mas.gov.sg/
+</code></pre>
+<p>Search the MAS (Monetary Authority of Singapore) site for information on:</p>
+<ul>
+<li>Digital Payment Token (DPT) service providers</li>
+<li>Payment Services Act (PS Act)</li>
+<li>Stablecoin regulatory framework</li>
+<li>AML/CFT requirements for DPT service providers</li>
+</ul>
+<p>Take notes on:</p>
+<ul>
+<li>Licensing requirements for entities converting RLUSD to SGD</li>
+<li>Customer due diligence (CDD) requirements</li>
+<li>Transaction monitoring obligations</li>
+<li>Reporting thresholds</li>
+</ul>
+<p>You may also search for &quot;Singapore PS Act payment token&quot; or &quot;MAS stablecoin framework&quot; for additional context.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Access to MAS regulatory guidance or information pages describing the Payment Services Act framework, licensing categories for DPT service providers, and AML/CFT obligations.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Confirm you have found information about Singapore's regulatory approach to digital payment tokens and the licensing/compliance obligations for service providers.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">7</span>
+            <span class="lab-step-instruction">Document off-ramp compliance controls for Singapore jurisdiction</span>
+          </div><div class="lab-step-detail"><p>In your compliance analysis document, add a new section:</p>
+<pre><code>
+OFF-RAMP COMPLIANCE CONTROLS (RLUSD to SGD Fiat)
+-------------------------------------------------
+
+Jurisdiction: Singapore
+Regulatory Framework: Payment Services Act (PS Act), MAS Notice on Prevention of Money Laundering and Countering the Financing of Terrorism
+
+Licensing Requirement:
+- 
+
+Customer Due Diligence (CDD) Controls:
+- 
+
+Transaction Monitoring Requirements:
+- 
+
+Reporting Obligations:
+- 
+
+Recordkeeping Requirements:
+- 
+</code></pre>
+<p>Fill in each section based on your MAS research:</p>
+<ul>
+<li><strong>Licensing Requirement</strong>: DPT service license under PS Act (likely requires Standard Payment Institution or Major Payment Institution license)</li>
+<li><strong>CDD Controls</strong>: Identity verification of beneficiary, source of funds verification, ongoing monitoring, enhanced due diligence for high-risk customers</li>
+<li><strong>Transaction Monitoring</strong>: Real-time screening against sanctions lists, suspicious transaction monitoring, threshold-based alerts</li>
+<li><strong>Reporting Obligations</strong>: Suspicious Transaction Reports (STRs) to STRO (Suspicious Transaction Reporting Office), Cash Transaction Reports for SGD 20,000+</li>
+<li><strong>Recordkeeping</strong>: 5 years minimum for transaction records and CDD documentation</li>
+</ul>
+<p>Save your document.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A completed off-ramp section with Singapore-specific regulatory controls documented, referencing the PS Act and MAS AML/CFT requirements.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Verify that your controls reference Singapore-specific frameworks (PS Act, MAS, STRO) and include specific thresholds or timeframes where applicable.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">8</span>
+            <span class="lab-step-instruction">Create a compliance control mapping matrix</span>
+          </div><div class="lab-step-detail"><p>At the end of your compliance analysis document, create a summary matrix:</p>
+<pre><code>
+COMPLIANCE CONTROL MAPPING MATRIX
+==================================
+
+Control Type                  | On-Ramp (EU) | Settlement (XRPL) | Off-Ramp (SG)
+------------------------------|--------------|-------------------|---------------
+Customer Identification       |              |                   |
+Sanctions Screening           |              |                   |
+Travel Rule Compliance        |              |                   |
+Transaction Monitoring        |              |                   |
+Regulatory Reporting          |              |                   |
+Recordkeeping                 |              |                   |
+Privacy/Data Protection       |              |                   |
+</code></pre>
+<p>For each cell, indicate:</p>
+<ul>
+<li><strong>Required</strong> (and specify responsible party)</li>
+<li><strong>Not Applicable</strong></li>
+<li><strong>Automated</strong> (if technology-enabled)</li>
+</ul>
+<p>Example for Customer Identification row:</p>
+<pre><code>Customer Identification       | Required - German Bank | Via Payment API Metadata | Required - Singapore Exchange
+</code></pre>
+<p>Complete the entire matrix based on your documented compliance controls from previous steps.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A completed matrix showing which compliance controls apply at each stage of the payment workflow, with responsible parties identified.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Check that each cell contains a specific entry (not blank) and that controls like sanctions screening and transaction monitoring appear across multiple stages.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">9</span>
+            <span class="lab-step-instruction">Identify gaps and redundancies in the compliance workflow</span>
+          </div><div class="lab-step-detail"><p>Add a new section to analyze your compliance workflow:</p>
+<pre><code>
+COMPLIANCE WORKFLOW ANALYSIS
+=============================
+
+Identified Gaps:
+1. 
+
+Potential Redundancies:
+1. 
+
+Efficiency Recommendations:
+1. 
+</code></pre>
+<p>Review your entire documented workflow and identify:</p>
+<p><strong>Gaps</strong> might include:</p>
+<ul>
+<li>Lack of real-time sanctions screening during settlement</li>
+<li>Missing beneficial ownership verification for corporate beneficiaries</li>
+<li>Unclear responsibility for ongoing monitoring</li>
+<li>No specified process for handling rejected transactions</li>
+</ul>
+<p><strong>Redundancies</strong> might include:</p>
+<ul>
+<li>Duplicate sanctions screening at both on-ramp and off-ramp</li>
+<li>Multiple identity verification steps without data sharing</li>
+<li>Redundant recordkeeping requirements across jurisdictions</li>
+</ul>
+<p><strong>Efficiency Recommendations</strong> might include:</p>
+<ul>
+<li>Implement shared KYC utilities between on-ramp and off-ramp providers</li>
+<li>Utilize Ripple&#39;s compliance APIs for automated Travel Rule data exchange</li>
+<li>Establish a centralized compliance data repository</li>
+<li>Use smart contracts for automated compliance checks during settlement</li>
+</ul>
+<p>List at least 2-3 items in each category.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A completed analysis section identifying specific gaps, redundancies, and actionable recommendations for improving compliance workflow efficiency.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Ensure each identified item is specific and relates directly to the EUR 50,000 Germany-to-Singapore payment scenario you have documented.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">10</span>
+            <span class="lab-step-instruction">Document audit trail requirements across all three workflow stages</span>
+          </div><div class="lab-step-detail"><p>Add a final section to your document:</p>
+<pre><code>
+AUDIT TRAIL AND RECORDKEEPING REQUIREMENTS
+===========================================
+
+On-Ramp Records to Maintain:
+- Record Type: [e.g., Customer Due Diligence File]
+  Retention Period: [e.g., 5 years post-relationship]
+  Storage Location: [e.g., Encrypted database, EU-based servers]
+  Access Controls: [e.g., Compliance officers only, audit log required]
+
+Settlement Records to Maintain:
+- Record Type: 
+  Retention Period: 
+  Storage Location: 
+  Access Controls: 
+
+Off-Ramp Records to Maintain:
+- Record Type: 
+  Retention Period: 
+  Storage Location: 
+  Access Controls: 
+
+Cross-Stage Audit Requirements:
+- End-to-end transaction traceability: 
+- Regulatory examination preparedness: 
+- Data subject access request procedures: 
+</code></pre>
+<p>Complete each section, considering:</p>
+<ul>
+<li><strong>On-Ramp</strong>: CDD files, transaction authorization records, sanctions screening results (5 years, GDPR-compliant EU storage)</li>
+<li><strong>Settlement</strong>: XRPL transaction hashes, Travel Rule data transmissions, payment confirmations (permanent blockchain record + institutional records per jurisdiction)</li>
+<li><strong>Off-Ramp</strong>: Beneficiary verification records, fund disbursement records, STR filings if applicable (5 years minimum in Singapore)</li>
+<li><strong>Cross-Stage</strong>: Implement unique transaction reference linking all stages, maintain compliance officer contact log, establish data subject request workflows compliant with both GDPR and Singapore PDPA</li>
+</ul>
+<p>Save your completed document.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A comprehensive audit trail section documenting record types, retention periods, storage requirements, and access controls for each workflow stage, plus cross-stage audit considerations.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Confirm that retention periods align with regulatory minimums (5 years for EU and Singapore), storage locations reflect data residency requirements, and access controls are specified.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">11</span>
+            <span class="lab-step-instruction">Review Ripple's compliance resources and tools</span>
+          </div><div class="lab-step-detail"><p>Navigate back to the Ripple website and search for compliance tools or partner solutions:</p>
+<pre><code>https://ripple.com/
+</code></pre>
+<p>Use the site search or navigation menu to find:</p>
+<ul>
+<li>Compliance solutions</li>
+<li>Partner ecosystem</li>
+<li>Trust and safety tools</li>
+<li>Regulatory technology (RegTech) integrations</li>
+</ul>
+<p>Look specifically for references to:</p>
+<ul>
+<li>Travel Rule solution providers</li>
+<li>Sanctions screening integrations</li>
+<li>Transaction monitoring tools</li>
+<li>Compliance API features</li>
+</ul>
+<p>Take note of any specific tools, partners, or technologies Ripple mentions for compliance automation.</p>
+<p>Alternatively, search for &quot;Ripple compliance tools&quot; or &quot;Ripple Travel Rule solution&quot; in your browser.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>You should find references to Ripple's approach to compliance, potential partner solutions for AML/CFT, or technology integrations that support regulatory requirements. This might include blockchain analytics providers, Travel Rule solution providers, or compliance data vendors.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Confirm you have identified at least one specific compliance tool, technology, or partner mentioned on Ripple's website.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">12</span>
+            <span class="lab-step-instruction">Add a technology solutions section to your analysis</span>
+          </div><div class="lab-step-detail"><p>In your compliance analysis document, add a final section:</p>
+<pre><code>
+COMPLIANCE TECHNOLOGY SOLUTIONS
+================================
+
+Recommended Tools for Automation:
+
+1. Travel Rule Compliance:
+   Solution: 
+   Function: 
+   Integration Point: 
+
+2. Sanctions Screening:
+   Solution: 
+   Function: 
+   Integration Point: 
+
+3. Transaction Monitoring:
+   Solution: 
+   Function: 
+   Integration Point: 
+
+4. Audit Trail Management:
+   Solution: 
+   Function: 
+   Integration Point: 
+
+Implementation Priority:
+1. [Highest priority tool and justification]
+2. 
+3. 
+</code></pre>
+<p>Based on your research of Ripple&#39;s resources and general knowledge of compliance technology:</p>
+<ul>
+<li><strong>Travel Rule Compliance</strong>: Consider solutions like TRP (Travel Rule Protocol) providers, Notabene, or Sygna Bridge - automate VASP-to-VASP data exchange</li>
+<li><strong>Sanctions Screening</strong>: Real-time API integrations with OFAC, EU, UN, MAS sanctions lists - integrate at payment submission and settlement confirmation</li>
+<li><strong>Transaction Monitoring</strong>: Blockchain analytics and fiat transaction monitoring - monitor RLUSD movements and fiat conversions</li>
+<li><strong>Audit Trail Management</strong>: Immutable logging solutions with XRPL transaction hash linking - centralized compliance dashboard</li>
+</ul>
+<p>Prioritize based on regulatory risk and volume of transactions.</p>
+<p>Save your final document.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A completed technology solutions section with at least 4 specific tool categories, integration recommendations, and a prioritized implementation plan.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Ensure each recommended solution has a clear integration point in your documented workflow (on-ramp, settlement, or off-ramp stage).</span>
+          </div></div></div>
+        <div class="lab-troubleshooting">
+          <h3>⚠️ Troubleshooting</h3>
+          <details class="lab-trouble-item">
+            <summary>Cannot locate specific compliance documentation on the Ripple website</summary>
+            <div class="lab-trouble-solution"><p>Ripple&#39;s website structure may change. If you cannot find a dedicated compliance section, check: (1) The RLUSD product page under &#39;Resources&#39; or &#39;Documentation&#39;, (2) The Trust &amp; Safety section in the footer, (3) Use site search for &#39;compliance&#39;, &#39;regulatory&#39;, or &#39;AML&#39;. If documentation is limited, supplement with general FATF guidance for virtual asset service providers and stablecoin-specific regulatory frameworks like MiCA or Singapore PS Act.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>Uncertainty about which regulatory framework applies to a specific jurisdiction</summary>
+            <div class="lab-trouble-solution"><p>For the EU, focus on MiCA (Markets in Crypto-Assets Regulation) for stablecoin issuance and 5AMLD/6AMLD for AML/KYC requirements. For Singapore, reference the Payment Services Act and MAS notices on digital payment tokens. For the United States, consider the combination of FinCEN&#39;s virtual currency guidance, state money transmitter laws, and potential federal stablecoin legislation. When in doubt, document multiple potentially applicable frameworks and note uncertainty for further legal review.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>Difficulty determining exact data fields required for Travel Rule compliance</summary>
+            <div class="lab-trouble-solution"><p>The FATF Travel Rule requires minimum originator and beneficiary information: (1) Name, (2) Account number or unique transaction reference, (3) Address (at minimum, country). For amounts over USD/EUR 1,000, this information must be transmitted immediately and securely. If the Ripple API documentation does not specify exact fields, refer to FATF&#39;s updated guidance on virtual assets (June 2019, updated 2021) and document the standard minimum fields. Note that some jurisdictions require additional information such as date of birth or national ID number.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>Confusion about where compliance responsibility lies in a cross-border payment</summary>
+            <div class="lab-trouble-solution"><p>In a typical cross-border RLUSD payment: (1) The on-ramp provider (German bank or exchange) is responsible for originator KYC and sanctions screening, (2) Both on-ramp and off-ramp providers share responsibility for Travel Rule data exchange, (3) The off-ramp provider (Singapore exchange or bank) is responsible for beneficiary KYC and sanctions screening, (4) Ripple provides the technology infrastructure but compliance obligations rest with the financial institutions using the network. Document this shared responsibility model clearly, noting that each regulated entity must comply with its home jurisdiction&#39;s requirements.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>Uncertainty about recordkeeping retention periods when multiple jurisdictions are involved</summary>
+            <div class="lab-trouble-solution"><p>When jurisdictions have different retention requirements, apply the longest retention period to ensure compliance with all applicable regulations. For EU-originating transactions, AMLD requires 5 years post-transaction. For Singapore, MAS requires 5 years minimum. Both XRPL blockchain records and off-chain institutional records should be maintained. Document the retention policy as &#39;5 years minimum, with annual review for regulatory changes.&#39; Note any potential conflicts between data retention (for compliance) and data minimization (for privacy regulations like GDPR), and document a policy that balances both requirements with legal justification for retention.</p>
+</div>
+          </details></div>
+        <div class="lab-challenge">
+          <h3>🏆 Design a Risk-Based Compliance Framework for High-Value RLUSD Payments</h3>
+          <p class="lab-challenge-intro">Apply what you learned — complete this task without step-by-step guidance.</p>
+          <div class="lab-challenge-body"><p>Using the compliance workflow you documented in this lab as a foundation, design a <strong>risk-based compliance framework</strong> for institutional RLUSD payments that segments customers and transactions by risk level.</p>
+<p><strong>Your framework must address:</strong></p>
+<ol>
+<li><p><strong>Risk Scoring Criteria</strong>: Define at least 5 factors that would elevate a customer or transaction to higher risk status (e.g., jurisdiction risk, transaction size, business type, payment patterns, beneficiary relationships).</p>
+</li>
+<li><p><strong>Tiered Control Requirements</strong>: Create three risk tiers (Low, Medium, High) and specify different compliance control requirements for each tier. For example, low-risk transactions might require automated sanctions screening only, while high-risk transactions require manual review, enhanced due diligence, and senior compliance officer approval.</p>
+</li>
+<li><p><strong>Escalation Procedures</strong>: Document when and how a transaction should be escalated from automated processing to manual review, including specific triggers and responsible parties.</p>
+</li>
+<li><p><strong>Jurisdictional Considerations</strong>: Explain how your framework adapts when payments originate from or are destined to high-risk jurisdictions as identified by FATF or national regulators.</p>
+</li>
+<li><p><strong>Technology Integration</strong>: Identify which parts of your risk-based framework could be automated using Ripple APIs, blockchain analytics, or third-party RegTech solutions, and which parts require human judgment.</p>
+</li>
+<li><p><strong>Documentation and Audit</strong>: Specify what additional documentation must be maintained for higher-risk transactions and how you would demonstrate the effectiveness of your risk-based approach to regulators.</p>
+</li>
+</ol>
+<p><strong>Deliverable</strong>: Create a new document titled <code>Risk_Based_Compliance_Framework.txt</code> that presents your framework in a structured format suitable for presentation to an institutional compliance committee. Include specific thresholds, decision trees, and justification for your risk categorization criteria. Test your framework against at least three different payment scenarios with varying risk profiles.</p>
+</div>
+        </div>
+        <div class="lab-check">
+          <label class="checkbox-label">
+            <input type="checkbox" onchange="this.closest('.lab-check').classList.toggle('completed', this.checked)">
+            <span>I have completed this lab exercise</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 8: Knowledge Check -->
+    <section class="screen" id="screen-8" data-index="8">
+      
+      <div class="screen-quiz">
+        <h2>📝 Knowledge Check</h2>
+        <p class="quiz-intro">Test your understanding of the material covered in this module. Select the best answer for each question.</p>
+        <div id="quizForm">
+          <div class="quiz-question" id="qq-0">
+            <h4>Question 1</h4>
+            <p class="question-text">Which of the following best describes the FATF Travel Rule requirement for stablecoin transfers?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q0" value="A">
+                <span class="option-text">A) Institutions must report all stablecoin transactions to FATF within 24 hours</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q0" value="B">
+                <span class="option-text">B) Institutions must share originator and beneficiary information for transfers exceeding specified thresholds (typically USD/EUR 1,000)</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q0" value="C">
+                <span class="option-text">C) Stablecoin issuers must travel to FATF headquarters annually for compliance audits</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q0" value="D">
+                <span class="option-text">D) Cross-border stablecoin transfers are prohibited under FATF guidelines</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-0"></div>
+          </div>
+          <div class="quiz-question" id="qq-1">
+            <h4>Question 2</h4>
+            <p class="question-text">In the United States, which regulatory approach creates the most complexity for stablecoin compliance?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q1" value="A">
+                <span class="option-text">A) Single harmonized federal framework under the SEC</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q1" value="B">
+                <span class="option-text">B) Multi-agency approach with overlapping federal and state requirements</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q1" value="C">
+                <span class="option-text">C) Complete absence of regulation allowing self-governance</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q1" value="D">
+                <span class="option-text">D) Exclusive state-level regulation with no federal oversight</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-1"></div>
+          </div>
+          <div class="quiz-question" id="qq-2">
+            <h4>Question 3</h4>
+            <p class="question-text">Which compliance control is most critical during the stablecoin on-ramp process?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q2" value="A">
+                <span class="option-text">A) Blockchain transaction speed optimization</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q2" value="B">
+                <span class="option-text">B) Source of funds verification and counterparty due diligence</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q2" value="C">
+                <span class="option-text">C) Smart contract code review for bugs</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q2" value="D">
+                <span class="option-text">D) Cryptocurrency tax calculation automation</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-2"></div>
+          </div>
+          <div class="quiz-question" id="qq-3">
+            <h4>Question 4</h4>
+            <p class="question-text">What is the primary purpose of Enhanced Due Diligence (EDD) in stablecoin KYC programs?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q3" value="A">
+                <span class="option-text">A) To speed up onboarding for all customers</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q3" value="B">
+                <span class="option-text">B) To apply heightened scrutiny for high-risk customers, PEPs, and complex transaction patterns</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q3" value="C">
+                <span class="option-text">C) To reduce compliance costs by consolidating customer checks</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q3" value="D">
+                <span class="option-text">D) To eliminate the need for ongoing transaction monitoring</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-3"></div>
+          </div>
+          <div class="quiz-question" id="qq-4">
+            <h4>Question 5</h4>
+            <p class="question-text">Under the EU's Markets in Crypto-Assets Regulation (MiCA), how are stablecoins pegged to fiat currencies primarily classified?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q4" value="A">
+                <span class="option-text">A) As securities requiring prospectus disclosure</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q4" value="B">
+                <span class="option-text">B) As e-money tokens requiring e-money institution licenses</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q4" value="C">
+                <span class="option-text">C) As commodities regulated by futures exchanges</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q4" value="D">
+                <span class="option-text">D) As unregulated digital assets outside MiCA scope</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-4"></div>
+          </div>
+          <div class="quiz-question" id="qq-5">
+            <h4>Question 6</h4>
+            <p class="question-text">Which record retention requirement is unique to blockchain-based stablecoin transactions compared to traditional payments?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q5" value="A">
+                <span class="option-text">A) Maintaining customer identification records for 5-7 years</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q5" value="B">
+                <span class="option-text">B) Preserving transaction amounts and dates in internal systems</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q5" value="C">
+                <span class="option-text">C) Linking blockchain addresses and transaction hashes to real-world identities and business purposes</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q5" value="D">
+                <span class="option-text">D) Storing email communications related to customer relationships</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-5"></div>
+          </div>
+          <div class="quiz-question" id="qq-6">
+            <h4>Question 7</h4>
+            <p class="question-text">What is a critical component of an adaptive compliance framework for stablecoin payments?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q6" value="A">
+                <span class="option-text">A) Fixed policies that never change to ensure consistency</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q6" value="B">
+                <span class="option-text">B) Exclusive reliance on blockchain immutability for all compliance needs</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q6" value="C">
+                <span class="option-text">C) Flexible policies and scalable infrastructure that can quickly accommodate new regulatory requirements</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q6" value="D">
+                <span class="option-text">D) Avoiding engagement with regulators to maintain operational independence</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-6"></div>
+          </div>
+          <div class="quiz-question" id="qq-7">
+            <h4>Question 8</h4>
+            <p class="question-text">During the stablecoin settlement phase, what type of control helps institutions detect money laundering typologies?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q7" value="A">
+                <span class="option-text">A) Static password authentication for wallet access</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q7" value="B">
+                <span class="option-text">B) Behavioral analytics and transaction monitoring rules adapted for blockchain environments</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q7" value="C">
+                <span class="option-text">C) Manual review of every transaction by compliance officers</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q7" value="D">
+                <span class="option-text">D) Limiting all transactions to minimum amounts</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-7"></div>
+          </div>
+          <div class="quiz-actions">
+            <button type="button" class="btn btn-primary quiz-submit-btn" onclick="gradeQuiz()">Submit Answers</button>
+            <button type="button" class="btn btn-secondary" onclick="resetQuiz()">Reset</button>
+          </div>
+          <div class="quiz-results" id="quizResults"></div>
+        </div>
+      </div><script>window.__quizAnswers = ["B","B","B","B","B","C","C","B"]; window.__quizExplanations = ["The FATF Travel Rule requires institutions to share originator and beneficiary information for cryptocurrency and stablecoin transfers that exceed specified thresholds, typically USD/EUR 1,000. This ensures transparency and enables AML/CTF monitoring across counterparties.","The US applies a fragmented multi-agency regulatory approach involving the OCC, Federal Reserve, FDIC, SEC, CFTC, FinCEN, and state money transmitter licensing. This creates overlapping and sometimes conflicting requirements, significantly increasing compliance complexity for institutions.","During the on-ramp process (converting fiat to stablecoins), institutions must verify the legitimate source of funds AND conduct customer identification and due diligence on the converting party. Source of funds verification is critical because it prevents money laundering at the entry point and ensures the fiat currency originates from lawful activity. This must be paired with customer identification to establish who owns the funds and sanctions screening to ensure the counterparty is not restricted.","Enhanced Due Diligence (EDD) applies heightened scrutiny and more intensive verification procedures for high-risk customers, including politically exposed persons (PEPs), customers from high-risk jurisdictions, or those engaging in complex or unusual transaction patterns. EDD helps institutions manage elevated compliance risks.","Under MiCA, stablecoins pegged to fiat currencies are classified and regulated as e-money tokens. Issuers must obtain e-money institution licenses, maintain 1:1 reserves in segregated accounts, and comply with transparency and redemption obligations—providing a comprehensive harmonized framework across the EU.","While blockchain provides an immutable permanent transaction record on-chain, institutions must maintain off-chain documentation that links blockchain addresses, transaction hashes, and wallet identifiers to real-world customer identities and the business purposes of transactions. This bridging of on-chain and off-chain records is unique to blockchain-based payment systems.","Given the evolving regulatory landscape for stablecoins, adaptive compliance frameworks require flexible policies that can be updated quickly, scalable infrastructure that grows with transaction volumes, and the ability to respond to new regulatory requirements across jurisdictions. This adaptability is essential for sustainable operations amid regulatory uncertainty.","During settlement, institutions deploy behavioral analytics and transaction monitoring rules that detect structuring, layering, and other money laundering typologies adapted specifically for blockchain environments. These automated systems can operate at the speed and scale of blockchain transactions while identifying suspicious patterns requiring investigation."];</script>
+    </section>
+
+    <!-- Screen 9: Summary -->
+    <section class="screen" id="screen-9" data-index="9">
+      
+      <div class="screen-summary">
+        <h2>🎯 Module Summary</h2>
+        <div class="summary-content"><p>This module examined the complex regulatory landscape for stablecoin payments, covering AML/KYC requirements, jurisdiction-specific frameworks across the US, EU, and APAC, and the compliance controls needed throughout institutional payment flows. We explored reporting obligations, audit trail requirements, and strategies for building adaptive risk management frameworks that can respond to evolving regulatory expectations. Institutions must embed compliance into their stablecoin operations through strong governance, technology investment, and proactive regulatory engagement to ensure sustainable, compliant payment solutions.</p>
+</div>
+        
+        <div class="objectives-review">
+          <h3>Learning Objectives — Review</h3>
+          <ul class="objectives-checklist">
+            
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Apply AML/KYC and regulatory compliance frameworks to stablecoin payment workflows</span>
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Identify jurisdiction-specific regulatory expectations for stablecoin issuance and use</span>
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Evaluate compliance controls for on-ramp, settlement, and off-ramp processes</span>
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Design compliant institutional workflows for cross-border stablecoin payments</span>
+              </label>
+            </li>
+          </ul>
+        </div>
+        <div class="completion-box">
+          <div class="completion-icon">🎉</div>
+          <h3>Module Complete!</h3>
+          <p>You have completed all sections of this module.</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" id="prevBtn" onclick="prev()">← Previous</button>
+      <span class="screen-counter" id="screenCounter">1 / 10</span>
+      <button class="btn btn-primary" id="nextBtn" onclick="next()">Next →</button>
+    </div>
+  </main>
+
+</div>
+
+<!-- ====== FOOTER ====== -->
+<footer class="course-footer">
+  <span></span>
+  
+</footer>
+
+
+<script>
+(function() {
+  const TOTAL = 10;
+  let current = 0;
+  const visited = new Set([0]);
+
+  function update() {
+    // Screens
+    document.querySelectorAll('.screen').forEach((el, i) => {
+      el.classList.toggle('active', i === current);
+    });
+
+    // Nav
+    document.querySelectorAll('.nav-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === current);
+      btn.classList.toggle('visited', visited.has(i) && i !== current);
+    });
+    document.querySelectorAll('.nav-check').forEach((el, i) => {
+      el.style.display = visited.has(i) && i !== current ? 'inline' : 'none';
+    });
+
+    // Buttons
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').textContent = current === TOTAL - 1 ? 'Finish ✓' : 'Next →';
+    document.getElementById('screenCounter').textContent = (current + 1) + ' / ' + TOTAL;
+
+    // Progress
+    const pct = Math.round((visited.size / TOTAL) * 100);
+    document.getElementById('progressPercent').textContent = pct;
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    // Scroll to top of content
+    document.getElementById('content').scrollTop = 0;
+    window.scrollTo(0, 0);
+  }
+
+  window.goTo = function(i) {
+    if (i >= 0 && i < TOTAL) { current = i; visited.add(i); update(); }
+  };
+  window.next = function() {
+    if (current < TOTAL - 1) { current++; visited.add(current); update(); }
+  };
+  window.prev = function() {
+    if (current > 0) { current--; update(); }
+  };
+  window.toggleSidebar = function() {
+    document.getElementById('sidebar').classList.toggle('open');
+  };
+
+  // Quiz grading
+  window.gradeQuiz = function() {
+    const answers = window.__quizAnswers || [];
+    const explanations = window.__quizExplanations || [];
+    let correct = 0;
+
+    answers.forEach((ans, i) => {
+      const selected = document.querySelector('input[name="q' + i + '"]:checked');
+      const fb = document.getElementById('fb-' + i);
+      const questionDiv = document.getElementById('qq-' + i);
+      const labels = questionDiv.querySelectorAll('.option-label');
+
+      labels.forEach(l => l.classList.remove('correct', 'incorrect'));
+
+      if (selected) {
+        const userAns = selected.value;
+        const isCorrect = userAns === ans;
+        if (isCorrect) {
+          correct++;
+          selected.closest('.option-label').classList.add('correct');
+          fb.className = 'feedback show correct';
+          fb.textContent = '✓ Correct!' + (explanations[i] ? ' ' + explanations[i] : '');
+        } else {
+          selected.closest('.option-label').classList.add('incorrect');
+          // Highlight correct answer
+          labels.forEach(l => {
+            const inp = l.querySelector('input');
+            if (inp && inp.value === ans) l.classList.add('correct');
+          });
+          fb.className = 'feedback show incorrect';
+          fb.textContent = '✗ Incorrect. The correct answer is ' + ans + '.' + (explanations[i] ? ' ' + explanations[i] : '');
+        }
+      } else {
+        fb.className = 'feedback show incorrect';
+        fb.textContent = 'No answer selected. The correct answer is ' + ans + '.';
+      }
+    });
+
+    const pct = Math.round((correct / answers.length) * 100);
+    const results = document.getElementById('quizResults');
+    results.className = 'quiz-results show ' + (pct >= 80 ? 'pass' : 'fail');
+    results.textContent = 'Score: ' + correct + '/' + answers.length + ' (' + pct + '%)' +
+      (pct >= 80 ? ' — Passed! ✓' : ' — Review the material and try again.');
+  };
+
+  window.resetQuiz = function() {
+    document.querySelectorAll('#quizForm input[type="radio"]').forEach(el => { el.checked = false; });
+    document.querySelectorAll('.feedback').forEach(el => { el.className = 'feedback'; });
+    document.querySelectorAll('.option-label').forEach(el => { el.classList.remove('correct', 'incorrect'); });
+    document.getElementById('quizResults').className = 'quiz-results';
+  };
+
+  // Initial state
+  update();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operational Use Cases: Remittances, Treasury, and Disbursements — RLUSD Stablecoin Payments for Institutions</title>
+<style>
+/* === RESET & BASE === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #1a1a2e; background: #f8f9fa; line-height: 1.65; display: flex; flex-direction: column; min-height: 100vh;
+}
+
+/* === HEADER === */
+.course-header {
+  background: #1a1a2e; color: #fff; padding: 0.75rem 1.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+  position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.header-left { display: flex; align-items: center; gap: 1rem; }
+.course-number { font-size: 0.8rem; opacity: 0.7; font-family: monospace; }
+.course-title { font-size: 0.95rem; font-weight: 600; }
+.header-right { display: flex; align-items: center; gap: 1.5rem; font-size: 0.85rem; }
+.module-label { opacity: 0.8; }
+.progress-text { font-weight: 600; color: #6ee7b7; }
+.print-btn {
+  background: transparent; border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.85); font-size: 0.78rem; padding: 0.3rem 0.75rem;
+  border-radius: 3px; cursor: pointer; font-family: inherit;
+  transition: background 0.15s, border-color 0.15s; white-space: nowrap;
+}
+.print-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
+
+/* === LAYOUT === */
+.layout { display: flex; flex: 1; min-height: 0; }
+
+/* === SIDEBAR === */
+.sidebar {
+  width: 280px; background: #fff; border-right: 1px solid #e5e7eb;
+  display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+  position: sticky; top: 52px; height: calc(100vh - 52px);
+}
+.sidebar-header { padding: 1.25rem 1rem 0.75rem; display: flex; justify-content: space-between; align-items: start; }
+.sidebar-header h2 { font-size: 1rem; font-weight: 700; color: #1a1a2e; line-height: 1.3; }
+.sidebar-toggle { display: none; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #6b7280; }
+.progress-bar { height: 3px; background: #e5e7eb; margin: 0 1rem 0.5rem; border-radius: 2px; }
+.progress-fill { height: 100%; background: #3b82f6; border-radius: 2px; width: 0; transition: width 0.4s ease; }
+.nav-list { list-style: none; padding: 0.25rem 0.5rem 1rem; flex: 1; overflow-y: auto; }
+.nav-btn {
+  width: 100%; text-align: left; background: none; border: none; padding: 0.6rem 0.75rem;
+  display: flex; align-items: center; gap: 0.6rem; border-radius: 0.5rem;
+  cursor: pointer; font-size: 0.85rem; color: #4b5563; transition: all 0.15s;
+}
+.nav-btn:hover { background: #f3f4f6; color: #1a1a2e; }
+.nav-btn.active { background: #eff6ff; color: #2563eb; font-weight: 600; }
+.nav-btn.visited .nav-check { display: inline; }
+.nav-icon { font-size: 1rem; flex-shrink: 0; }
+.nav-label { flex: 1; }
+.nav-check { display: none; color: #22c55e; font-size: 0.8rem; flex-shrink: 0; }
+
+/* === MAIN CONTENT === */
+.content { flex: 1; padding: 2rem 3rem 2rem 2.5rem; max-width: 860px; min-height: calc(100vh - 52px); }
+.screen { display: none; animation: fadeIn 0.25s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* === NAV BUTTONS === */
+.nav-buttons {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;
+}
+.screen-counter { font-size: 0.85rem; color: #9ca3af; }
+.btn {
+  padding: 0.6rem 1.4rem; border-radius: 0.5rem; font-size: 0.9rem; font-weight: 600;
+  border: none; cursor: pointer; transition: all 0.15s;
+}
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn-primary { background: #2563eb; color: #fff; }
+.btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+.btn-secondary { background: #f3f4f6; color: #4b5563; }
+.btn-secondary:hover:not(:disabled) { background: #e5e7eb; }
+
+/* === LANDING SCREEN === */
+.screen-landing { text-align: center; padding: 3rem 0; }
+.screen-landing h1 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; }
+.screen-landing h2 { font-size: 2rem; font-weight: 800; color: #1a1a2e; margin-top: 0.25rem; }
+.objectives-box {
+  text-align: left; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.75rem;
+  padding: 1.5rem; margin: 2rem auto; max-width: 580px;
+}
+.objectives-box h3 { font-size: 1rem; margin-bottom: 0.5rem; color: #1e40af; }
+.objectives-box ul { margin-top: 0.5rem; padding-left: 1.25rem; }
+.objectives-box li { margin-bottom: 0.4rem; font-size: 0.92rem; color: #1e3a5f; }
+.start-hint { margin-top: 2rem; color: #9ca3af; font-size: 0.9rem; }
+
+/* === LESSON SCREEN === */
+.screen-lesson h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; color: #1a1a2e; }
+.lesson-content { font-size: 0.95rem; line-height: 1.75; }
+.lesson-content h3 { font-size: 1.15rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #1a1a2e; }
+.lesson-content h4 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
+.lesson-content p { margin-bottom: 0.75rem; }
+.lesson-content ul, .lesson-content ol { margin: 0.5rem 0 1rem 1.25rem; }
+.lesson-content li { margin-bottom: 0.3rem; }
+.lesson-content code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.88rem; }
+.lesson-content pre { background: #1e293b; color: #e2e8f0; padding: 1rem 1.25rem; border-radius: 0.5rem; overflow-x: auto; margin: 1rem 0; }
+.lesson-content pre code { background: none; padding: 0; color: inherit; }
+.lesson-content blockquote { border-left: 3px solid #3b82f6; padding: 0.5rem 1rem; background: #f8fafc; margin: 1rem 0; border-radius: 0 0.5rem 0.5rem 0; }
+.lesson-content table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+.lesson-content th, .lesson-content td { padding: 0.6rem 0.75rem; border: 1px solid #e5e7eb; text-align: left; }
+.lesson-content th { background: #f8fafc; font-weight: 600; }
+
+/* === MEDIA === */
+.media-block { margin: 1.5rem 0; text-align: center; }
+.media-caption { font-size: 0.82rem; color: #6b7280; margin-top: 0.5rem; font-style: italic; }
+.media-placeholder { background: #f8fafc; border: 2px dashed #d1d5db; border-radius: 0.5rem; padding: 2rem; }
+.placeholder-icon { font-size: 2rem; }
+
+/* === KEY POINTS === */
+.key-points {
+  background: #fefce8; border: 1px solid #fde68a; border-radius: 0.75rem;
+  padding: 1.25rem; margin-top: 1.5rem;
+}
+.key-points h4 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+.key-points ul { padding-left: 1.25rem; }
+.key-points li { font-size: 0.9rem; margin-bottom: 0.3rem; color: #713f12; }
+
+/* === LAB === */
+.screen-lab h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.lab-header { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+.lab-objective { font-size: 0.92rem; color: #166534; margin-top: 0.5rem; }
+.lab-meta { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.75rem; }
+.lab-meta-item { font-size: 0.82rem; color: #15803d; font-weight: 500; }
+.lab-prereqs { margin-top: 0.75rem; font-size: 0.85rem; color: #166534; }
+.lab-prereqs ul { margin: 0.25rem 0 0 1.25rem; padding: 0; }
+.lab-prereqs li { margin-bottom: 0.15rem; }
+.lab-procedures h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; color: #1e293b; }
+.lab-step { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+.lab-step-header { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.5rem; }
+.lab-step-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; min-width: 28px; background: #2563eb; color: #fff; font-size: 0.82rem; font-weight: 700; border-radius: 50%; }
+.lab-step-instruction { font-weight: 600; color: #1e293b; font-size: 0.95rem; line-height: 1.5; padding-top: 2px; }
+.lab-step-detail { font-size: 0.9rem; line-height: 1.7; color: #475569; margin-top: 0.25rem; padding-left: 2.8rem; }
+.lab-step-detail code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; }
+.lab-step-detail pre { background: #1e293b; color: #e2e8f0; padding: 0.75rem 1rem; border-radius: 0.5rem; overflow-x: auto; margin: 0.5rem 0; font-size: 0.85rem; }
+.lab-step-detail pre code { background: none; padding: 0; color: inherit; }
+.lab-expected-output { margin: 0.5rem 0 0 2.8rem; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 0.5rem; padding: 0.75rem 1rem; }
+.lab-expected-label { font-size: 0.78rem; font-weight: 700; color: #0369a1; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.35rem; }
+.lab-expected-output pre { background: #0c4a6e; color: #e0f2fe; padding: 0.5rem 0.75rem; border-radius: 0.375rem; margin: 0.25rem 0 0; font-size: 0.82rem; overflow-x: auto; }
+.lab-expected-output pre code { background: none; padding: 0; color: inherit; }
+.lab-verification { display: flex; align-items: flex-start; gap: 0.5rem; margin: 0.5rem 0 0 2.8rem; padding: 0.6rem 0.75rem; background: #fefce8; border: 1px solid #fde68a; border-radius: 0.5rem; font-size: 0.85rem; color: #854d0e; }
+.lab-verification-icon { font-size: 1rem; line-height: 1.3; }
+.lab-troubleshooting { margin-top: 1.5rem; }
+.lab-troubleshooting h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; color: #1e293b; }
+.lab-trouble-item { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.5rem; margin-bottom: 0.5rem; }
+.lab-trouble-item summary { padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 500; color: #b45309; cursor: pointer; list-style: none; }
+.lab-trouble-item summary::before { content: '▸ '; font-weight: 700; }
+.lab-trouble-item[open] summary::before { content: '▾ '; }
+.lab-trouble-solution { padding: 0 1rem 0.75rem; font-size: 0.87rem; color: #475569; line-height: 1.6; }
+.lab-trouble-solution code { background: #f1f5f9; padding: 0.1rem 0.3rem; border-radius: 0.2rem; font-size: 0.84rem; }
+.lab-challenge { margin-top: 1.5rem; background: #faf5ff; border: 2px dashed #c4b5fd; border-radius: 0.75rem; padding: 1.25rem; }
+.lab-challenge h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; color: #6b21a8; }
+.lab-challenge-intro { font-size: 0.82rem; color: #7c3aed; margin-bottom: 0.75rem; font-style: italic; }
+.lab-challenge-body { font-size: 0.9rem; line-height: 1.65; color: #581c87; }
+.lab-challenge-body code { background: #ede9fe; padding: 0.1rem 0.3rem; border-radius: 0.2rem; font-size: 0.84rem; }
+.lab-steps { font-size: 0.95rem; line-height: 1.75; }
+.lab-steps ol { padding-left: 1.25rem; }
+.lab-steps li { margin-bottom: 0.5rem; }
+.lab-steps code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.88rem; }
+.lab-steps pre { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin: 0.75rem 0; }
+.lab-steps pre code { background: none; padding: 0; color: inherit; }
+.lab-check { margin-top: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 0.5rem; }
+.lab-check.completed { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.checkbox-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.92rem; }
+.checkbox-label input { width: 1.1rem; height: 1.1rem; accent-color: #22c55e; }
+
+/* === QUIZ === */
+.screen-quiz h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.quiz-intro { font-size: 0.92rem; color: #6b7280; margin-bottom: 1.5rem; }
+.quiz-question { background: #fff; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; }
+.quiz-question h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; margin-bottom: 0.5rem; }
+.question-text { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.75rem; }
+.options { display: flex; flex-direction: column; gap: 0.5rem; }
+.option-label {
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.75rem;
+  border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; transition: all 0.15s;
+}
+.option-label:hover { border-color: #93c5fd; background: #eff6ff; }
+.option-label input { accent-color: #2563eb; }
+.option-label.correct { background: #f0fdf4; border-color: #86efac; }
+.option-label.incorrect { background: #fef2f2; border-color: #fca5a5; }
+.feedback { margin-top: 0.5rem; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.88rem; display: none; }
+.feedback.show { display: block; }
+.feedback.correct { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.feedback.incorrect { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.quiz-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+.quiz-results {
+  margin-top: 1.5rem; padding: 1.25rem; border-radius: 0.75rem; display: none;
+  text-align: center; font-size: 1.1rem; font-weight: 700;
+}
+.quiz-results.show { display: block; }
+.quiz-results.pass { background: #f0fdf4; color: #166534; border: 2px solid #86efac; }
+.quiz-results.fail { background: #fefce8; color: #854d0e; border: 2px solid #fde68a; }
+
+/* === SUMMARY === */
+.screen-summary h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+.summary-content { font-size: 0.95rem; line-height: 1.75; margin-bottom: 1.5rem; }
+.objectives-review { background: #f8fafc; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+.objectives-review h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+.objectives-checklist { list-style: none; }
+.objectives-checklist li { margin-bottom: 0.5rem; }
+.completion-box { text-align: center; padding: 2rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0; }
+.completion-icon { font-size: 3rem; }
+.completion-box h3 { margin-top: 0.5rem; color: #166534; }
+
+/* === FOOTER === */
+.course-footer {
+  background: #1a1a2e; color: #9ca3af; padding: 0.75rem 1.5rem;
+  display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;
+}
+.trial-badge { background: #2563eb; color: #fff; padding: 0.2rem 0.6rem; border-radius: 0.25rem; font-size: 0.72rem; }
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .sidebar { position: fixed; left: -280px; top: 52px; height: calc(100vh - 52px); z-index: 90; transition: left 0.25s; box-shadow: 2px 0 12px rgba(0,0,0,0.15); }
+  .sidebar.open { left: 0; }
+  .sidebar-toggle { display: block; }
+  .content { padding: 1.5rem 1rem; }
+  .course-header { padding: 0.6rem 1rem; }
+  .header-left .course-title { font-size: 0.85rem; }
+}
+
+/* === PRINT === */
+@media print {
+  /* Hide all interactive chrome */
+  .sidebar, .nav-buttons, .course-header, .course-footer,
+  .sidebar-toggle, .quiz-actions, .lab-check, .print-btn { display: none !important; }
+
+  /* Full-width content, no padding waste */
+  body  { background: #fff !important; color: #000 !important; font-size: 11pt; line-height: 1.55; }
+  .layout { display: block !important; }
+  .content { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+
+  /* Show all screens sequentially with page breaks */
+  .screen { display: block !important; animation: none !important; opacity: 1 !important; transform: none !important; page-break-after: always; break-after: page; }
+  .screen:last-child { page-break-after: avoid; break-after: avoid; }
+
+  /* Headings */
+  h1, h2 { page-break-after: avoid; break-after: avoid; font-size: 14pt; }
+  h3, h4  { page-break-after: avoid; break-after: avoid; font-size: 12pt; }
+
+  /* Keep steps and quiz questions together */
+  .lab-step, .quiz-question { page-break-inside: avoid; break-inside: avoid; }
+
+  /* Code blocks — preserve formatting, avoid splitting */
+  pre { white-space: pre-wrap; word-break: break-word; page-break-inside: avoid; break-inside: avoid;
+        background: #f5f5f5 !important; color: #000 !important; border: 1px solid #ccc;
+        padding: 0.5rem 0.75rem; font-size: 9pt; }
+  code { background: #f5f5f5 !important; color: #000 !important; font-size: 9pt; }
+
+  /* AI images — scale to fit, never split */
+  .media-block { page-break-inside: avoid; break-inside: avoid; text-align: center; }
+  .media-block svg, .media-block img { max-width: 100% !important; height: auto !important; }
+
+  /* Key points — keep together */
+  .key-points { page-break-inside: avoid; break-inside: avoid;
+                background: #fefce8 !important; border: 1px solid #ccc; }
+
+  /* Remove link underlines and interactive colours */
+  a { color: #000 !important; text-decoration: none !important; }
+
+  /* Quiz — show correct answer indicator in print */
+  .option-label.correct { background: #f0fff0 !important; font-weight: 600; }
+  .feedback.correct { display: block !important; }
+
+  /* Objectives box */
+  .objectives-box { background: #f0f8ff !important; border: 1px solid #ccc !important; }
+
+  /* Page margins */
+  @page { margin: 18mm 15mm; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<header class="course-header">
+  <div class="header-left">
+    <span class="course-number">RUSD-001</span>
+    <span class="course-title">RLUSD Stablecoin Payments for Institutions</span>
+  </div>
+  <div class="header-right">
+    <span class="module-label">Module 4 of 5</span>
+    <span class="progress-text"><span id="progressPercent">0</span>% complete</span>
+    <button class="print-btn" onclick="window.print()" title="Print or save this module as PDF">&#128424; Print / Save as PDF</button>
+  </div>
+</header>
+
+<!-- ====== LAYOUT ====== -->
+<div class="layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Operational Use Cases: Remittances, Treasury, and Disbursements</h2>
+      <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <ul class="nav-list">
+      <li><button class="nav-btn active" onclick="goTo(0)" id="nav-0">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Welcome</span>
+        <span class="nav-check" id="check-0">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(1)" id="nav-1">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Overview: Institutional Payment Use Cases</span>
+        <span class="nav-check" id="check-1">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(2)" id="nav-2">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Cross-Border Remittance Workflows</span>
+        <span class="nav-check" id="check-2">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(3)" id="nav-3">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Treasury Movement and Liquidity Management</span>
+        <span class="nav-check" id="check-3">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(4)" id="nav-4">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Global Disbursements: Payroll and Vendor Payments</span>
+        <span class="nav-check" id="check-4">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(5)" id="nav-5">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Cost Modeling and Efficiency Gains</span>
+        <span class="nav-check" id="check-5">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(6)" id="nav-6">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Enterprise Integration Architecture</span>
+        <span class="nav-check" id="check-6">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(7)" id="nav-7">
+        <span class="nav-icon">🔬</span>
+        <span class="nav-label">Modeling Cross-Border Payment Workflows with RLUSD</span>
+        <span class="nav-check" id="check-7">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(8)" id="nav-8">
+        <span class="nav-icon">📝</span>
+        <span class="nav-label">Knowledge Check</span>
+        <span class="nav-check" id="check-8">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(9)" id="nav-9">
+        <span class="nav-icon">🎯</span>
+        <span class="nav-label">Summary</span>
+        <span class="nav-check" id="check-9">✓</span>
+      </button></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="content" id="content">
+
+    <!-- Screen 0: Welcome -->
+    <section class="screen active" id="screen-0" data-index="0">
+      
+      <div class="screen-landing">
+        <h1>Module 4</h1>
+        <h2>Operational Use Cases: Remittances, Treasury, and Disbursements</h2>
+        
+        <div class="objectives-box">
+          <h3>🎯 Learning Objectives</h3>
+          <p>After completing this module, you will be able to:</p>
+          <ul>
+            <li>Analyze operational workflows for remittances, treasury movement, and global disbursements using RLUSD</li>
+            <li>Evaluate cost and speed advantages of stablecoin payments in each use case</li>
+            <li>Identify integration points with existing enterprise systems and processes</li>
+            <li>Design end-to-end payment flows for specific institutional scenarios</li>
+          </ul>
+        </div>
+        <p class="start-hint">Click <strong>Next →</strong> to begin.</p>
+      </div>
+    </section>
+
+    <!-- Screen 1: Overview: Institutional Payment Use Cases -->
+    <section class="screen" id="screen-1" data-index="1">
+      <div class="screen-lesson"><h2>Overview: Institutional Payment Use Cases</h2><div class="lesson-content"><p>Remittance payments—cross-border transfers from individuals or businesses to recipients in other countries—represent a significant portion of global payment flows. Traditional money transfer operators (MTOs) and banks impose substantial operational costs that are passed to customers as fees ranging from 3-8% of transfer value.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/4/mod04_fig01.png" alt="Split-screen comparison showing traditional correspondent banking chain with multiple intermediary banks on the left versus direct RLUSD settlement pathway on the right" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Split-screen comparison showing traditional correspondent banking chain with multiple intermediary banks on the left versus direct RLUSD settlement pathway on the right</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Institutions handle three core payment types: remittances, treasury movement, and disbursements</li>
+          <li>Traditional correspondent banking imposes high costs, delays, and operational complexity</li>
+          <li>RLUSD workflows offer speed, transparency, and cost advantages through direct settlement</li>
+          <li>Business value derives from fee reduction, faster settlement, and operational automation</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 2: Cross-Border Remittance Workflows -->
+    <section class="screen" id="screen-2" data-index="2">
+      <div class="screen-lesson"><h2>Cross-Border Remittance Workflows</h2><div class="lesson-content"><h2>Transforming Remittance Operations</h2>
+<p>Remittance payments—cross-border transfers from individuals or businesses to recipients in other countries—represent a $700+ billion annual market. Traditional money transfer operators (MTOs) and banks face significant operational costs that are passed to customers as fees ranging from 3-8% of transfer value.</p>
+<p><strong>Traditional Remittance Flow:</strong></p>
+<ol>
+<li>Sender initiates transfer at bank or MTO location</li>
+<li>Originating institution converts local currency to intermediary currency (often USD)</li>
+<li>Payment routes through 2-4 correspondent banks</li>
+<li>Receiving institution converts to destination currency</li>
+<li>Recipient collects funds (typically 2-5 business days later)</li>
+</ol>
+<p><strong>RLUSD-Enabled Remittance Flow:</strong></p>
+<ol>
+<li>Sender initiates transfer through digital channel or branch</li>
+<li>Originating institution converts local currency to RLUSD</li>
+<li>RLUSD transfers directly to receiving institution on XRPL (3-5 seconds)</li>
+<li>Receiving institution converts RLUSD to local currency</li>
+<li>Recipient accesses funds immediately</li>
+</ol>
+<p><strong>Key Operational Advantages:</strong></p>
+<ul>
+<li><strong>Speed</strong>: Settlement reduced from days to seconds, enabling same-day fund availability</li>
+<li><strong>Cost</strong>: Elimination of intermediary fees reduces total cost by 60-80%</li>
+<li><strong>Transparency</strong>: On-ledger tracking provides real-time status visibility</li>
+<li><strong>Compliance</strong>: Embedded payment metadata supports KYC/AML requirements</li>
+</ul>
+<p><strong>Implementation Considerations:</strong></p>
+<p>Institutions must establish RLUSD liquidity on both ends, integrate with existing remittance platforms, ensure regulatory approval for stablecoin operations, and provide customer education on the new payment method. The business case is strongest for high-volume corridors where cost savings offset integration investment within 6-12 months.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/4/mod04_fig02.png" alt="Before and after workflow illustration showing traditional remittance process with multiple steps and delays versus streamlined RLUSD remittance with direct transfer" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Before and after workflow illustration showing traditional remittance process with multiple steps and delays versus streamlined RLUSD remittance with direct transfer</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Traditional remittance flows involve multiple intermediaries and 2-5 day settlement</li>
+          <li>RLUSD enables direct institution-to-institution transfers settling in seconds</li>
+          <li>Cost savings of 60-80% through elimination of correspondent banking fees</li>
+          <li>Implementation requires liquidity management, platform integration, and regulatory approval</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 3: Treasury Movement and Liquidity Management -->
+    <section class="screen" id="screen-3" data-index="3">
+      <div class="screen-lesson"><h2>Treasury Movement and Liquidity Management</h2><div class="lesson-content"><h2>Optimizing Multi-Jurisdictional Treasury Operations</h2>
+<p>Corporate treasurers at multinational enterprises face daily challenges managing liquidity across subsidiaries in multiple countries. Traditional treasury movement relies on correspondent banking relationships that create <strong>trapped liquidity</strong>, <strong>delayed visibility</strong>, and <strong>inefficient capital utilization</strong>.</p>
+<p><strong>Traditional Treasury Challenges:</strong></p>
+<ul>
+<li><strong>Nostro accounts</strong>: Pre-funded accounts at correspondent banks tie up $3-5 trillion globally</li>
+<li><strong>Settlement delays</strong>: Intercompany transfers take 2-3 business days, preventing dynamic reallocation</li>
+<li><strong>FX costs</strong>: Multiple currency conversions incur 0.5-2% spread costs</li>
+<li><strong>Reconciliation complexity</strong>: Tracking funds across banks requires manual processes</li>
+<li><strong>Intraday uncertainty</strong>: Treasurers cannot optimize working capital without real-time visibility</li>
+</ul>
+<p><strong>RLUSD Treasury Movement Workflow:</strong></p>
+<ol>
+<li>Treasury management system (TMS) identifies liquidity surplus/deficit across entities</li>
+<li>TMS generates RLUSD transfer instruction via API integration</li>
+<li>XRPL executes transfer with immediate settlement and on-ledger confirmation</li>
+<li>Receiving entity&#39;s TMS updates cash position in real-time</li>
+<li>Automated reconciliation matches transaction against enterprise accounting system</li>
+</ol>
+<p><strong>Operational Benefits:</strong></p>
+<ul>
+<li><strong>Real-time liquidity</strong>: Instant settlement enables intraday cash positioning and optimization</li>
+<li><strong>Capital efficiency</strong>: Reduced need for prefunded accounts frees trapped capital</li>
+<li><strong>Cost reduction</strong>: Direct transfers eliminate intermediary fees and reduce FX spreads</li>
+<li><strong>Automated reconciliation</strong>: On-ledger transaction data integrates directly with TMS and ERP systems</li>
+</ul>
+<p><strong>Integration Architecture:</strong></p>
+<p>Successful treasury implementations integrate XRPL APIs with existing TMS platforms (e.g., Kyriba, FIS, SAP Treasury), establish RLUSD liquidity pools at major treasury centers, implement automated currency conversion workflows, and configure real-time reporting dashboards. Enterprise adoption typically begins with pilot corridors between two subsidiaries before expanding globally.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/4/mod04_fig03.png" alt="Illustration of global treasury network showing multinational company with subsidiaries across continents connected by instant RLUSD liquidity flows" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Illustration of global treasury network showing multinational company with subsidiaries across continents connected by instant RLUSD liquidity flows</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Traditional treasury operations suffer from trapped liquidity in nostro accounts and settlement delays</li>
+          <li>RLUSD enables real-time intercompany transfers with immediate cash position updates</li>
+          <li>Capital efficiency improves through reduced prefunding requirements and optimized working capital</li>
+          <li>Integration with TMS and ERP systems automates reconciliation and reporting</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 4: Global Disbursements: Payroll and Vendor Payments -->
+    <section class="screen" id="screen-4" data-index="4">
+      <div class="screen-lesson"><h2>Global Disbursements: Payroll and Vendor Payments</h2><div class="lesson-content"><h2>Streamlining Mass Payment Operations</h2>
+<p>Global disbursements—including <strong>payroll</strong>, <strong>vendor payments</strong>, and <strong>settlement operations</strong>—represent high-volume, time-sensitive payment flows that demand reliability, speed, and cost efficiency. Organizations processing thousands of monthly disbursements across borders face substantial operational overhead and beneficiary friction.</p>
+<p><strong>Traditional Disbursement Challenges:</strong></p>
+<ul>
+<li><strong>Batch processing delays</strong>: Payroll and vendor payments process in daily or weekly batches</li>
+<li><strong>High per-transaction costs</strong>: International wire fees of $15-50 per payment</li>
+<li><strong>Recipient friction</strong>: Beneficiaries wait 3-7 days for funds to clear</li>
+<li><strong>Exception handling</strong>: Failed payments require manual intervention and reprocessing</li>
+<li><strong>Limited payment tracking</strong>: Senders and recipients lack real-time status visibility</li>
+</ul>
+<p><strong>RLUSD Disbursement Workflow:</strong></p>
+<ol>
+<li>ERP or payment platform generates disbursement file (e.g., payroll run, vendor invoice batch)</li>
+<li>Payment processor converts batch to individual RLUSD transactions via XRPL API</li>
+<li>Each transaction settles within 3-5 seconds with on-ledger confirmation</li>
+<li>Recipients receive RLUSD immediately to digital wallets or institutional accounts</li>
+<li>Recipients can hold RLUSD or convert to local currency instantly</li>
+<li>Automated confirmation feeds back to ERP for reconciliation</li>
+</ol>
+<p><strong>Use Case Examples:</strong></p>
+<p><strong>Payroll</strong>: Multinational employer pays 5,000 employees across 20 countries. RLUSD enables same-day salary delivery with 90% cost reduction versus wire transfers.</p>
+<p><strong>Vendor Payments</strong>: Manufacturer pays 500 global suppliers monthly. RLUSD settlement improves supplier cash flow and reduces early payment discount costs.</p>
+<p><strong>Insurance Claims</strong>: Insurer disburses claims to international policyholders. RLUSD accelerates payouts from weeks to minutes, improving customer satisfaction.</p>
+<p><strong>Implementation Requirements:</strong></p>
+<p>Organizations must integrate XRPL APIs with existing payment platforms, establish beneficiary onboarding processes for RLUSD receipt, configure automated currency conversion options, and implement exception handling for failed or rejected transactions. The ROI analysis typically shows breakeven at 1,000+ monthly transactions.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/4/mod04_fig04.png" alt="Illustration showing mass disbursement from central payment hub radiating outward to diverse recipients globally, with real-time confirmation indicators" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Illustration showing mass disbursement from central payment hub radiating outward to diverse recipients globally, with real-time confirmation indicators</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Global disbursements face high costs, delays, and operational complexity in traditional systems</li>
+          <li>RLUSD enables near-instant, low-cost mass payments for payroll, vendors, and settlements</li>
+          <li>Recipients benefit from immediate fund availability and optional currency conversion</li>
+          <li>Integration with ERP and payment platforms enables automated end-to-end workflows</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 5: Cost Modeling and Efficiency Gains -->
+    <section class="screen" id="screen-5" data-index="5">
+      <div class="screen-lesson"><h2>Cost Modeling and Efficiency Gains</h2><div class="lesson-content"><h2>Quantifying the Business Case</h2>
+<p>Institutions evaluating RLUSD adoption require rigorous <strong>cost-benefit analysis</strong> comparing traditional payment infrastructure with stablecoin-enabled alternatives. The business case extends beyond direct fee reduction to include operational efficiency, working capital optimization, and risk mitigation.</p>
+<p><strong>Traditional Cost Components:</strong></p>
+<ul>
+<li><strong>Correspondent banking fees</strong>: $10-40 per transaction, varying by corridor and currency</li>
+<li><strong>FX spreads</strong>: 0.5-2% of transaction value for currency conversion</li>
+<li><strong>Nostro account opportunity cost</strong>: Capital tied up in prefunded accounts (annual cost = balance × cost of capital)</li>
+<li><strong>Operational overhead</strong>: Staff time for transaction processing, exception handling, and reconciliation</li>
+<li><strong>Failed transaction costs</strong>: Reprocessing, investigation, and customer service for ~3-5% of payments</li>
+</ul>
+<p><strong>RLUSD Cost Model:</strong></p>
+<ul>
+<li><strong>Transaction fees</strong>: XRPL fees of $0.00001-0.0001 per transaction (negligible)</li>
+<li><strong>Liquidity management</strong>: Minimal RLUSD holdings required for operational buffer</li>
+<li><strong>Integration costs</strong>: One-time API development and system integration (amortized over transaction volume)</li>
+<li><strong>FX conversion</strong>: Market-rate spreads for RLUSD entry/exit (typically 0.1-0.3%)</li>
+<li><strong>Operational costs</strong>: Reduced by 50-70% through automation and exception reduction</li>
+</ul>
+<p><strong>Sample ROI Calculation (Remittance Provider):</strong></p>
+<p>Baseline: 100,000 monthly transactions, average value $250, traditional cost $12.50 per transaction (5%)</p>
+<ul>
+<li><strong>Traditional monthly cost</strong>: $1,250,000 in total fees and operations</li>
+<li><strong>RLUSD monthly cost</strong>: $75,000 (0.3% FX + operational overhead)</li>
+<li><strong>Monthly savings</strong>: $1,175,000</li>
+<li><strong>Annual savings</strong>: $14,100,000</li>
+<li><strong>Integration investment</strong>: $500,000 one-time + $50,000 monthly operations</li>
+<li><strong>Payback period</strong>: 0.4 months</li>
+</ul>
+<p><strong>Beyond Direct Costs:</strong></p>
+<p>Additional value drivers include improved customer satisfaction through faster settlement, competitive differentiation in crowded markets, reduced regulatory and counterparty risk, and enablement of new product offerings (e.g., instant cross-border payments).</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/4/mod04_fig05.png" alt="Cost comparison infographic showing stacked cost components for traditional payments versus minimal costs for RLUSD payments" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Cost comparison infographic showing stacked cost components for traditional payments versus minimal costs for RLUSD payments</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Traditional payments incur correspondent fees, FX spreads, nostro costs, and operational overhead</li>
+          <li>RLUSD dramatically reduces per-transaction costs while improving capital efficiency</li>
+          <li>ROI analysis should include operational savings, working capital benefits, and risk reduction</li>
+          <li>Typical institutional payback periods range from immediate to 12 months depending on volume</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 6: Enterprise Integration Architecture -->
+    <section class="screen" id="screen-6" data-index="6">
+      <div class="screen-lesson"><h2>Enterprise Integration Architecture</h2><div class="lesson-content"><h2>Connecting XRPL to Enterprise Systems</h2>
+<p>Successful RLUSD adoption requires seamless integration between the XRP Ledger and existing enterprise systems including <strong>ERP platforms</strong> (SAP, Oracle, Microsoft Dynamics), <strong>treasury management systems</strong> (Kyriba, FIS, Reval), <strong>payment platforms</strong> (Finastra, Fiserv), and <strong>core banking systems</strong>. Integration architecture determines operational efficiency and user adoption.</p>
+<p><strong>Integration Patterns:</strong></p>
+<p><strong>1. API-Based Integration</strong>
+Enterprise systems call XRPL APIs directly via RESTful endpoints or WebSocket connections. This pattern suits organizations with in-house development resources and need for customization. Payment instructions flow from ERP → API layer → XRPL, while confirmations return via webhooks or polling.</p>
+<p><strong>2. Middleware Integration</strong>
+A payment gateway or middleware platform sits between enterprise systems and XRPL, handling translation, error handling, and retry logic. This pattern suits organizations preferring vendor-supported solutions and multi-ledger connectivity.</p>
+<p><strong>3. File-Based Integration</strong>
+Enterprise systems generate payment files (e.g., NACHA, ISO 20022) that a bridge application processes into XRPL transactions. This pattern suits legacy systems with batch-oriented workflows.</p>
+<p><strong>Key Integration Points:</strong></p>
+<ul>
+<li><strong>Payment initiation</strong>: ERP generates payment instructions with beneficiary details, amount, and metadata</li>
+<li><strong>Account management</strong>: Wallet creation, key management, and trust line configuration</li>
+<li><strong>Transaction monitoring</strong>: Real-time status tracking and exception alerting</li>
+<li><strong>Reconciliation</strong>: Automated matching of ledger transactions to accounting entries</li>
+<li><strong>Reporting</strong>: Transaction history, fee analysis, and audit trail generation</li>
+</ul>
+<p><strong>Technical Considerations:</strong></p>
+<ul>
+<li><strong>Security</strong>: Private key management using HSMs or MPC wallets, API authentication</li>
+<li><strong>Scalability</strong>: Connection pooling, rate limiting, and transaction queuing for high volumes</li>
+<li><strong>Error handling</strong>: Retry logic, timeout management, and manual intervention workflows</li>
+<li><strong>Compliance</strong>: Transaction screening, sanctions checking, and reporting integration</li>
+</ul>
+<p>Implementation timelines typically range from 8-16 weeks for API integration, including requirements definition, development, testing, and production deployment.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/4/mod04_fig06.png" alt="Integration architecture illustration showing enterprise systems connecting to XRPL through various integration layers and patterns" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Integration architecture illustration showing enterprise systems connecting to XRPL through various integration layers and patterns</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Enterprise integration connects XRPL to ERP, TMS, payment platforms, and core banking systems</li>
+          <li>Integration patterns include direct API, middleware, and file-based approaches</li>
+          <li>Key integration points cover payment initiation, monitoring, reconciliation, and reporting</li>
+          <li>Security, scalability, error handling, and compliance are critical technical considerations</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 7: Modeling Cross-Border Payment Workflows with RLUSD -->
+    <section class="screen" id="screen-7" data-index="7">
+      
+      <div class="screen-lab">
+        <div class="lab-header">
+          <h2>🔬 Modeling Cross-Border Payment Workflows with RLUSD</h2>
+          <p class="lab-objective"><strong>Objective:</strong> Students will analyze and compare traditional correspondent banking workflows with RLUSD-based payment flows for remittances, treasury movements, and disbursements, calculating cost and time savings while identifying integration points.</p>
+          <div class="lab-meta"><span class="lab-meta-item">⏱ Estimated time: 45 minutes</span><span class="lab-meta-item">💻 Platform: Windows PC with internet browser</span></div>
+          <div class="lab-prereqs">
+            <strong>Prerequisites:</strong>
+            <ul><li>Web browser (Chrome, Edge, or Firefox)</li><li>Access to ripple.com and XRPL documentation</li><li>Spreadsheet software (Excel or Google Sheets)</li><li>Notepad or text editor</li><li>Calculator or spreadsheet for cost calculations</li></ul>
+          </div></div><div class="lab-procedures"><h3>Procedures</h3>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">1</span>
+            <span class="lab-step-instruction">Navigate to the Ripple Payments documentation and locate the RLUSD stablecoin overview page</span>
+          </div><div class="lab-step-detail"><p>Open your web browser and navigate to:</p>
+<p><code>https://ripple.com/solutions/crypto-liquidity/</code></p>
+<p>From the main navigation menu, select <strong>Solutions</strong> &gt; <strong>Crypto Liquidity</strong>. Scroll to the section titled &quot;Ripple USD (RLUSD)&quot; or use the search function to find &quot;RLUSD stablecoin.&quot;</p>
+<p>Alternatively, you can access the documentation directly at:</p>
+<p><code>https://docs.ripple.com/</code></p>
+<p>Use the documentation search bar and enter: <code>RLUSD stablecoin</code></p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>You should see the RLUSD overview page displaying key features including 1:1 USD backing, regulatory compliance details, and supported networks (XRP Ledger and Ethereum).</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Confirm you can see sections describing RLUSD's use cases for payments, the backing mechanism, and network availability.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">2</span>
+            <span class="lab-step-instruction">Create a comparison spreadsheet for traditional vs. RLUSD remittance workflows</span>
+          </div><div class="lab-step-detail"><p>Open Microsoft Excel or Google Sheets and create a new workbook named <code>RLUSD_Payment_Analysis.xlsx</code>.</p>
+<p>Create the first worksheet and rename it to <code>Remittance_Comparison</code>.</p>
+<p>Set up the following column headers in Row 1:</p>
+<ul>
+<li>Column A: <strong>Payment Stage</strong></li>
+<li>Column B: <strong>Traditional Correspondent Banking</strong></li>
+<li>Column C: <strong>RLUSD on XRPL</strong></li>
+<li>Column D: <strong>Time Saved</strong></li>
+<li>Column E: <strong>Cost Saved</strong></li>
+</ul>
+<p>In Column A, starting from Row 2, enter these payment stages:</p>
+<ol>
+<li>Payment Initiation</li>
+<li>Currency Conversion</li>
+<li>Correspondent Bank 1</li>
+<li>Correspondent Bank 2</li>
+<li>Correspondent Bank 3</li>
+<li>Final Settlement</li>
+<li>Beneficiary Credit</li>
+<li><strong>Total</strong></li>
+</ol>
+<p>Format the header row with bold text and light blue background.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A structured spreadsheet with 7 payment stages listed plus a totals row, ready for data entry across traditional and RLUSD workflows.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Your spreadsheet should have 5 columns and 9 rows (including header and total row). Column A should list all 7 payment stages.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">3</span>
+            <span class="lab-step-instruction">Document the traditional correspondent banking workflow timing and costs</span>
+          </div><div class="lab-step-detail"><p>Based on typical correspondent banking data, populate Column B with realistic workflow details. For each stage in Column A, enter the following in Column B:</p>
+<p><strong>Row 2 (Payment Initiation):</strong> <code>Customer submits wire transfer request; 2-4 hours processing; $15 origination fee</code></p>
+<p><strong>Row 3 (Currency Conversion):</strong> <code>Source bank converts USD to intermediate currency; 4-6 hours; 1.5% FX spread</code></p>
+<p><strong>Row 4 (Correspondent Bank 1):</strong> <code>First intermediary processes and forwards; 6-12 hours; $25 correspondent fee</code></p>
+<p><strong>Row 5 (Correspondent Bank 2):</strong> <code>Second intermediary compliance check; 12-24 hours; $30 correspondent fee</code></p>
+<p><strong>Row 6 (Correspondent Bank 3):</strong> <code>Third intermediary routing; 6-8 hours; $20 correspondent fee</code></p>
+<p><strong>Row 7 (Final Settlement):</strong> <code>Destination bank settles funds; 4-6 hours; $25 receiving fee</code></p>
+<p><strong>Row 8 (Beneficiary Credit):</strong> <code>Final credit to beneficiary account; 2-4 hours; No additional fee</code></p>
+<p><strong>Row 9 (Total):</strong> <code>3-5 business days; $115 + FX spread (~1.5-3%)</code></p>
+<p>Widen Column B to fit all text content.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Column B fully populated with realistic timing and cost data for a traditional $10,000 cross-border wire transfer through correspondent banking network.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Each row in Column B should contain timing information, processing details, and fee amounts. The total should indicate 3-5 business days.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">4</span>
+            <span class="lab-step-instruction">Navigate to XRPL.org and research RLUSD transaction settlement times</span>
+          </div><div class="lab-step-detail"><p>Open a new browser tab and navigate to:</p>
+<p><code>https://xrpl.org/</code></p>
+<p>From the main menu, select <strong>Docs</strong> &gt; <strong>Concepts</strong> &gt; <strong>Consensus Protocol</strong>.</p>
+<p>Locate information about ledger close time. You should find that the XRP Ledger closes a new ledger every 3-5 seconds.</p>
+<p>Next, navigate to:</p>
+<p><code>https://xrpl.org/payment.html</code></p>
+<p>Read about Payment transactions and note that payments are final once validated in a closed ledger (irreversible settlement).</p>
+<p>Document the following key facts in Notepad:</p>
+<ul>
+<li>Ledger close time: 3-5 seconds</li>
+<li>Transaction finality: Immediate upon ledger validation</li>
+<li>Settlement finality: No chargebacks or reversals after validation</li>
+</ul>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Documentation showing XRP Ledger validates transactions in 3-5 seconds with immediate finality, compared to the 3-5 day settlement in traditional banking.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Your notes should confirm that XRPL transactions achieve final settlement within seconds, not days.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">5</span>
+            <span class="lab-step-instruction">Populate the RLUSD workflow timing and costs in the spreadsheet</span>
+          </div><div class="lab-step-detail"><p>Return to your <code>RLUSD_Payment_Analysis.xlsx</code> spreadsheet.</p>
+<p>In Column C, document the RLUSD-based workflow for each stage:</p>
+<p><strong>Row 2 (Payment Initiation):</strong> <code>Customer initiates RLUSD payment via API; 1-2 minutes; $0.50 platform fee</code></p>
+<p><strong>Row 3 (Currency Conversion):</strong> <code>Automated USD to RLUSD at par (1:1); 30 seconds; No FX spread</code></p>
+<p><strong>Row 4 (Correspondent Bank 1):</strong> <code>Not required - direct settlement; 0 minutes; $0</code></p>
+<p><strong>Row 5 (Correspondent Bank 2):</strong> <code>Not required - direct settlement; 0 minutes; $0</code></p>
+<p><strong>Row 6 (Correspondent Bank 3):</strong> <code>Not required - direct settlement; 0 minutes; $0</code></p>
+<p><strong>Row 7 (Final Settlement):</strong> <code>XRPL ledger validation; 3-5 seconds; $0.00001 network fee</code></p>
+<p><strong>Row 8 (Beneficiary Credit):</strong> <code>Automated RLUSD to local currency; 1-2 minutes; 0.2% conversion fee</code></p>
+<p><strong>Row 9 (Total):</strong> <code>5-10 minutes total; ~$0.50 + 0.2% conversion = $20.50 for $10,000 transfer</code></p>
+<p>Format Column C with light green background to highlight the improved workflow.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Column C shows a dramatically simplified workflow with no intermediary banks, settlement in minutes instead of days, and costs under $21 for a $10,000 transfer versus $115+ for traditional methods.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> The total row should show 5-10 minutes total time and approximately $20.50 in total costs for RLUSD workflow.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">6</span>
+            <span class="lab-step-instruction">Calculate time and cost savings in Columns D and E</span>
+          </div><div class="lab-step-detail"><p>In Column D (Time Saved), enter formulas or values showing the time reduction:</p>
+<p><strong>Row 2:</strong> <code>2-4 hours → 1-2 minutes = ~3.5 hours saved</code></p>
+<p><strong>Row 3:</strong> <code>4-6 hours → 30 seconds = ~5 hours saved</code></p>
+<p><strong>Row 4-6:</strong> <code>24-44 hours → 0 = ~34 hours saved (combined)</code></p>
+<p><strong>Row 7:</strong> <code>4-6 hours → 5 seconds = ~5 hours saved</code></p>
+<p><strong>Row 8:</strong> <code>2-4 hours → 2 minutes = ~3 hours saved</code></p>
+<p><strong>Row 9 (Total):</strong> <code>3-5 business days → 10 minutes = 99.8% time reduction</code></p>
+<p>In Column E (Cost Saved), calculate savings:</p>
+<p><strong>Row 2:</strong> <code>$15 - $0.50 = $14.50</code></p>
+<p><strong>Row 3:</strong> <code>$150 (1.5% of $10K) - $0 = $150.00</code></p>
+<p><strong>Row 4-6:</strong> <code>$75 - $0 = $75.00</code></p>
+<p><strong>Row 7:</strong> <code>$25 - $0.00001 = $24.99999</code></p>
+<p><strong>Row 8:</strong> <code>$0 - $20 (0.2% of $10K) = -$20.00</code></p>
+<p><strong>Row 9 (Total):</strong> <code>$265 - $20.50 = $244.50 saved (92% cost reduction)</code></p>
+<p>Format the Total row with bold text and yellow background.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Calculations showing 99.8% time reduction (days to minutes) and 92% cost reduction ($244.50 savings on a $10,000 transfer).</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Row 9 totals should show nearly 100% time savings and over 90% cost savings for RLUSD vs. traditional correspondent banking.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">7</span>
+            <span class="lab-step-instruction">Create a treasury movement workflow diagram in a new worksheet</span>
+          </div><div class="lab-step-detail"><p>In your Excel workbook, create a new worksheet and name it <code>Treasury_Movement</code>.</p>
+<p>Create a text-based workflow diagram for intercompany treasury transfers:</p>
+<p>In cell A1, enter: <strong>TREASURY MOVEMENT SCENARIO</strong></p>
+<p>In cell A3, enter: <code>Scenario: US Parent Company needs to fund EUR subsidiary operations</code></p>
+<p>In cell A4, enter: <code>Amount: $5,000,000 USD</code></p>
+<p>In cell A6, create this workflow structure:</p>
+<pre><code>TRADITIONAL TREASURY MOVEMENT:
+Step 1: Treasury manager initiates wire [4 hours]
+Step 2: US bank converts USD to EUR [1-2 days, 0.8% spread = $40,000]
+Step 3: Correspondent banks process [2-3 days, $150 fees]
+Step 4: EUR subsidiary receives funds [1 day]
+Total: 4-6 days | Cost: $40,150
+
+RLUSD TREASURY MOVEMENT:
+Step 1: Treasury system API calls RLUSD transfer [2 minutes]
+Step 2: US entity converts USD to RLUSD 1:1 [30 seconds, $0]
+Step 3: RLUSD transferred on XRPL [5 seconds, $0.00001]
+Step 4: EUR subsidiary converts RLUSD to EUR via DEX [2 minutes, 0.15% = $7,500]
+Total: 5 minutes | Cost: $7,500
+
+SAVINGS: 99.9% faster | $32,650 saved (81% cost reduction)
+</code></pre>
+<p>Format this section with Courier New font for clarity.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A clear comparison showing treasury movement time reduced from 4-6 days to 5 minutes, with significant cost savings on the $5M transfer.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> The worksheet should show both workflows side-by-side with total time and cost clearly calculated at the bottom of each section.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">8</span>
+            <span class="lab-step-instruction">Research RLUSD integration points with enterprise systems</span>
+          </div><div class="lab-step-detail"><p>Navigate to the Ripple Payments API documentation:</p>
+<p><code>https://docs.ripple.com/</code></p>
+<p>Search for &quot;API integration&quot; or browse to <strong>Developer</strong> &gt; <strong>APIs</strong>.</p>
+<p>Document the following integration capabilities in a new text file named <code>Integration_Points.txt</code>:</p>
+<p><strong>ERP System Integration:</strong></p>
+<ul>
+<li>REST API endpoints for payment initiation</li>
+<li>Webhook notifications for payment status updates</li>
+<li>Bulk payment file processing (CSV, XML)</li>
+<li>Real-time balance queries</li>
+</ul>
+<p><strong>Treasury Management System (TMS) Integration:</strong></p>
+<ul>
+<li>Real-time FX rate feeds</li>
+<li>Multi-currency balance consolidation</li>
+<li>Automated liquidity management rules</li>
+<li>Reconciliation file exports</li>
+</ul>
+<p><strong>Payment Platform Integration:</strong></p>
+<ul>
+<li>OAuth 2.0 authentication</li>
+<li>Payment status tracking endpoints</li>
+<li>Settlement confirmation callbacks</li>
+<li>Exception handling APIs</li>
+</ul>
+<p>Note the API authentication requirements and supported data formats (JSON, XML).</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A comprehensive list of integration points showing how RLUSD can connect with SAP, Oracle ERP, treasury management systems, and payment platforms via standard APIs.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Your Integration_Points.txt file should contain at least 12 specific integration capabilities across ERP, TMS, and payment platforms.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">9</span>
+            <span class="lab-step-instruction">Create a global disbursement use case analysis</span>
+          </div><div class="lab-step-detail"><p>Create a new worksheet in your Excel workbook named <code>Global_Disbursements</code>.</p>
+<p>Document a payroll disbursement scenario:</p>
+<p><strong>Cell A1:</strong> <code>GLOBAL PAYROLL DISBURSEMENT USE CASE</code></p>
+<p><strong>Cell A3:</strong> <code>Company: Multinational software company</code>
+<strong>Cell A4:</strong> <code>Employees: 500 contractors across 25 countries</code>
+<strong>Cell A5:</strong> <code>Monthly payroll: $2,000,000 USD equivalent</code></p>
+<p>Create a comparison table starting at Row 7:</p>
+<table>
+<thead>
+<tr>
+<th>Criteria</th>
+<th>Traditional Wire Transfers</th>
+<th>RLUSD Payments</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Processing time per payment</td>
+<td>3-5 days</td>
+<td>5 minutes</td>
+</tr>
+<tr>
+<td>Cost per $4,000 payment</td>
+<td>$35 wire fee + 2% FX = $115</td>
+<td>$0.50 + 0.2% FX = $8.50</td>
+</tr>
+<tr>
+<td>Total monthly cost (500 payments)</td>
+<td>$57,500</td>
+<td>$4,250</td>
+</tr>
+<tr>
+<td>Failed payment rate</td>
+<td>8-12% (require reprocessing)</td>
+<td>&lt;1% (address validation)</td>
+</tr>
+<tr>
+<td>Compliance overhead</td>
+<td>Manual review per jurisdiction</td>
+<td>Automated compliance checks</td>
+</tr>
+<tr>
+<td>Employee satisfaction</td>
+<td>Low (delays, high fees)</td>
+<td>High (same-day, low fees)</td>
+</tr>
+<tr>
+<td>Monthly time savings</td>
+<td>N/A</td>
+<td>2,495 hours (499+ days)</td>
+</tr>
+<tr>
+<td>Annual cost savings</td>
+<td>N/A</td>
+<td>$639,000</td>
+</tr>
+</tbody></table>
+<p>Format the table with borders and alternating row colors.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A detailed use case showing how RLUSD enables same-day global payroll disbursements with 93% cost reduction and massive time savings.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> The table should show $639,000 annual savings and 2,495 hours monthly time savings for the 500-employee disbursement scenario.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">10</span>
+            <span class="lab-step-instruction">Access the XRPL transaction explorer to view live settlement examples</span>
+          </div><div class="lab-step-detail"><p>Navigate to the XRP Ledger explorer:</p>
+<p><code>https://livenet.xrpl.org/</code></p>
+<p>In the search bar at the top, you can explore recent transactions. Click on <strong>Ledgers</strong> in the main navigation to see the live ledger close times.</p>
+<p>Observe the following:</p>
+<ul>
+<li>Note the <strong>Ledger Index</strong> number incrementing every 3-5 seconds</li>
+<li>Click on any recent ledger to see the transactions included</li>
+<li>Note the <strong>Close Time</strong> showing exact timestamp</li>
+<li>Observe the <strong>Transaction Count</strong> in each ledger</li>
+</ul>
+<p>Click on an individual Payment transaction (look for transactions with type &quot;Payment&quot;). Document:</p>
+<ul>
+<li>Transaction hash (long alphanumeric string)</li>
+<li>Account addresses (sender and receiver)</li>
+<li>Amount transferred</li>
+<li>Transaction cost (typically 0.00001 XRP or less)</li>
+<li>Validated status</li>
+</ul>
+<p>In your Notepad, record: <code>Observed ledger close interval: [X] seconds</code> and <code>Sample transaction fee: [Y] XRP</code></p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Real-time observation of the XRP Ledger closing new ledgers every 3-5 seconds with immediate transaction finality and minimal fees.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> You should see the ledger index incrementing regularly, with each ledger containing validated Payment transactions showing near-instant settlement.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">11</span>
+            <span class="lab-step-instruction">Calculate break-even analysis for RLUSD implementation</span>
+          </div><div class="lab-step-detail"><p>Create a new worksheet named <code>ROI_Analysis</code>.</p>
+<p>Set up a break-even calculation for implementing RLUSD payments:</p>
+<p><strong>Implementation Costs (one-time):</strong></p>
+<ul>
+<li>Cell A2: <code>API Integration Development: $50,000</code></li>
+<li>Cell A3: <code>Staff Training: $15,000</code></li>
+<li>Cell A4: <code>Compliance Review: $10,000</code></li>
+<li>Cell A5: <code>Testing &amp; Validation: $8,000</code></li>
+<li>Cell A6: <strong>Total Implementation Cost:</strong> Use formula <code>=SUM(A2:A5)</code> which equals <code>$83,000</code></li>
+</ul>
+<p><strong>Monthly Savings:</strong></p>
+<ul>
+<li>Cell C2: <code>Remittance cost savings (100 transactions): $24,450</code></li>
+<li>Cell C3: <code>Treasury movement savings (4 transactions): $32,650</code></li>
+<li>Cell C4: <code>Payroll disbursement savings (500 employees): $53,250</code></li>
+<li>Cell C5: <strong>Total Monthly Savings:</strong> Use formula <code>=SUM(C2:C4)</code> which equals <code>$110,350</code></li>
+</ul>
+<p><strong>Break-even Analysis:</strong></p>
+<ul>
+<li>Cell A9: <code>Break-even period (months):</code></li>
+<li>Cell B9: <code>=A6/C5</code> which calculates to <code>0.75 months (~23 days)</code></li>
+</ul>
+<p><strong>12-Month ROI:</strong></p>
+<ul>
+<li>Cell A11: <code>Total annual savings:</code></li>
+<li>Cell B11: <code>=C5*12</code> which equals <code>$1,324,200</code></li>
+<li>Cell A12: <code>Net benefit (Year 1):</code></li>
+<li>Cell B12: <code>=B11-A6</code> which equals <code>$1,241,200</code></li>
+<li>Cell A13: <code>ROI Percentage:</code></li>
+<li>Cell B13: <code>=(B12/A6)*100</code> which equals <code>1,495%</code></li>
+</ul>
+<p>Format currency cells with $ symbol and ROI as percentage.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A clear ROI analysis showing break-even in less than one month and nearly 1,500% first-year ROI, demonstrating strong business case for RLUSD implementation.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Cell B9 should show approximately 0.75 months, and cell B13 should show ROI greater than 1,400%.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">12</span>
+            <span class="lab-step-instruction">Document workflow integration touchpoints for each use case</span>
+          </div><div class="lab-step-detail"><p>Create a new worksheet named <code>System_Integration_Map</code>.</p>
+<p>Create an integration mapping table with these columns:</p>
+<ul>
+<li>Column A: <strong>Use Case</strong></li>
+<li>Column B: <strong>Existing System</strong></li>
+<li>Column C: <strong>Integration Point</strong></li>
+<li>Column D: <strong>Data Flow</strong></li>
+<li>Column E: <strong>Frequency</strong></li>
+</ul>
+<p>Populate with the following integrations:</p>
+<p><strong>Remittances:</strong></p>
+<ul>
+<li>Row 2: <code>Cross-border Remittance | Core Banking System | Payment Initiation API | Customer request → RLUSD transfer | Real-time</code></li>
+<li>Row 3: <code>Cross-border Remittance | AML/KYC System | Compliance Webhook | Transaction details → Risk screening | Per transaction</code></li>
+<li>Row 4: <code>Cross-border Remittance | Accounting System | Settlement Notification | Confirmed payment → GL posting | Real-time</code></li>
+</ul>
+<p><strong>Treasury Movement:</strong></p>
+<ul>
+<li>Row 5: <code>Intercompany Transfer | Treasury Management System | Balance Query API | Account balances ← RLUSD positions | Every 15 minutes</code></li>
+<li>Row 6: <code>Intercompany Transfer | ERP System | Transfer Initiation | Treasury instruction → RLUSD transfer | On-demand</code></li>
+<li>Row 7: <code>Intercompany Transfer | Reconciliation System | Settlement Report | Completed transfers → Daily reconciliation file | Daily batch</code></li>
+</ul>
+<p><strong>Disbursements:</strong></p>
+<ul>
+<li>Row 8: <code>Global Payroll | HRIS System | Bulk Payment API | Employee payment file → RLUSD disbursements | Monthly</code></li>
+<li>Row 9: <code>Global Payroll | Payroll System | Status Callback | Payment confirmations → Employee records | Real-time</code></li>
+<li>Row 10: <code>Vendor Payments | AP System | Invoice Payment API | Approved invoices → RLUSD payments | Daily batch</code></li>
+</ul>
+<p>Format with borders and header row highlighting.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A comprehensive integration map showing 9 specific system touchpoints across remittance, treasury, and disbursement use cases.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> The table should contain at least 3 integration points per use case category, clearly showing bidirectional data flows and update frequencies.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">13</span>
+            <span class="lab-step-instruction">Review and save all analysis documents</span>
+          </div><div class="lab-step-detail"><p>Review each worksheet in your <code>RLUSD_Payment_Analysis.xlsx</code> workbook:</p>
+<ol>
+<li><strong>Remittance_Comparison</strong> - Verify cost/time savings calculations</li>
+<li><strong>Treasury_Movement</strong> - Confirm workflow comparison is complete</li>
+<li><strong>Global_Disbursements</strong> - Check annual savings calculation</li>
+<li><strong>ROI_Analysis</strong> - Validate break-even and ROI formulas</li>
+<li><strong>System_Integration_Map</strong> - Ensure all integration points are documented</li>
+</ol>
+<p>Save the Excel file to your Documents folder:</p>
+<ul>
+<li>Click <strong>File</strong> &gt; <strong>Save As</strong></li>
+<li>Navigate to <code>C:\Users\[YourUsername]\Documents\</code></li>
+<li>Filename: <code>RLUSD_Payment_Analysis.xlsx</code></li>
+<li>Click <strong>Save</strong></li>
+</ul>
+<p>Save your <code>Integration_Points.txt</code> file to the same location:</p>
+<ul>
+<li>Open Notepad with your integration notes</li>
+<li>Click <strong>File</strong> &gt; <strong>Save As</strong></li>
+<li>Navigate to <code>C:\Users\[YourUsername]\Documents\</code></li>
+<li>Filename: <code>Integration_Points.txt</code></li>
+<li>Save as type: <strong>Text Documents (*.txt)</strong></li>
+<li>Click <strong>Save</strong></li>
+</ul>
+<p>Create a summary screenshot by pressing <strong>Windows Key + Shift + S</strong>, selecting the rectangular selection tool, and capturing your Remittance_Comparison worksheet showing the total savings row.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Two saved files in your Documents folder: RLUSD_Payment_Analysis.xlsx (with 5 worksheets) and Integration_Points.txt. A screenshot saved to clipboard showing the comparison analysis.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Navigate to C:\Users\[YourUsername]\Documents\ in File Explorer and confirm both files are present with today's modification date.</span>
+          </div></div></div>
+        <div class="lab-troubleshooting">
+          <h3>⚠️ Troubleshooting</h3>
+          <details class="lab-trouble-item">
+            <summary>Unable to access Ripple.com or XRPL.org documentation pages due to network restrictions or slow loading</summary>
+            <div class="lab-trouble-solution"><p>If corporate firewall blocks access, request temporary access from IT department or use cached versions via Google search (click the down arrow next to result and select &#39;Cached&#39;). Alternatively, access documentation from a mobile device with personal internet connection. If pages load slowly, disable browser extensions or try incognito/private browsing mode. The XRPL.org documentation is also available at <a href="https://xrpl.org/docs.html">https://xrpl.org/docs.html</a> as a direct link.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>Excel formulas showing #VALUE! or #REF! errors in the ROI_Analysis worksheet</summary>
+            <div class="lab-trouble-solution"><p>Verify that all referenced cells contain numeric values without text formatting. Check that implementation cost cells (A2:A5) contain only numbers without dollar signs if using formulas (format cells as Currency after formula entry). Ensure there are no merged cells disrupting the cell references. Re-enter the formula =SUM(A2:A5) by clicking cell A6, typing the formula, and pressing Enter. If using a non-English version of Excel, formulas may need semicolons (;) instead of commas (,) as separators.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>Difficulty calculating percentage savings correctly between traditional and RLUSD workflows</summary>
+            <div class="lab-trouble-solution"><p>Use this formula for percentage savings: ((Traditional Cost - RLUSD Cost) / Traditional Cost) × 100. For example, for remittance costs: (($265 - $20.50) / $265) × 100 = 92.3% savings. Ensure you&#39;re comparing like amounts (same transfer size). For time savings converting days to minutes: 3 days = 4,320 minutes, so (4,320 - 10) / 4,320 × 100 = 99.8% time saved. Double-check that you&#39;re subtracting in the correct order (higher value minus lower value) before dividing.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>XRPL Ledger explorer (livenet.xrpl.org) not showing recent transactions or showing 'No ledgers found' message</summary>
+            <div class="lab-trouble-solution"><p>The XRPL mainnet is always active, so this indicates a temporary connectivity issue. Refresh the browser page (press F5 or Ctrl+R). Clear browser cache by pressing Ctrl+Shift+Delete and selecting &#39;Cached images and files&#39;, then reload. If problem persists, try an alternative explorer: <a href="https://xrpscan.com/">https://xrpscan.com/</a> or <a href="https://bithomp.com/explorer/">https://bithomp.com/explorer/</a> which provide similar transaction viewing capabilities. Verify your internet connection is stable. The ledger closes every 3-5 seconds, so within 10 seconds of refreshing you should see a new ledger.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>Unable to determine realistic cost figures for traditional correspondent banking fees</summary>
+            <div class="lab-trouble-solution"><p>If you need more accurate figures for your specific region, consult SWIFT&#39;s published gpi statistics (<a href="https://www.swift.com/swift-gpi">https://www.swift.com/swift-gpi</a>) which show average correspondent banking fees of $25-$50 per intermediary. World Bank Remittance Prices Worldwide database (remittanceprices.worldbank.org) provides regional averages for FX spreads (typically 1-3% for retail, 0.5-1.5% for institutional). For this lab exercise, use the provided baseline figures: $15 origination, $25-30 per correspondent bank, 1.5% FX spread for retail, 0.5% for institutional. These represent industry-standard estimates for educational purposes.</p>
+</div>
+          </details></div>
+        <div class="lab-challenge">
+          <h3>🏆 Multi-Currency Liquidity Optimization Model</h3>
+          <p class="lab-challenge-intro">Apply what you learned — complete this task without step-by-step guidance.</p>
+          <div class="lab-challenge-body"><p>Design a complete liquidity management strategy for a multinational corporation with subsidiaries in 8 countries (USA, UK, Germany, Japan, Singapore, Brazil, UAE, Australia).</p>
+<p><strong>Your challenge:</strong> Create a comprehensive model that:</p>
+<ol>
+<li><p><strong>Analyzes current state</strong>: Document the corporation&#39;s current treasury structure with local bank accounts in each country, estimating monthly cross-border funding needs between entities based on seasonal business patterns (e.g., US parent funds APAC subsidiaries in Q4 for holiday inventory, EMEA entities repatriate profits in Q1).</p>
+</li>
+<li><p><strong>Designs RLUSD liquidity pools</strong>: Propose a centralized RLUSD treasury strategy that maintains optimal liquidity balances to meet 90% of cross-border funding needs within 15 minutes. Calculate the required RLUSD pool size and allocate backup reserves.</p>
+</li>
+<li><p><strong>Maps automated triggers</strong>: Define specific business rules and API integration flows that automatically initiate RLUSD transfers when subsidiary account balances fall below thresholds or when intercompany invoices are approved in the ERP system.</p>
+</li>
+<li><p><strong>Quantifies total value</strong>: Calculate comprehensive savings including reduced FX losses from timing differences, eliminated float time on trapped cash, reduced banking fees, and improved interest income from centralized treasury management. Build a 3-year financial projection.</p>
+</li>
+<li><p><strong>Identifies risks and controls</strong>: Document operational risks (e.g., RLUSD liquidity availability, exchange rate volatility when converting back to fiat, regulatory restrictions in specific countries) and design mitigation controls.</p>
+</li>
+</ol>
+<p>Deliver your analysis as a new Excel workbook with supporting documentation. Include workflow diagrams, decision trees for automated funding triggers, and a executive summary suitable for CFO presentation. Demonstrate understanding of both the technical RLUSD capabilities and the strategic treasury management implications.</p>
+</div>
+        </div>
+        <div class="lab-check">
+          <label class="checkbox-label">
+            <input type="checkbox" onchange="this.closest('.lab-check').classList.toggle('completed', this.checked)">
+            <span>I have completed this lab exercise</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 8: Knowledge Check -->
+    <section class="screen" id="screen-8" data-index="8">
+      
+      <div class="screen-quiz">
+        <h2>📝 Knowledge Check</h2>
+        <p class="quiz-intro">Test your understanding of the material covered in this module. Select the best answer for each question.</p>
+        <div id="quizForm">
+          <div class="quiz-question" id="qq-0">
+            <h4>Question 1</h4>
+            <p class="question-text">What is the primary cost advantage of RLUSD-based remittances compared to traditional correspondent banking?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q0" value="A">
+                <span class="option-text">A) Elimination of currency conversion requirements</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q0" value="B">
+                <span class="option-text">B) Removal of intermediary bank fees through direct settlement</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q0" value="C">
+                <span class="option-text">C) Government subsidies for blockchain-based payments</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q0" value="D">
+                <span class="option-text">D) Lower labor costs due to offshore processing</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-0"></div>
+          </div>
+          <div class="quiz-question" id="qq-1">
+            <h4>Question 2</h4>
+            <p class="question-text">In a traditional treasury movement workflow, what is the primary cause of trapped liquidity?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q1" value="A">
+                <span class="option-text">A) High transaction fees charged by correspondent banks</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q1" value="B">
+                <span class="option-text">B) Regulatory restrictions on cross-border capital flows</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q1" value="C">
+                <span class="option-text">C) Nostro accounts that must be prefunded at correspondent banks</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q1" value="D">
+                <span class="option-text">D) Daily settlement windows that limit transaction timing</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-1"></div>
+          </div>
+          <div class="quiz-question" id="qq-2">
+            <h4>Question 3</h4>
+            <p class="question-text">A multinational company processes 10,000 monthly vendor payments averaging $500 each. Traditional wire transfer costs are $25 per payment. Switching to RLUSD would reduce costs to approximately $1.50 per payment (0.3% FX spread). What would be the monthly savings?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q2" value="A">
+                <span class="option-text">A) $150,000</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q2" value="B">
+                <span class="option-text">B) $235,000</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q2" value="C">
+                <span class="option-text">C) $250,000</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q2" value="D">
+                <span class="option-text">D) $265,000</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-2"></div>
+          </div>
+          <div class="quiz-question" id="qq-3">
+            <h4>Question 4</h4>
+            <p class="question-text">Which integration pattern would be most appropriate for a legacy ERP system that cannot make real-time API calls but generates daily payment batch files?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q3" value="A">
+                <span class="option-text">A) Direct API integration with RESTful endpoints</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q3" value="B">
+                <span class="option-text">B) WebSocket-based real-time integration</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q3" value="C">
+                <span class="option-text">C) File-based integration with a bridge application</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q3" value="D">
+                <span class="option-text">D) Blockchain-native integration requiring ERP replacement</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-3"></div>
+          </div>
+          <div class="quiz-question" id="qq-4">
+            <h4>Question 5</h4>
+            <p class="question-text">What operational advantage does RLUSD provide for global payroll processing beyond cost reduction?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q4" value="A">
+                <span class="option-text">A) Elimination of employment tax obligations</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q4" value="B">
+                <span class="option-text">B) Immediate fund availability to employees rather than 3-7 day delays</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q4" value="C">
+                <span class="option-text">C) Automatic compliance with all local labor regulations</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q4" value="D">
+                <span class="option-text">D) Reduced employer payroll tax rates</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-4"></div>
+          </div>
+          <div class="quiz-question" id="qq-5">
+            <h4>Question 6</h4>
+            <p class="question-text">In an RLUSD treasury movement workflow integrated with a Treasury Management System (TMS), at what point does the receiving entity's cash position update?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q5" value="A">
+                <span class="option-text">A) When the sending entity initiates the transfer in their TMS</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q5" value="B">
+                <span class="option-text">B) At end-of-day settlement after batch reconciliation</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q5" value="C">
+                <span class="option-text">C) In real-time upon XRPL transaction settlement confirmation</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q5" value="D">
+                <span class="option-text">D) After manual verification by treasury staff (typically 2-4 hours)</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-5"></div>
+          </div>
+          <div class="quiz-question" id="qq-6">
+            <h4>Question 7</h4>
+            <p class="question-text">Which cost component is NOT typically included when calculating the total cost of traditional cross-border payments?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q6" value="A">
+                <span class="option-text">A) FX spreads charged on currency conversion</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q6" value="B">
+                <span class="option-text">B) Opportunity cost of capital tied up in nostro accounts</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q6" value="C">
+                <span class="option-text">C) Blockchain transaction fees from competing networks</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q6" value="D">
+                <span class="option-text">D) Operational overhead for exception handling and reconciliation</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-6"></div>
+          </div>
+          <div class="quiz-question" id="qq-7">
+            <h4>Question 8</h4>
+            <p class="question-text">What is the primary technical consideration when implementing XRPL integration for enterprise payment systems?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q7" value="A">
+                <span class="option-text">A) Ensuring sufficient physical server space for blockchain data storage</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q7" value="B">
+                <span class="option-text">B) Private key management using HSMs or MPC wallets for security</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q7" value="C">
+                <span class="option-text">C) Hiring blockchain developers to replace existing IT staff</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q7" value="D">
+                <span class="option-text">D) Migrating all enterprise data to distributed ledger storage</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-7"></div>
+          </div>
+          <div class="quiz-actions">
+            <button type="button" class="btn btn-primary quiz-submit-btn" onclick="gradeQuiz()">Submit Answers</button>
+            <button type="button" class="btn btn-secondary" onclick="resetQuiz()">Reset</button>
+          </div>
+          <div class="quiz-results" id="quizResults"></div>
+        </div>
+      </div><script>window.__quizAnswers = ["B","C","B","C","B","C","C","B"]; window.__quizExplanations = ["RLUSD enables direct institution-to-institution transfers without routing through multiple correspondent banks, eliminating the 3-5 intermediary fees that traditionally account for most remittance costs. Currency conversion is still required, and there are no government subsidies or offshore processing involved.","Nostro accounts—prefunded accounts that institutions maintain at correspondent banks to facilitate payments—tie up an estimated $3-5 trillion globally. This capital could otherwise be deployed productively but must remain idle to ensure payment capacity. RLUSD reduces this requirement through real-time settlement.","Traditional cost: 10,000 × $25 = $250,000. RLUSD cost: 10,000 × $1.50 = $15,000. Monthly savings: $250,000 - $15,000 = $235,000. This represents a 94% cost reduction.","File-based integration is designed specifically for legacy systems that work with batch files (e.g., NACHA, ISO 20022). A bridge application reads these files and converts them into XRPL transactions, allowing the legacy system to continue operating without modification while gaining blockchain payment capabilities.","RLUSD settles in 3-5 seconds, enabling employees to receive salary payments immediately rather than waiting days for international wire transfers to clear. This improves employee satisfaction and cash flow. Tax obligations, regulatory compliance, and tax rates are unchanged by the payment method.","XRPL settlement occurs in 3-5 seconds with immediate on-ledger confirmation. When integrated via API, the receiving entity's TMS can update cash positions in real-time upon receiving this confirmation, enabling intraday liquidity optimization. This is a key advantage over traditional systems that require end-of-day settlement and manual reconciliation.","Traditional payment systems do not use blockchain networks, so blockchain fees are not a cost component. The actual cost components include FX spreads (0.5-2%), nostro account opportunity costs (capital × cost of capital), correspondent fees ($10-40 per transaction), and operational overhead (staff time for processing and exceptions).","Private key management is the critical security consideration, as keys control access to RLUSD funds. Hardware Security Modules (HSMs) or Multi-Party Computation (MPC) wallets provide enterprise-grade key protection. Physical servers, staff replacement, and data migration are not required—XRPL integration typically occurs via APIs alongside existing systems."];</script>
+    </section>
+
+    <!-- Screen 9: Summary -->
+    <section class="screen" id="screen-9" data-index="9">
+      
+      <div class="screen-summary">
+        <h2>🎯 Module Summary</h2>
+        <div class="summary-content"><p>This module examined three core institutional use cases for RLUSD: <strong>remittances</strong> (achieving 60-80% cost reduction and same-day settlement), <strong>treasury movement</strong> (enabling real-time liquidity optimization and freeing trapped nostro capital), and <strong>global disbursements</strong> (streamlining payroll and vendor payments with instant settlement). We analyzed detailed workflows for each use case, developed cost models demonstrating ROI in 0-12 months, and explored enterprise integration patterns connecting XRPL to ERP, TMS, and payment platforms. Key takeaways include the importance of liquidity management, automated reconciliation, and phased implementation starting with high-volume corridors.</p>
+</div>
+        
+        <div class="objectives-review">
+          <h3>Learning Objectives — Review</h3>
+          <ul class="objectives-checklist">
+            
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Analyze operational workflows for remittances, treasury movement, and global disbursements using RLUSD</span>
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Evaluate cost and speed advantages of stablecoin payments in each use case</span>
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Identify integration points with existing enterprise systems and processes</span>
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Design end-to-end payment flows for specific institutional scenarios</span>
+              </label>
+            </li>
+          </ul>
+        </div>
+        <div class="completion-box">
+          <div class="completion-icon">🎉</div>
+          <h3>Module Complete!</h3>
+          <p>You have completed all sections of this module.</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" id="prevBtn" onclick="prev()">← Previous</button>
+      <span class="screen-counter" id="screenCounter">1 / 10</span>
+      <button class="btn btn-primary" id="nextBtn" onclick="next()">Next →</button>
+    </div>
+  </main>
+
+</div>
+
+<!-- ====== FOOTER ====== -->
+<footer class="course-footer">
+  <span></span>
+  
+</footer>
+
+
+<script>
+(function() {
+  const TOTAL = 10;
+  let current = 0;
+  const visited = new Set([0]);
+
+  function update() {
+    // Screens
+    document.querySelectorAll('.screen').forEach((el, i) => {
+      el.classList.toggle('active', i === current);
+    });
+
+    // Nav
+    document.querySelectorAll('.nav-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === current);
+      btn.classList.toggle('visited', visited.has(i) && i !== current);
+    });
+    document.querySelectorAll('.nav-check').forEach((el, i) => {
+      el.style.display = visited.has(i) && i !== current ? 'inline' : 'none';
+    });
+
+    // Buttons
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').textContent = current === TOTAL - 1 ? 'Finish ✓' : 'Next →';
+    document.getElementById('screenCounter').textContent = (current + 1) + ' / ' + TOTAL;
+
+    // Progress
+    const pct = Math.round((visited.size / TOTAL) * 100);
+    document.getElementById('progressPercent').textContent = pct;
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    // Scroll to top of content
+    document.getElementById('content').scrollTop = 0;
+    window.scrollTo(0, 0);
+  }
+
+  window.goTo = function(i) {
+    if (i >= 0 && i < TOTAL) { current = i; visited.add(i); update(); }
+  };
+  window.next = function() {
+    if (current < TOTAL - 1) { current++; visited.add(current); update(); }
+  };
+  window.prev = function() {
+    if (current > 0) { current--; update(); }
+  };
+  window.toggleSidebar = function() {
+    document.getElementById('sidebar').classList.toggle('open');
+  };
+
+  // Quiz grading
+  window.gradeQuiz = function() {
+    const answers = window.__quizAnswers || [];
+    const explanations = window.__quizExplanations || [];
+    let correct = 0;
+
+    answers.forEach((ans, i) => {
+      const selected = document.querySelector('input[name="q' + i + '"]:checked');
+      const fb = document.getElementById('fb-' + i);
+      const questionDiv = document.getElementById('qq-' + i);
+      const labels = questionDiv.querySelectorAll('.option-label');
+
+      labels.forEach(l => l.classList.remove('correct', 'incorrect'));
+
+      if (selected) {
+        const userAns = selected.value;
+        const isCorrect = userAns === ans;
+        if (isCorrect) {
+          correct++;
+          selected.closest('.option-label').classList.add('correct');
+          fb.className = 'feedback show correct';
+          fb.textContent = '✓ Correct!' + (explanations[i] ? ' ' + explanations[i] : '');
+        } else {
+          selected.closest('.option-label').classList.add('incorrect');
+          // Highlight correct answer
+          labels.forEach(l => {
+            const inp = l.querySelector('input');
+            if (inp && inp.value === ans) l.classList.add('correct');
+          });
+          fb.className = 'feedback show incorrect';
+          fb.textContent = '✗ Incorrect. The correct answer is ' + ans + '.' + (explanations[i] ? ' ' + explanations[i] : '');
+        }
+      } else {
+        fb.className = 'feedback show incorrect';
+        fb.textContent = 'No answer selected. The correct answer is ' + ans + '.';
+      }
+    });
+
+    const pct = Math.round((correct / answers.length) * 100);
+    const results = document.getElementById('quizResults');
+    results.className = 'quiz-results show ' + (pct >= 80 ? 'pass' : 'fail');
+    results.textContent = 'Score: ' + correct + '/' + answers.length + ' (' + pct + '%)' +
+      (pct >= 80 ? ' — Passed! ✓' : ' — Review the material and try again.');
+  };
+
+  window.resetQuiz = function() {
+    document.querySelectorAll('#quizForm input[type="radio"]').forEach(el => { el.checked = false; });
+    document.querySelectorAll('.feedback').forEach(el => { el.className = 'feedback'; });
+    document.querySelectorAll('.option-label').forEach(el => { el.classList.remove('correct', 'incorrect'); });
+    document.getElementById('quizResults').className = 'quiz-results';
+  };
+
+  // Initial state
+  update();
+})();
+</script>
+
+</body>
+</html>

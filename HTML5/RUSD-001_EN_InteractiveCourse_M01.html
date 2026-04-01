@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to RLUSD and Institutional Payment Infrastructure — RLUSD Stablecoin Payments for Institutions</title>
+<style>
+/* === RESET & BASE === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #1a1a2e; background: #f8f9fa; line-height: 1.65; display: flex; flex-direction: column; min-height: 100vh;
+}
+
+/* === HEADER === */
+.course-header {
+  background: #1a1a2e; color: #fff; padding: 0.75rem 1.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+  position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.header-left { display: flex; align-items: center; gap: 1rem; }
+.course-number { font-size: 0.8rem; opacity: 0.7; font-family: monospace; }
+.course-title { font-size: 0.95rem; font-weight: 600; }
+.header-right { display: flex; align-items: center; gap: 1.5rem; font-size: 0.85rem; }
+.module-label { opacity: 0.8; }
+.progress-text { font-weight: 600; color: #6ee7b7; }
+.print-btn {
+  background: transparent; border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.85); font-size: 0.78rem; padding: 0.3rem 0.75rem;
+  border-radius: 3px; cursor: pointer; font-family: inherit;
+  transition: background 0.15s, border-color 0.15s; white-space: nowrap;
+}
+.print-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
+
+/* === LAYOUT === */
+.layout { display: flex; flex: 1; min-height: 0; }
+
+/* === SIDEBAR === */
+.sidebar {
+  width: 280px; background: #fff; border-right: 1px solid #e5e7eb;
+  display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+  position: sticky; top: 52px; height: calc(100vh - 52px);
+}
+.sidebar-header { padding: 1.25rem 1rem 0.75rem; display: flex; justify-content: space-between; align-items: start; }
+.sidebar-header h2 { font-size: 1rem; font-weight: 700; color: #1a1a2e; line-height: 1.3; }
+.sidebar-toggle { display: none; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #6b7280; }
+.progress-bar { height: 3px; background: #e5e7eb; margin: 0 1rem 0.5rem; border-radius: 2px; }
+.progress-fill { height: 100%; background: #3b82f6; border-radius: 2px; width: 0; transition: width 0.4s ease; }
+.nav-list { list-style: none; padding: 0.25rem 0.5rem 1rem; flex: 1; overflow-y: auto; }
+.nav-btn {
+  width: 100%; text-align: left; background: none; border: none; padding: 0.6rem 0.75rem;
+  display: flex; align-items: center; gap: 0.6rem; border-radius: 0.5rem;
+  cursor: pointer; font-size: 0.85rem; color: #4b5563; transition: all 0.15s;
+}
+.nav-btn:hover { background: #f3f4f6; color: #1a1a2e; }
+.nav-btn.active { background: #eff6ff; color: #2563eb; font-weight: 600; }
+.nav-btn.visited .nav-check { display: inline; }
+.nav-icon { font-size: 1rem; flex-shrink: 0; }
+.nav-label { flex: 1; }
+.nav-check { display: none; color: #22c55e; font-size: 0.8rem; flex-shrink: 0; }
+
+/* === MAIN CONTENT === */
+.content { flex: 1; padding: 2rem 3rem 2rem 2.5rem; max-width: 860px; min-height: calc(100vh - 52px); }
+.screen { display: none; animation: fadeIn 0.25s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* === NAV BUTTONS === */
+.nav-buttons {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;
+}
+.screen-counter { font-size: 0.85rem; color: #9ca3af; }
+.btn {
+  padding: 0.6rem 1.4rem; border-radius: 0.5rem; font-size: 0.9rem; font-weight: 600;
+  border: none; cursor: pointer; transition: all 0.15s;
+}
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn-primary { background: #2563eb; color: #fff; }
+.btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+.btn-secondary { background: #f3f4f6; color: #4b5563; }
+.btn-secondary:hover:not(:disabled) { background: #e5e7eb; }
+
+/* === LANDING SCREEN === */
+.screen-landing { text-align: center; padding: 3rem 0; }
+.screen-landing h1 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; }
+.screen-landing h2 { font-size: 2rem; font-weight: 800; color: #1a1a2e; margin-top: 0.25rem; }
+.objectives-box {
+  text-align: left; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.75rem;
+  padding: 1.5rem; margin: 2rem auto; max-width: 580px;
+}
+.objectives-box h3 { font-size: 1rem; margin-bottom: 0.5rem; color: #1e40af; }
+.objectives-box ul { margin-top: 0.5rem; padding-left: 1.25rem; }
+.objectives-box li { margin-bottom: 0.4rem; font-size: 0.92rem; color: #1e3a5f; }
+.start-hint { margin-top: 2rem; color: #9ca3af; font-size: 0.9rem; }
+
+/* === LESSON SCREEN === */
+.screen-lesson h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; color: #1a1a2e; }
+.lesson-content { font-size: 0.95rem; line-height: 1.75; }
+.lesson-content h3 { font-size: 1.15rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #1a1a2e; }
+.lesson-content h4 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
+.lesson-content p { margin-bottom: 0.75rem; }
+.lesson-content ul, .lesson-content ol { margin: 0.5rem 0 1rem 1.25rem; }
+.lesson-content li { margin-bottom: 0.3rem; }
+.lesson-content code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.88rem; }
+.lesson-content pre { background: #1e293b; color: #e2e8f0; padding: 1rem 1.25rem; border-radius: 0.5rem; overflow-x: auto; margin: 1rem 0; }
+.lesson-content pre code { background: none; padding: 0; color: inherit; }
+.lesson-content blockquote { border-left: 3px solid #3b82f6; padding: 0.5rem 1rem; background: #f8fafc; margin: 1rem 0; border-radius: 0 0.5rem 0.5rem 0; }
+.lesson-content table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+.lesson-content th, .lesson-content td { padding: 0.6rem 0.75rem; border: 1px solid #e5e7eb; text-align: left; }
+.lesson-content th { background: #f8fafc; font-weight: 600; }
+
+/* === MEDIA === */
+.media-block { margin: 1.5rem 0; text-align: center; }
+.media-caption { font-size: 0.82rem; color: #6b7280; margin-top: 0.5rem; font-style: italic; }
+.media-placeholder { background: #f8fafc; border: 2px dashed #d1d5db; border-radius: 0.5rem; padding: 2rem; }
+.placeholder-icon { font-size: 2rem; }
+
+/* === KEY POINTS === */
+.key-points {
+  background: #fefce8; border: 1px solid #fde68a; border-radius: 0.75rem;
+  padding: 1.25rem; margin-top: 1.5rem;
+}
+.key-points h4 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+.key-points ul { padding-left: 1.25rem; }
+.key-points li { font-size: 0.9rem; margin-bottom: 0.3rem; color: #713f12; }
+
+/* === LAB === */
+.screen-lab h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.lab-header { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+.lab-objective { font-size: 0.92rem; color: #166534; margin-top: 0.5rem; }
+.lab-meta { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.75rem; }
+.lab-meta-item { font-size: 0.82rem; color: #15803d; font-weight: 500; }
+.lab-prereqs { margin-top: 0.75rem; font-size: 0.85rem; color: #166534; }
+.lab-prereqs ul { margin: 0.25rem 0 0 1.25rem; padding: 0; }
+.lab-prereqs li { margin-bottom: 0.15rem; }
+.lab-procedures h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; color: #1e293b; }
+.lab-step { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+.lab-step-header { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.5rem; }
+.lab-step-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; min-width: 28px; background: #2563eb; color: #fff; font-size: 0.82rem; font-weight: 700; border-radius: 50%; }
+.lab-step-instruction { font-weight: 600; color: #1e293b; font-size: 0.95rem; line-height: 1.5; padding-top: 2px; }
+.lab-step-detail { font-size: 0.9rem; line-height: 1.7; color: #475569; margin-top: 0.25rem; padding-left: 2.8rem; }
+.lab-step-detail code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; }
+.lab-step-detail pre { background: #1e293b; color: #e2e8f0; padding: 0.75rem 1rem; border-radius: 0.5rem; overflow-x: auto; margin: 0.5rem 0; font-size: 0.85rem; }
+.lab-step-detail pre code { background: none; padding: 0; color: inherit; }
+.lab-expected-output { margin: 0.5rem 0 0 2.8rem; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 0.5rem; padding: 0.75rem 1rem; }
+.lab-expected-label { font-size: 0.78rem; font-weight: 700; color: #0369a1; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.35rem; }
+.lab-expected-output pre { background: #0c4a6e; color: #e0f2fe; padding: 0.5rem 0.75rem; border-radius: 0.375rem; margin: 0.25rem 0 0; font-size: 0.82rem; overflow-x: auto; }
+.lab-expected-output pre code { background: none; padding: 0; color: inherit; }
+.lab-verification { display: flex; align-items: flex-start; gap: 0.5rem; margin: 0.5rem 0 0 2.8rem; padding: 0.6rem 0.75rem; background: #fefce8; border: 1px solid #fde68a; border-radius: 0.5rem; font-size: 0.85rem; color: #854d0e; }
+.lab-verification-icon { font-size: 1rem; line-height: 1.3; }
+.lab-troubleshooting { margin-top: 1.5rem; }
+.lab-troubleshooting h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; color: #1e293b; }
+.lab-trouble-item { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.5rem; margin-bottom: 0.5rem; }
+.lab-trouble-item summary { padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 500; color: #b45309; cursor: pointer; list-style: none; }
+.lab-trouble-item summary::before { content: '▸ '; font-weight: 700; }
+.lab-trouble-item[open] summary::before { content: '▾ '; }
+.lab-trouble-solution { padding: 0 1rem 0.75rem; font-size: 0.87rem; color: #475569; line-height: 1.6; }
+.lab-trouble-solution code { background: #f1f5f9; padding: 0.1rem 0.3rem; border-radius: 0.2rem; font-size: 0.84rem; }
+.lab-challenge { margin-top: 1.5rem; background: #faf5ff; border: 2px dashed #c4b5fd; border-radius: 0.75rem; padding: 1.25rem; }
+.lab-challenge h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; color: #6b21a8; }
+.lab-challenge-intro { font-size: 0.82rem; color: #7c3aed; margin-bottom: 0.75rem; font-style: italic; }
+.lab-challenge-body { font-size: 0.9rem; line-height: 1.65; color: #581c87; }
+.lab-challenge-body code { background: #ede9fe; padding: 0.1rem 0.3rem; border-radius: 0.2rem; font-size: 0.84rem; }
+.lab-steps { font-size: 0.95rem; line-height: 1.75; }
+.lab-steps ol { padding-left: 1.25rem; }
+.lab-steps li { margin-bottom: 0.5rem; }
+.lab-steps code { background: #f1f5f9; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.88rem; }
+.lab-steps pre { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin: 0.75rem 0; }
+.lab-steps pre code { background: none; padding: 0; color: inherit; }
+.lab-check { margin-top: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 0.5rem; }
+.lab-check.completed { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.checkbox-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.92rem; }
+.checkbox-label input { width: 1.1rem; height: 1.1rem; accent-color: #22c55e; }
+
+/* === QUIZ === */
+.screen-quiz h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.quiz-intro { font-size: 0.92rem; color: #6b7280; margin-bottom: 1.5rem; }
+.quiz-question { background: #fff; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; }
+.quiz-question h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; margin-bottom: 0.5rem; }
+.question-text { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.75rem; }
+.options { display: flex; flex-direction: column; gap: 0.5rem; }
+.option-label {
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.75rem;
+  border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; transition: all 0.15s;
+}
+.option-label:hover { border-color: #93c5fd; background: #eff6ff; }
+.option-label input { accent-color: #2563eb; }
+.option-label.correct { background: #f0fdf4; border-color: #86efac; }
+.option-label.incorrect { background: #fef2f2; border-color: #fca5a5; }
+.feedback { margin-top: 0.5rem; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.88rem; display: none; }
+.feedback.show { display: block; }
+.feedback.correct { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.feedback.incorrect { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.quiz-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+.quiz-results {
+  margin-top: 1.5rem; padding: 1.25rem; border-radius: 0.75rem; display: none;
+  text-align: center; font-size: 1.1rem; font-weight: 700;
+}
+.quiz-results.show { display: block; }
+.quiz-results.pass { background: #f0fdf4; color: #166534; border: 2px solid #86efac; }
+.quiz-results.fail { background: #fefce8; color: #854d0e; border: 2px solid #fde68a; }
+
+/* === SUMMARY === */
+.screen-summary h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+.summary-content { font-size: 0.95rem; line-height: 1.75; margin-bottom: 1.5rem; }
+.objectives-review { background: #f8fafc; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+.objectives-review h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+.objectives-checklist { list-style: none; }
+.objectives-checklist li { margin-bottom: 0.5rem; }
+.completion-box { text-align: center; padding: 2rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0; }
+.completion-icon { font-size: 3rem; }
+.completion-box h3 { margin-top: 0.5rem; color: #166534; }
+
+/* === FOOTER === */
+.course-footer {
+  background: #1a1a2e; color: #9ca3af; padding: 0.75rem 1.5rem;
+  display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;
+}
+.trial-badge { background: #2563eb; color: #fff; padding: 0.2rem 0.6rem; border-radius: 0.25rem; font-size: 0.72rem; }
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .sidebar { position: fixed; left: -280px; top: 52px; height: calc(100vh - 52px); z-index: 90; transition: left 0.25s; box-shadow: 2px 0 12px rgba(0,0,0,0.15); }
+  .sidebar.open { left: 0; }
+  .sidebar-toggle { display: block; }
+  .content { padding: 1.5rem 1rem; }
+  .course-header { padding: 0.6rem 1rem; }
+  .header-left .course-title { font-size: 0.85rem; }
+}
+
+/* === PRINT === */
+@media print {
+  /* Hide all interactive chrome */
+  .sidebar, .nav-buttons, .course-header, .course-footer,
+  .sidebar-toggle, .quiz-actions, .lab-check, .print-btn { display: none !important; }
+
+  /* Full-width content, no padding waste */
+  body  { background: #fff !important; color: #000 !important; font-size: 11pt; line-height: 1.55; }
+  .layout { display: block !important; }
+  .content { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+
+  /* Show all screens sequentially with page breaks */
+  .screen { display: block !important; animation: none !important; opacity: 1 !important; transform: none !important; page-break-after: always; break-after: page; }
+  .screen:last-child { page-break-after: avoid; break-after: avoid; }
+
+  /* Headings */
+  h1, h2 { page-break-after: avoid; break-after: avoid; font-size: 14pt; }
+  h3, h4  { page-break-after: avoid; break-after: avoid; font-size: 12pt; }
+
+  /* Keep steps and quiz questions together */
+  .lab-step, .quiz-question { page-break-inside: avoid; break-inside: avoid; }
+
+  /* Code blocks — preserve formatting, avoid splitting */
+  pre { white-space: pre-wrap; word-break: break-word; page-break-inside: avoid; break-inside: avoid;
+        background: #f5f5f5 !important; color: #000 !important; border: 1px solid #ccc;
+        padding: 0.5rem 0.75rem; font-size: 9pt; }
+  code { background: #f5f5f5 !important; color: #000 !important; font-size: 9pt; }
+
+  /* AI images — scale to fit, never split */
+  .media-block { page-break-inside: avoid; break-inside: avoid; text-align: center; }
+  .media-block svg, .media-block img { max-width: 100% !important; height: auto !important; }
+
+  /* Key points — keep together */
+  .key-points { page-break-inside: avoid; break-inside: avoid;
+                background: #fefce8 !important; border: 1px solid #ccc; }
+
+  /* Remove link underlines and interactive colours */
+  a { color: #000 !important; text-decoration: none !important; }
+
+  /* Quiz — show correct answer indicator in print */
+  .option-label.correct { background: #f0fff0 !important; font-weight: 600; }
+  .feedback.correct { display: block !important; }
+
+  /* Objectives box */
+  .objectives-box { background: #f0f8ff !important; border: 1px solid #ccc !important; }
+
+  /* Page margins */
+  @page { margin: 18mm 15mm; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<header class="course-header">
+  <div class="header-left">
+    <span class="course-number">RUSD-001</span>
+    <span class="course-title">RLUSD Stablecoin Payments for Institutions</span>
+  </div>
+  <div class="header-right">
+    <span class="module-label">Module 1 of 5</span>
+    <span class="progress-text"><span id="progressPercent">0</span>% complete</span>
+    <button class="print-btn" onclick="window.print()" title="Print or save this module as PDF">&#128424; Print / Save as PDF</button>
+  </div>
+</header>
+
+<!-- ====== LAYOUT ====== -->
+<div class="layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Introduction to RLUSD and Institutional Payment Infrastructure</h2>
+      <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <ul class="nav-list">
+      <li><button class="nav-btn active" onclick="goTo(0)" id="nav-0">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Welcome</span>
+        <span class="nav-check" id="check-0">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(1)" id="nav-1">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">RLUSD Fundamentals and the Stablecoin Landscape</span>
+        <span class="nav-check" id="check-1">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(2)" id="nav-2">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Integration Points with Existing Payment Infrastructure</span>
+        <span class="nav-check" id="check-2">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(3)" id="nav-3">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Settlement Models: Real-Time Gross Settlement vs. Correspondent Banking</span>
+        <span class="nav-check" id="check-3">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(4)" id="nav-4">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Institutional Use Cases and Stakeholder Ecosystem</span>
+        <span class="nav-check" id="check-4">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(5)" id="nav-5">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Value Proposition: Speed, Cost, and Transparency</span>
+        <span class="nav-check" id="check-5">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(6)" id="nav-6">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Regulatory Framework and Compliance Foundations</span>
+        <span class="nav-check" id="check-6">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(7)" id="nav-7">
+        <span class="nav-icon">🔬</span>
+        <span class="nav-label">Exploring RLUSD Characteristics and Payment Infrastructure Integration</span>
+        <span class="nav-check" id="check-7">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(8)" id="nav-8">
+        <span class="nav-icon">📝</span>
+        <span class="nav-label">Knowledge Check</span>
+        <span class="nav-check" id="check-8">✓</span>
+      </button></li>
+      <li><button class="nav-btn" onclick="goTo(9)" id="nav-9">
+        <span class="nav-icon">🎯</span>
+        <span class="nav-label">Summary</span>
+        <span class="nav-check" id="check-9">✓</span>
+      </button></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="content" id="content">
+
+    <!-- Screen 0: Welcome -->
+    <section class="screen active" id="screen-0" data-index="0">
+      
+      <div class="screen-landing">
+        <h1>Module 1</h1>
+        <h2>Introduction to RLUSD and Institutional Payment Infrastructure</h2>
+        
+        <div class="objectives-box">
+          <h3>🎯 Learning Objectives</h3>
+          <p>After completing this module, you will be able to:</p>
+          <ul>
+            <li>Describe the fundamental characteristics and regulatory foundation of RLUSD</li>
+            <li>Explain how RLUSD fits within institutional payment infrastructure and settlement workflows</li>
+            <li>Identify key stakeholders and roles in stablecoin-based payment ecosystems</li>
+            <li>Compare traditional cross-border payment methods with stablecoin-enabled alternatives</li>
+          </ul>
+        </div>
+        <p class="start-hint">Click <strong>Next →</strong> to begin.</p>
+      </div>
+    </section>
+
+    <!-- Screen 1: RLUSD Fundamentals and the Stablecoin Landscape -->
+    <section class="screen" id="screen-1" data-index="1">
+      <div class="screen-lesson"><h2>RLUSD Fundamentals and the Stablecoin Landscape</h2><div class="lesson-content"><h2>Understanding RLUSD in the Stablecoin Ecosystem</h2>
+<p>RLUSD is Ripple&#39;s enterprise-grade stablecoin, designed specifically for institutional payment infrastructure. Unlike volatile cryptocurrencies, RLUSD maintains a 1:1 peg with the US dollar through full reserve backing, combining the stability of traditional fiat with the efficiency of blockchain settlement.</p>
+<p><strong>Key Characteristics of RLUSD:</strong></p>
+<ul>
+<li><strong>Full Reserve Backing:</strong> Each RLUSD token is backed by US dollar deposits, short-term US government treasuries, and cash equivalents held in segregated accounts</li>
+<li><strong>Regulatory Compliance:</strong> Issued under regulatory frameworks including New York Department of Financial Services (NYDFS) oversight</li>
+<li><strong>Multi-Ledger Support:</strong> Native issuance on both XRP Ledger and Ethereum, enabling broad institutional integration</li>
+<li><strong>Institutional Focus:</strong> Purpose-built for treasury operations, cross-border payments, and settlement workflows</li>
+</ul>
+<h2>The Institutional Imperative</h2>
+<p>Traditional stablecoins like USDT and USDC pioneered digital dollar equivalents, but RLUSD differentiates itself through enterprise-specific design. Where consumer-focused stablecoins prioritize trading and DeFi integration, RLUSD emphasizes regulatory clarity, enterprise custody solutions, and seamless integration with existing payment infrastructure.</p>
+<p>Financial institutions face mounting pressure to modernize payment rails while maintaining compliance and risk management standards. RLUSD addresses this by providing a regulated on-ramp to blockchain-based settlement without requiring institutions to navigate the complexities of unregulated digital assets.</p>
+<p><strong>Regulatory positioning matters:</strong> RLUSD&#39;s compliance framework enables banks, payment service providers, and corporate treasuries to adopt blockchain settlement within their existing regulatory perimeters, reducing legal uncertainty and accelerating institutional adoption.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/1/mod01_fig01.png" alt="Abstract illustration showing digital and traditional financial infrastructure converging, with regulated stablecoin bridge connecting legacy banking systems to modern blockchain settlement" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Abstract illustration showing digital and traditional financial infrastructure converging, with regulated stablecoin bridge connecting legacy banking systems to modern blockchain settlement</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>RLUSD is a fully-reserved, regulated stablecoin designed for institutional payment infrastructure</li>
+          <li>Regulatory compliance and multi-ledger support differentiate RLUSD from consumer-focused stablecoins</li>
+          <li>Enterprise treasury and cross-border settlement are primary institutional use cases</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 2: Integration Points with Existing Payment Infrastructure -->
+    <section class="screen" id="screen-2" data-index="2">
+      <div class="screen-lesson"><h2>Integration Points with Existing Payment Infrastructure</h2><div class="lesson-content"><h2>Bridging Legacy and Modern Payment Systems</h2>
+<p>Institutional payment infrastructure consists of multiple interconnected layers: core banking systems, payment gateways, correspondent banking networks, and settlement platforms. RLUSD integration occurs at strategic points within this ecosystem, enabling institutions to adopt blockchain settlement without wholesale replacement of existing systems.</p>
+<p><strong>Primary Integration Touchpoints:</strong></p>
+<ol>
+<li><strong>Treasury Management Systems (TMS):</strong> RLUSD wallets integrate with corporate TMS platforms, allowing treasury teams to manage stablecoin balances alongside traditional currency accounts</li>
+<li><strong>Payment Gateways:</strong> API-based integration enables payment processors to offer RLUSD as a settlement option within existing merchant and B2B payment flows</li>
+<li><strong>Custody Solutions:</strong> Institutional-grade custody providers support RLUSD, enabling secure storage with familiar risk controls and insurance frameworks</li>
+<li><strong>Liquidity Pools:</strong> Integration with Ripple&#39;s liquidity network allows institutions to convert between RLUSD and local currencies on-demand</li>
+</ol>
+<h2>Technical Architecture Considerations</h2>
+<p>Successful integration requires understanding how blockchain settlement interacts with traditional payment messaging. While legacy systems use SWIFT, ISO 20022, and proprietary APIs, RLUSD transactions settle on-ledger through smart contracts and cryptographic signatures.</p>
+<p><strong>The integration challenge:</strong> Institutions must map traditional payment instructions to blockchain transactions while maintaining audit trails, compliance controls, and operational workflows. Middleware solutions, often provided by Ripple or third-party vendors, translate between these paradigms.</p>
+<p>API-first design enables developers to abstract blockchain complexity. Rather than requiring payment operations teams to understand distributed ledgers, integration platforms present familiar RESTful APIs that trigger RLUSD transactions behind the scenes. This approach accelerates adoption by minimizing retraining and process redesign.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/1/mod01_fig02.png" alt="Illustrated ecosystem map showing institutional payment infrastructure layers with RLUSD integration points highlighted across treasury systems, payment gateways, custody providers, and liquidity networks" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Illustrated ecosystem map showing institutional payment infrastructure layers with RLUSD integration points highlighted across treasury systems, payment gateways, custody providers, and liquidity networks</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>RLUSD integrates at strategic points within existing payment infrastructure rather than replacing systems</li>
+          <li>Treasury management, payment gateways, custody, and liquidity conversion are primary integration touchpoints</li>
+          <li>Middleware solutions translate between traditional payment messaging and blockchain settlement</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 3: Settlement Models: Real-Time Gross Settlement vs. Correspondent Banking -->
+    <section class="screen" id="screen-3" data-index="3">
+      <div class="screen-lesson"><h2>Settlement Models: Real-Time Gross Settlement vs. Correspondent Banking</h2><div class="lesson-content"><p><strong>Net Settlement:</strong> Transactions batch by counterparty and settle periodically (end-of-day or longer), rather than individually and immediately</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/1/mod01_fig03.png" alt="Before-and-after comparison showing traditional correspondent banking payment flow with multiple intermediary banks on left side versus direct RLUSD blockchain settlement on right side" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Before-and-after comparison showing traditional correspondent banking payment flow with multiple intermediary banks on left side versus direct RLUSD blockchain settlement on right side</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Correspondent banking relies on multi-hop intermediaries with batched net settlement and opaque fees</li>
+          <li>RLUSD enables Real-Time Gross Settlement with atomic finality and transparent costs</li>
+          <li>Blockchain-based RTGS operates 24/7/365 and eliminates settlement risk inherent in traditional multi-day clearing</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 4: Institutional Use Cases and Stakeholder Ecosystem -->
+    <section class="screen" id="screen-4" data-index="4">
+      <div class="screen-lesson"><h2>Institutional Use Cases and Stakeholder Ecosystem</h2><div class="lesson-content"><h2>Primary Institutional Use Cases for RLUSD</h2>
+<p>Stablecoin adoption in institutional settings clusters around specific high-value use cases where traditional payment methods demonstrate clear inefficiencies. RLUSD addresses these gaps through programmable, instant settlement with regulatory compliance.</p>
+<p><strong>Cross-Border Treasury Operations:</strong></p>
+<p>Multinational corporations manage liquidity across subsidiaries in different jurisdictions. RLUSD enables treasury teams to rebalance funds across geographies instantly, reducing FX conversion costs and eliminating multi-day settlement delays that tie up working capital.</p>
+<p><strong>B2B Payment Settlement:</strong></p>
+<p>Supply chain payments, especially international supplier settlements, benefit from RLUSD&#39;s speed and cost structure. A manufacturer paying component suppliers across Asia can settle in RLUSD, with recipients converting to local currency through Ripple&#39;s liquidity network—completing in minutes what traditionally requires days.</p>
+<p><strong>Remittance Corridor Optimization:</strong></p>
+<p>Payment service providers and money transfer operators use RLUSD as a bridge asset for high-volume remittance corridors. Rather than pre-funding nostro accounts in dozens of currencies, providers hold RLUSD and convert on-demand, dramatically improving capital efficiency.</p>
+<p><strong>Securities Settlement:</strong></p>
+<p>Institutional investors and broker-dealers explore RLUSD for cash leg settlement in securities transactions. Delivery-versus-payment (DvP) workflows benefit from atomic settlement, reducing counterparty risk in securities trades.</p>
+<h2>Stakeholder Ecosystem</h2>
+<p>Successful RLUSD adoption requires coordination across a diverse stakeholder ecosystem:</p>
+<ul>
+<li><strong>Issuers (Ripple):</strong> Maintain reserve backing, regulatory compliance, and technical infrastructure</li>
+<li><strong>Regulated Financial Institutions:</strong> Banks, broker-dealers, and payment processors that custody RLUSD and facilitate conversion</li>
+<li><strong>Corporate Treasuries:</strong> End-users managing institutional payment and liquidity operations</li>
+<li><strong>Technology Providers:</strong> Custody platforms, payment gateways, and integration middleware vendors</li>
+<li><strong>Regulators:</strong> Oversight bodies ensuring compliance with anti-money laundering (AML), sanctions, and capital requirements</li>
+<li><strong>Liquidity Providers:</strong> Market makers facilitating RLUSD to fiat currency conversion</li>
+</ul>
+<p>Each stakeholder contributes distinct capabilities and faces unique regulatory and operational requirements. Ecosystem health depends on clear roles, interoperable standards, and aligned incentives across participants.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/1/mod01_fig04.png" alt="Illustrated stakeholder ecosystem map showing interconnected roles including Ripple issuer, banks, corporate treasuries, technology providers, regulators, and liquidity providers arranged around RLUSD at center" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Illustrated stakeholder ecosystem map showing interconnected roles including Ripple issuer, banks, corporate treasuries, technology providers, regulators, and liquidity providers arranged around RLUSD at center</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>Primary institutional use cases include cross-border treasury, B2B payments, remittance optimization, and securities settlement</li>
+          <li>RLUSD ecosystem includes issuers, financial institutions, corporate treasuries, technology providers, regulators, and liquidity providers</li>
+          <li>Use case viability depends on stakeholder coordination and aligned incentives across the ecosystem</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 5: Value Proposition: Speed, Cost, and Transparency -->
+    <section class="screen" id="screen-5" data-index="5">
+      <div class="screen-lesson"><h2>Value Proposition: Speed, Cost, and Transparency</h2><div class="lesson-content"><h2>Quantifying the Institutional Value Proposition</h2>
+<p>RLUSD&#39;s value to institutional adopters manifests across three primary dimensions: settlement speed, transaction cost, and operational transparency. Understanding these benefits in quantitative terms enables ROI analysis and adoption decision-making.</p>
+<p><strong>Settlement Speed:</strong></p>
+<p>Traditional cross-border payments settle in 2-5 business days through correspondent banking networks. RLUSD transactions achieve finality in 3-5 seconds on-chain. For treasury operations managing billions in cross-border flows, this 10,000x speed improvement translates to:</p>
+<ul>
+<li><strong>Reduced float:</strong> Funds available for deployment or investment within seconds rather than days</li>
+<li><strong>Improved cash forecasting:</strong> Instant settlement eliminates uncertainty in receivables timing</li>
+<li><strong>Faster market response:</strong> Treasury can react to FX opportunities or funding needs in real-time</li>
+</ul>
+<p><strong>Transaction Cost Structure:</strong></p>
+<p>Correspondent banking fees compound across intermediaries, typically ranging from 3-7% of transaction value for cross-border payments when including FX spreads and intermediary charges. RLUSD on-chain transaction fees measure in cents, with FX conversion occurring through competitive liquidity pools.</p>
+<p>For high-volume payment corridors, cost savings can reach 40-60% compared to traditional rails. A multinational corporation processing $500 million annually in cross-border supplier payments might reduce payment costs by $15-25 million through RLUSD adoption.</p>
+<p><strong>Operational Transparency:</strong></p>
+<p>Blockchain-based settlement provides complete transaction transparency and auditability. Every RLUSD transfer is permanently recorded on-ledger with cryptographic proof, enabling:</p>
+<ul>
+<li><strong>Real-time reconciliation:</strong> Automated matching of payments to invoices without manual reconciliation</li>
+<li><strong>Audit trail compliance:</strong> Immutable transaction history simplifies regulatory reporting and audits</li>
+<li><strong>Fraud reduction:</strong> Transparent flows and cryptographic authentication reduce payment fraud risk</li>
+</ul>
+<p>Transparency extends to fee structures—institutions know exact transaction costs upfront, eliminating hidden intermediary fees common in correspondent banking. This predictability improves financial planning and cost management.</p>
+<h2>Strategic Considerations</h2>
+<p>While speed, cost, and transparency drive initial adoption interest, strategic value emerges from competitive positioning. Early institutional adopters gain operational advantages that compound over time: stronger supplier relationships through faster payments, improved capital efficiency enabling better investment returns, and enhanced compliance positioning reducing regulatory risk.</p>
+<p>The value proposition extends beyond direct cost savings to strategic differentiation in an increasingly digital financial ecosystem.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/1/mod01_fig05.png" alt="Infographic comparing traditional cross-border payment metrics (speed, cost, transparency) side-by-side with RLUSD stablecoin settlement metrics, showing dramatic improvements across all three dimensions" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Infographic comparing traditional cross-border payment metrics (speed, cost, transparency) side-by-side with RLUSD stablecoin settlement metrics, showing dramatic improvements across all three dimensions</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>RLUSD delivers 10,000x speed improvement over traditional cross-border settlement (seconds vs. days)</li>
+          <li>Transaction costs can be reduced by 40-60% compared to correspondent banking in high-volume corridors</li>
+          <li>Blockchain transparency enables real-time reconciliation, simplified audits, and reduced fraud risk</li>
+          <li>Strategic value includes competitive positioning and operational advantages beyond direct cost savings</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 6: Regulatory Framework and Compliance Foundations -->
+    <section class="screen" id="screen-6" data-index="6">
+      <div class="screen-lesson"><h2>Regulatory Framework and Compliance Foundations</h2><div class="lesson-content"><h2>Regulatory Positioning of RLUSD</h2>
+<p>Stablecoin regulation represents a rapidly evolving landscape, with jurisdictions worldwide developing frameworks to govern digital asset issuance, custody, and transfer. RLUSD&#39;s regulatory strategy emphasizes proactive compliance with existing financial regulations rather than awaiting stablecoin-specific rules.</p>
+<p><strong>Key Regulatory Touchpoints:</strong></p>
+<ul>
+<li><strong>Money Transmitter Licensing:</strong> RLUSD issuance and redemption operates under state and federal money transmission frameworks in the US, including NYDFS oversight</li>
+<li><strong>Reserve Requirements:</strong> Full backing with US dollar deposits and short-term treasuries aligns with proposed stablecoin reserve standards</li>
+<li><strong>AML/KYC Compliance:</strong> Know Your Customer (KYC) and Anti-Money Laundering (AML) controls apply at issuance, redemption, and institutional integration points</li>
+<li><strong>Securities Law Considerations:</strong> RLUSD&#39;s structure as a payment instrument rather than investment contract positions it outside securities regulation in most jurisdictions</li>
+</ul>
+<h2>Institutional Compliance Obligations</h2>
+<p>Financial institutions integrating RLUSD must navigate compliance requirements that extend beyond the stablecoin itself. Banks, payment processors, and broker-dealers face distinct regulatory obligations when handling digital assets:</p>
+<p><strong>Bank Integration Requirements:</strong></p>
+<p>Banks offering RLUSD custody or conversion services must address capital adequacy, liquidity coverage, and risk management frameworks. Regulatory guidance varies by jurisdiction—US banks follow OCC and Federal Reserve guidance on digital asset activities, while EU institutions navigate MiCA (Markets in Crypto-Assets) regulation.</p>
+<p><strong>Payment Service Provider Obligations:</strong></p>
+<p>PSPs incorporating RLUSD into payment flows must maintain existing AML/KYC standards, transaction monitoring, and sanctions screening. The blockchain&#39;s transparency can enhance compliance monitoring, but institutions retain responsibility for customer due diligence.</p>
+<p><strong>Cross-Border Regulatory Harmonization:</strong></p>
+<p>Institutional RLUSD adoption accelerates as regulatory frameworks harmonize across jurisdictions. Industry consortia and standard-setting bodies work to establish interoperable compliance frameworks, enabling RLUSD to flow across borders while meeting local regulatory requirements.</p>
+<p>Understanding the regulatory foundation is essential for institutions evaluating RLUSD adoption. Compliance readiness determines timeline and operational model for integration.</p>
+</div>
+        <div class="media-block">
+          <img src="https://urdywqqvtmibbzommwhp.supabase.co/storage/v1/object/public/course-media/projects/3ce45b52-d1d0-4019-a6a9-f4f444ca8d3d/1/mod01_fig06.png" alt="Illustrated concept showing regulatory framework layers surrounding RLUSD, depicting compliance touchpoints including money transmitter licensing, reserve requirements, AML/KYC controls, and cross-border regulatory coordination" style="max-width: 100%; height: auto; border-radius: 0.5rem;" />
+          <p class="media-caption">Illustrated concept showing regulatory framework layers surrounding RLUSD, depicting compliance touchpoints including money transmitter licensing, reserve requirements, AML/KYC controls, and cross-border regulatory coordination</p>
+        </div>
+      <div class="key-points">
+        <h4>💡 Key Takeaways</h4>
+        <ul>
+          <li>RLUSD operates under existing money transmitter, reserve, and AML/KYC regulatory frameworks</li>
+          <li>Institutional adopters face jurisdiction-specific compliance obligations for digital asset integration</li>
+          <li>Regulatory harmonization across jurisdictions accelerates institutional stablecoin adoption</li>
+          <li>Compliance readiness is a critical factor in institutional RLUSD integration timelines</li>
+        </ul>
+      </div></div>
+    </section>
+
+    <!-- Screen 7: Exploring RLUSD Characteristics and Payment Infrastructure Integration -->
+    <section class="screen" id="screen-7" data-index="7">
+      
+      <div class="screen-lab">
+        <div class="lab-header">
+          <h2>🔬 Exploring RLUSD Characteristics and Payment Infrastructure Integration</h2>
+          <p class="lab-objective"><strong>Objective:</strong> Navigate Ripple's official documentation and tools to investigate RLUSD characteristics, regulatory framework, and integration points within institutional payment infrastructure, then compare traditional payment methods with stablecoin-enabled alternatives</p>
+          <div class="lab-meta"><span class="lab-meta-item">⏱ Estimated time: 45 minutes</span><span class="lab-meta-item">💻 Platform: Windows PC with web browser and internet access</span></div>
+          <div class="lab-prereqs">
+            <strong>Prerequisites:</strong>
+            <ul><li>Windows 10 or 11 computer</li><li>Modern web browser (Chrome, Edge, or Firefox)</li><li>Internet connection</li><li>Basic familiarity with web navigation</li><li>Notepad or text editor for recording observations</li></ul>
+          </div></div><div class="lab-procedures"><h3>Procedures</h3>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">1</span>
+            <span class="lab-step-instruction">Open your web browser and navigate to the official Ripple RLUSD documentation page</span>
+          </div><div class="lab-step-detail"><p>Launch your preferred web browser (Chrome, Edge, or Firefox) and enter the following URL in the address bar:</p>
+<pre><code>https://ripple.com/solutions/crypto/rlusd/
+</code></pre>
+<p>Press <strong>Enter</strong> to load the page. This is Ripple&#39;s primary information page for RLUSD stablecoin.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>The Ripple RLUSD landing page loads, displaying an overview of the RLUSD stablecoin, its regulatory framework, and key features. The page header should show the Ripple logo and navigation menu.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Confirm you see content describing RLUSD as a USD-backed stablecoin and references to regulatory compliance.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">2</span>
+            <span class="lab-step-instruction">Locate and document the fundamental characteristics of RLUSD</span>
+          </div><div class="lab-step-detail"><p>Scroll through the RLUSD page and identify the following fundamental characteristics. Open Notepad (press <strong>Windows Key + R</strong>, type <code>notepad</code>, press <strong>Enter</strong>) and create a document to record your findings:</p>
+<ol>
+<li>What currency is RLUSD pegged to?</li>
+<li>What is the backing mechanism (what assets back RLUSD)?</li>
+<li>Which blockchain(s) support RLUSD?</li>
+<li>What regulatory framework is mentioned?</li>
+</ol>
+<p>Format your notes as:</p>
+<pre><code>RLUSD Fundamental Characteristics
+==================================
+Pegged Currency: [your answer]
+Backing Mechanism: [your answer]
+Blockchain Support: [your answer]
+Regulatory Framework: [your answer]
+</code></pre>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A Notepad document with documented characteristics showing RLUSD is pegged 1:1 to USD, backed by US dollar deposits and short-term treasuries, supported on XRP Ledger and Ethereum, and compliant with regulatory frameworks including New York Department of Financial Services oversight.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Review your notes to ensure all four characteristics are documented with specific details from the Ripple website.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">3</span>
+            <span class="lab-step-instruction">Navigate to the RLUSD technical documentation</span>
+          </div><div class="lab-step-detail"><p>In your browser, navigate to the Ripple developer documentation for RLUSD:</p>
+<pre><code>https://docs.ripple.com/
+</code></pre>
+<p>Once the page loads, use the search function (typically <strong>Ctrl + F</strong> or look for a search box in the navigation) and search for:</p>
+<pre><code>RLUSD
+</code></pre>
+<p>Click on the most relevant result related to RLUSD stablecoin documentation or integration guides.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>The Ripple documentation site loads, and search results display links to RLUSD-related technical documentation, integration guides, or API references.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Confirm you have accessed technical documentation that includes integration details, not just marketing content.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">4</span>
+            <span class="lab-step-instruction">Identify integration points with existing payment infrastructure</span>
+          </div><div class="lab-step-detail"><p>Within the technical documentation, locate sections describing how RLUSD integrates with existing payment systems. Look for:</p>
+<ul>
+<li>API endpoints or integration methods</li>
+<li>Settlement workflow descriptions</li>
+<li>Treasury management interfaces</li>
+<li>Bank account connection requirements</li>
+</ul>
+<p>Add a new section to your Notepad document:</p>
+<pre><code>RLUSD Integration Points
+========================
+API Integration: [describe available APIs]
+Settlement Process: [describe the workflow]
+Treasury Management: [describe treasury interfaces]
+Traditional Banking Links: [describe bank connections]
+</code></pre>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Documentation showing Ripple Payments API endpoints, webhook integrations for settlement notifications, treasury dashboards for liquidity management, and requirements for fiat on/off ramps through banking partners.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Your notes should include at least three distinct integration points with specific technical details.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">5</span>
+            <span class="lab-step-instruction">Access the XRPL Learning Portal to understand blockchain settlement</span>
+          </div><div class="lab-step-detail"><p>Open a new browser tab and navigate to the XRP Ledger Learning Portal:</p>
+<pre><code>https://learn.xrpl.org/
+</code></pre>
+<p>From the main page, locate and click on the <strong>Course</strong> or <strong>Lessons</strong> section. Look for content related to:</p>
+<ul>
+<li>Payment settlement on XRPL</li>
+<li>How transactions are validated</li>
+<li>Settlement finality timing</li>
+</ul>
+<p>Click on the most relevant introductory lesson about XRPL payments or settlement.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>The XRPL Learning Portal displays an organized curriculum with lessons covering XRPL fundamentals, payment mechanics, and settlement characteristics. You should see interactive content or videos explaining how the ledger processes payments.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Confirm you have accessed educational content that explains the XRPL transaction validation and settlement process.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">6</span>
+            <span class="lab-step-instruction">Document real-time gross settlement (RTGS) characteristics</span>
+          </div><div class="lab-step-detail"><p>Within the XRPL learning content, identify information about settlement timing and finality. Pay particular attention to:</p>
+<ul>
+<li>How long transactions take to settle</li>
+<li>Whether settlement is final or reversible</li>
+<li>How this compares to traditional payment rails</li>
+</ul>
+<p>Add this section to your Notepad document:</p>
+<pre><code>RTGS Characteristics via XRPL
+==============================
+Settlement Time: [typical time for finality]
+Reversibility: [can transactions be reversed?]
+Validation Method: [how are transactions confirmed?]
+Comparison to Traditional: [key differences]
+</code></pre>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Notes showing XRPL transactions settle in 3-5 seconds, settlement is final and irreversible once validated by consensus, transactions are validated through the XRPL consensus protocol, and this is significantly faster than traditional correspondent banking which takes 1-5 business days.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Your notes should clearly distinguish between XRPL settlement speed and traditional payment rails.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">7</span>
+            <span class="lab-step-instruction">Navigate to Ripple's API documentation with interactive tools</span>
+          </div><div class="lab-step-detail"><p>Open a new browser tab and navigate to Ripple&#39;s API reference:</p>
+<pre><code>https://docs.ripple.com/api/
+</code></pre>
+<p>Or search for &quot;Ripple Payments API&quot; from the docs.ripple.com homepage.</p>
+<p>Look for API endpoints related to payment operations. Common endpoints might include:</p>
+<ul>
+<li><code>/v1/payments</code> - for initiating payments</li>
+<li><code>/v1/quotes</code> - for obtaining payment quotes</li>
+<li><code>/v1/accounts</code> - for account management</li>
+</ul>
+<p>Click on any endpoint that has a <strong>Try it</strong> or <strong>Test</strong> button.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>The Ripple API documentation loads with a list of REST API endpoints. Each endpoint should show HTTP methods (GET, POST), parameters, and potentially an interactive testing interface.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Confirm you can see API endpoint documentation with parameter descriptions and example requests/responses.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">8</span>
+            <span class="lab-step-instruction">Explore an interactive API example for payment quotes</span>
+          </div><div class="lab-step-detail"><p>Locate the quotes or payment estimation endpoint (often <code>/v1/quotes</code> or similar). If an interactive &quot;Try it&quot; feature is available:</p>
+<ol>
+<li>Click the <strong>Try it</strong> or <strong>Test this endpoint</strong> button</li>
+<li>Examine the required parameters (source currency, destination currency, amount)</li>
+<li>Review example values or documentation</li>
+<li>Note the response structure showing settlement details</li>
+</ol>
+<p>If no interactive feature is available, carefully read the example request and response JSON.</p>
+<p>Add to your Notepad document:</p>
+<pre><code>Payment Quote API Observations
+==============================
+Endpoint: [API path]
+Required Parameters: [list parameters]
+Response Data: [what information is returned]
+Settlement Information: [how settlement details are provided]
+</code></pre>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Documentation showing a quote endpoint that accepts source amount, source currency (USD), destination currency, and returns estimated fees, exchange rates, settlement time estimates, and liquidity source information.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Your notes should include the specific API endpoint path and at least three parameters or response fields.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">9</span>
+            <span class="lab-step-instruction">Compare traditional correspondent banking with RLUSD settlement</span>
+          </div><div class="lab-step-detail"><p>Using information gathered from previous steps and additional browsing of Ripple&#39;s use cases or solutions pages, create a comparison table in your Notepad document:</p>
+<pre><code>Traditional vs. RLUSD Settlement Comparison
+===========================================
+
+Criteria              | Traditional Banking | RLUSD/XRPL
+----------------------------------------------------------
+Settlement Time       | [fill in]           | [fill in]
+Operating Hours       | [fill in]           | [fill in]
+Intermediary Banks    | [fill in]           | [fill in]
+Fee Structure         | [fill in]           | [fill in]
+Transparency          | [fill in]           | [fill in]
+Currency Conversion   | [fill in]           | [fill in]
+</code></pre>
+<p>Fill in each cell based on your research. If needed, navigate to:</p>
+<pre><code>https://ripple.com/use-cases/
+</code></pre>
+<p>to find comparative information about traditional vs. blockchain-based payments.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A completed comparison table showing: Traditional (1-5 days, business hours only, multiple intermediaries, 3-7% fees, limited transparency, multiple conversions) vs. RLUSD/XRPL (3-5 seconds, 24/7/365, direct settlement, minimal fees, full transparency, single conversion or none if USD-USD).</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Your table should have all six criteria filled in with specific, contrasting details for both columns.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">10</span>
+            <span class="lab-step-instruction">Identify key stakeholders in the RLUSD ecosystem</span>
+          </div><div class="lab-step-detail"><p>Navigate back to the main Ripple website and explore the following sections to identify stakeholder roles:</p>
+<pre><code>https://ripple.com/customers/
+https://ripple.com/partners/
+</code></pre>
+<p>Identify at least five distinct stakeholder categories involved in RLUSD-based payments.</p>
+<p>Create a new section in your Notepad document:</p>
+<pre><code>Key Stakeholders in RLUSD Ecosystem
+====================================
+1. [Stakeholder type]: [Role/responsibility]
+2. [Stakeholder type]: [Role/responsibility]
+3. [Stakeholder type]: [Role/responsibility]
+4. [Stakeholder type]: [Role/responsibility]
+5. [Stakeholder type]: [Role/responsibility]
+</code></pre>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A list identifying stakeholders such as: (1) Financial Institutions - issue and redeem RLUSD, (2) Payment Service Providers - facilitate transactions, (3) Enterprises - send/receive payments, (4) Liquidity Providers - ensure market depth, (5) Regulators - oversee compliance, (6) Custodians - secure digital assets, (7) Technology Partners - provide infrastructure.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> You should have documented at least five distinct stakeholder types with their specific roles in the ecosystem.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">11</span>
+            <span class="lab-step-instruction">Document institutional use cases for RLUSD</span>
+          </div><div class="lab-step-detail"><p>Browse Ripple&#39;s use case pages and case studies to identify specific institutional applications. Look for:</p>
+<pre><code>https://ripple.com/use-cases/
+</code></pre>
+<p>Navigate to sections covering:</p>
+<ul>
+<li>Cross-border payments</li>
+<li>Treasury operations</li>
+<li>Trade finance</li>
+<li>Remittances</li>
+</ul>
+<p>Add to your Notepad document:</p>
+<pre><code>Institutional Use Cases for RLUSD
+==================================
+Use Case 1: [Name and brief description]
+Use Case 2: [Name and brief description]
+Use Case 3: [Name and brief description]
+Use Case 4: [Name and brief description]
+</code></pre>
+<p>For each use case, note the specific business problem solved and the value delivered.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Documentation of four institutional use cases such as: (1) Cross-border B2B payments - reducing settlement time from days to seconds, (2) Treasury liquidity management - optimizing working capital across global subsidiaries, (3) Trade finance settlement - accelerating letter of credit processing, (4) High-volume remittances - reducing transaction costs for payment corridors.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Each use case should include both the application name and the specific business value or problem solved.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">12</span>
+            <span class="lab-step-instruction">Explore RLUSD transparency features using blockchain explorers</span>
+          </div><div class="lab-step-detail"><p>Navigate to the XRP Ledger explorer to understand transaction transparency:</p>
+<pre><code>https://livenet.xrpl.org/
+</code></pre>
+<p>Or alternatively:</p>
+<pre><code>https://xrpscan.com/
+</code></pre>
+<p>Examine the interface to understand what information is publicly visible:</p>
+<ul>
+<li>Transaction history</li>
+<li>Account balances</li>
+<li>Settlement timestamps</li>
+<li>Network validators</li>
+</ul>
+<p>You don&#39;t need to search for specific transactions, just observe the available information categories.</p>
+<p>Add to your Notepad:</p>
+<pre><code>RLUSD Transparency Capabilities
+================================
+Publicly Visible Information:
+- [list observable data points]
+
+Privacy Protections:
+- [note what is NOT visible]
+</code></pre>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Notes showing publicly visible information includes transaction hashes, timestamps, amounts, sender/receiver addresses (but not identities), and settlement status. Privacy protections include: actual identity of participants remains pseudonymous, business purposes not disclosed, and individual transaction details can be permissioned.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Your notes should distinguish between what blockchain transparency provides and what privacy protections exist for institutional users.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">13</span>
+            <span class="lab-step-instruction">Research regulatory compliance framework for RLUSD</span>
+          </div><div class="lab-step-detail"><p>Return to the Ripple RLUSD page:</p>
+<pre><code>https://ripple.com/solutions/crypto/rlusd/
+</code></pre>
+<p>Scroll to sections covering regulatory compliance, trust, and reserves. Look for specific mentions of:</p>
+<ul>
+<li>Regulatory authorities providing oversight</li>
+<li>Attestation and audit processes</li>
+<li>Reserve management and transparency</li>
+</ul>
+<p>Document your findings:</p>
+<pre><code>RLUSD Regulatory Framework
+==========================
+Regulatory Oversight: [which authorities]
+Attestation Process: [how reserves are verified]
+Reserve Composition: [what backs each RLUSD]
+Transparency Reports: [how often and what content]
+</code></pre>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Notes indicating RLUSD is issued under oversight of the New York Department of Financial Services (NYDFS), backed 1:1 by USD deposits and short-term US Treasury securities, subject to monthly third-party attestations of reserves, with public transparency reports available.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Your notes should specifically name at least one regulatory authority and describe the reserve verification process.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">14</span>
+            <span class="lab-step-instruction">Calculate theoretical payment cost savings</span>
+          </div><div class="lab-step-detail"><p>Using the comparison data you&#39;ve collected, calculate theoretical cost savings for a sample international payment scenario.</p>
+<p>Open Calculator (press <strong>Windows Key + R</strong>, type <code>calc</code>, press <strong>Enter</strong>).</p>
+<p>Scenario: A company sends $100,000 USD cross-border monthly.</p>
+<p>Traditional cost assumptions:</p>
+<ul>
+<li>Wire transfer fee: $40</li>
+<li>Intermediary bank fees: $25-35 (use $30)</li>
+<li>FX markup: 2-3% (use 2.5%)</li>
+</ul>
+<p>RLUSD cost assumptions:</p>
+<ul>
+<li>Network fee: ~$0.01</li>
+<li>FX markup: 0.1-0.5% (use 0.3%)</li>
+</ul>
+<p>Calculate:</p>
+<ol>
+<li>Traditional total cost = Wire fee + Intermediary + (Amount × FX markup %)</li>
+<li>RLUSD total cost = Network fee + (Amount × FX markup %)</li>
+<li>Savings = Traditional cost - RLUSD cost</li>
+<li>Savings percentage = (Savings / Traditional cost) × 100</li>
+</ol>
+<p>Document in Notepad:</p>
+<pre><code>Cost Savings Calculation
+========================
+Monthly Payment Amount: $100,000
+
+Traditional Method:
+Wire Fee: $40.00
+Intermediary Fee: $30.00
+FX Markup (2.5%): $[calculate]
+Total Traditional Cost: $[calculate]
+
+RLUSD Method:
+Network Fee: $0.01
+FX Markup (0.3%): $[calculate]
+Total RLUSD Cost: $[calculate]
+
+Monthly Savings: $[calculate]
+Savings Percentage: [calculate]%
+Annual Savings: $[monthly × 12]
+</code></pre>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>Completed calculation showing: Traditional ($40 + $30 + $2,500 = $2,570), RLUSD ($0.01 + $300 = $300.01), Monthly Savings ($2,269.99), Savings Percentage (88.3%), Annual Savings ($27,239.88).</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> All calculation fields should be filled with specific dollar amounts and percentages.</span>
+          </div></div>
+        <div class="lab-step">
+          <div class="lab-step-header">
+            <span class="lab-step-num">15</span>
+            <span class="lab-step-instruction">Save your research findings and review learning outcomes</span>
+          </div><div class="lab-step-detail"><p>In Notepad, click <strong>File &gt; Save As</strong>.</p>
+<p>Navigate to your Documents folder:</p>
+<ol>
+<li>In the Save As dialog, click <strong>Documents</strong> in the left sidebar</li>
+<li>In the &quot;File name&quot; field, type:<pre><code>RLUSD_Lab_Findings.txt
+</code></pre>
+</li>
+<li>Ensure &quot;Save as type&quot; is set to <strong>Text Documents (*.txt)</strong></li>
+<li>Click <strong>Save</strong></li>
+</ol>
+<p>Review your complete document and verify you have documented:</p>
+<ul>
+<li>RLUSD fundamental characteristics</li>
+<li>Integration points with payment infrastructure</li>
+<li>RTGS settlement characteristics</li>
+<li>API structure and functionality</li>
+<li>Traditional vs. RLUSD comparison</li>
+<li>Stakeholder ecosystem</li>
+<li>Institutional use cases</li>
+<li>Transparency capabilities</li>
+<li>Regulatory framework</li>
+<li>Cost savings analysis</li>
+</ul>
+<p>Close all browser tabs and Notepad.</p>
+</div>
+          <div class="lab-expected-output">
+            <div class="lab-expected-label">✓ Expected Output</div>
+            <pre><code>A saved text file named &quot;RLUSD_Lab_Findings.txt&quot; in your Documents folder containing all research findings organized in clearly labeled sections.</code></pre>
+          </div>
+          <div class="lab-verification">
+            <span class="lab-verification-icon">🔍</span>
+            <span><strong>Verify:</strong> Navigate to Documents folder and confirm the file exists. Open it to verify all sections are present and populated with your research findings.</span>
+          </div></div></div>
+        <div class="lab-troubleshooting">
+          <h3>⚠️ Troubleshooting</h3>
+          <details class="lab-trouble-item">
+            <summary>Ripple website pages return 404 errors or content has moved</summary>
+            <div class="lab-trouble-solution"><p>Navigate to <a href="https://ripple.com">https://ripple.com</a> and use the site&#39;s main navigation menu to find RLUSD information under &#39;Solutions&#39; or &#39;Products&#39;. Use the search function (magnifying glass icon) and search for &#39;RLUSD&#39; to locate current documentation. Ripple occasionally reorganizes their site structure.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>API documentation 'Try it' features require authentication or account creation</summary>
+            <div class="lab-trouble-solution"><p>If interactive features require login, focus on reading the example requests and responses provided in the documentation. The learning objective is understanding the API structure, not executing actual API calls. Document the example JSON structures and parameter requirements shown in the static documentation.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>XRPL Learning Portal content is too technical or assumes blockchain knowledge</summary>
+            <div class="lab-trouble-solution"><p>Focus on high-level concepts rather than technical implementation details. Look for introductory or &#39;Getting Started&#39; sections. Skip sections about consensus algorithms or cryptography and focus on payment flow diagrams and settlement timing explanations. Watch any available video content which often explains concepts more clearly.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>Cannot find specific cost or fee information for RLUSD transactions</summary>
+            <div class="lab-trouble-solution"><p>RLUSD fees vary by implementation and use case. For this lab, use the provided assumptions in Step 14. In production scenarios, fees are determined by the financial institution or payment service provider implementing RLUSD, not by a fixed public rate. Focus on the comparative methodology rather than exact figures.</p>
+</div>
+          </details>
+          <details class="lab-trouble-item">
+            <summary>Blockchain explorer shows complex technical data that is difficult to interpret</summary>
+            <div class="lab-trouble-solution"><p>Don&#39;t try to understand every field in the explorer. Focus only on these observable elements: transaction timestamps (showing settlement speed), transaction status (showing finality), and the presence of sender/receiver addresses (showing transparency). You can ignore technical fields like &#39;Sequence Number&#39;, &#39;LastLedgerSequence&#39;, or cryptographic hashes.</p>
+</div>
+          </details></div>
+        <div class="lab-challenge">
+          <h3>🏆 Institutional Payment Corridor Analysis</h3>
+          <p class="lab-challenge-intro">Apply what you learned — complete this task without step-by-step guidance.</p>
+          <div class="lab-challenge-body"><p>Select a specific international payment corridor (e.g., USD to EUR, USD to MXN, or USD to PHP) that represents a real business need for an institution you&#39;re familiar with or interested in.</p>
+<p>Using the research skills developed in this lab, investigate and document:</p>
+<ol>
+<li><p><strong>Current State Analysis</strong>: Research the traditional payment infrastructure for this corridor - identify typical settlement times, costs, intermediary banks involved, and common pain points. Use resources like SWIFT documentation, World Bank remittance data, or financial institution websites.</p>
+</li>
+<li><p><strong>RLUSD Integration Design</strong>: Describe how RLUSD could be integrated into this payment corridor. Consider: What role would RLUSD play? Would it replace or complement existing rails? What stakeholders would need to participate? What regulatory considerations exist for both the source and destination jurisdictions?</p>
+</li>
+<li><p><strong>Value Quantification</strong>: Create a detailed cost-benefit analysis comparing traditional methods to an RLUSD-enabled solution for a realistic transaction volume (e.g., 100 transactions per month at varying amounts). Include not just direct costs but also opportunity costs of slow settlement and working capital implications.</p>
+</li>
+<li><p><strong>Implementation Roadmap</strong>: Outline a high-level implementation plan including: required integrations, stakeholder onboarding sequence, regulatory approvals needed, and a phased rollout strategy.</p>
+</li>
+</ol>
+<p>Deliverable: Create a 2-3 page document (you may use Word, Google Docs, or continue with formatted text) presenting your analysis with specific data points, calculations, and actionable recommendations. Include references to specific Ripple documentation, regulatory frameworks, or industry sources you consulted.</p>
+</div>
+        </div>
+        <div class="lab-check">
+          <label class="checkbox-label">
+            <input type="checkbox" onchange="this.closest('.lab-check').classList.toggle('completed', this.checked)">
+            <span>I have completed this lab exercise</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 8: Knowledge Check -->
+    <section class="screen" id="screen-8" data-index="8">
+      
+      <div class="screen-quiz">
+        <h2>📝 Knowledge Check</h2>
+        <p class="quiz-intro">Test your understanding of the material covered in this module. Select the best answer for each question.</p>
+        <div id="quizForm">
+          <div class="quiz-question" id="qq-0">
+            <h4>Question 1</h4>
+            <p class="question-text">What is the primary differentiator of RLUSD compared to consumer-focused stablecoins like USDT?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q0" value="A">
+                <span class="option-text">A) RLUSD is designed specifically for institutional payment infrastructure with regulatory compliance emphasis</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q0" value="B">
+                <span class="option-text">B) RLUSD maintains a higher peg ratio to the US dollar</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q0" value="C">
+                <span class="option-text">C) RLUSD is only available on the XRP Ledger</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q0" value="D">
+                <span class="option-text">D) RLUSD offers higher interest yields to token holders</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-0"></div>
+          </div>
+          <div class="quiz-question" id="qq-1">
+            <h4>Question 2</h4>
+            <p class="question-text">In traditional correspondent banking networks, what is a primary source of settlement risk?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q1" value="A">
+                <span class="option-text">A) Excessive transaction speed creating operational errors</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q1" value="B">
+                <span class="option-text">B) Time lag between payment initiation and final settlement creating counterparty exposure</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q1" value="C">
+                <span class="option-text">C) Overly transparent fee structures reducing bank profitability</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q1" value="D">
+                <span class="option-text">D) Direct settlement between payer and payee without intermediaries</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-1"></div>
+          </div>
+          <div class="quiz-question" id="qq-2">
+            <h4>Question 3</h4>
+            <p class="question-text">Which institutional use case benefits most from RLUSD's ability to reduce pre-funded nostro account requirements?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q2" value="A">
+                <span class="option-text">A) Securities settlement for broker-dealers</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q2" value="B">
+                <span class="option-text">B) Remittance corridor optimization for payment service providers</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q2" value="C">
+                <span class="option-text">C) Internal treasury operations within a single jurisdiction</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q2" value="D">
+                <span class="option-text">D) Domestic ACH payment processing</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-2"></div>
+          </div>
+          <div class="quiz-question" id="qq-3">
+            <h4>Question 4</h4>
+            <p class="question-text">What is the approximate settlement time for RLUSD transactions compared to traditional cross-border payments?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q3" value="A">
+                <span class="option-text">A) RLUSD settles in 30 minutes compared to traditional 24-hour settlement</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q3" value="B">
+                <span class="option-text">B) RLUSD settles in 3-5 seconds compared to traditional 2-5 business days</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q3" value="C">
+                <span class="option-text">C) RLUSD settles in 1 hour compared to traditional same-day settlement</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q3" value="D">
+                <span class="option-text">D) RLUSD and traditional methods have similar settlement times but different cost structures</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-3"></div>
+          </div>
+          <div class="quiz-question" id="qq-4">
+            <h4>Question 5</h4>
+            <p class="question-text">Which regulatory framework component is essential for RLUSD's institutional positioning?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q4" value="A">
+                <span class="option-text">A) Securities registration as an investment contract</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q4" value="B">
+                <span class="option-text">B) Full reserve backing with US dollar deposits and short-term treasuries</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q4" value="C">
+                <span class="option-text">C) Exemption from all AML/KYC requirements to enable faster transactions</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q4" value="D">
+                <span class="option-text">D) Classification as a commodity futures contract</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-4"></div>
+          </div>
+          <div class="quiz-question" id="qq-5">
+            <h4>Question 6</h4>
+            <p class="question-text">How does blockchain transparency benefit institutional compliance operations?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q5" value="A">
+                <span class="option-text">A) It eliminates the need for AML/KYC customer due diligence</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q5" value="B">
+                <span class="option-text">B) It enables real-time reconciliation and provides immutable audit trails for regulatory reporting</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q5" value="C">
+                <span class="option-text">C) It allows institutions to hide transaction details from regulators</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q5" value="D">
+                <span class="option-text">D) It reduces all compliance costs to zero</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-5"></div>
+          </div>
+          <div class="quiz-question" id="qq-6">
+            <h4>Question 7</h4>
+            <p class="question-text">What is a primary integration challenge when connecting RLUSD to existing institutional payment systems?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q6" value="A">
+                <span class="option-text">A) RLUSD transactions are too slow for institutional requirements</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q6" value="B">
+                <span class="option-text">B) Mapping traditional payment messaging standards to blockchain transactions while maintaining audit trails</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q6" value="C">
+                <span class="option-text">C) RLUSD cannot integrate with treasury management systems</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q6" value="D">
+                <span class="option-text">D) Blockchain settlement operates only during banking hours</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-6"></div>
+          </div>
+          <div class="quiz-question" id="qq-7">
+            <h4>Question 8</h4>
+            <p class="question-text">For a multinational corporation processing $500 million annually in cross-border supplier payments, what is the potential cost savings range from RLUSD adoption?</p>
+            <div class="options">
+              <label class="option-label">
+                <input type="radio" name="q7" value="A">
+                <span class="option-text">A) $1-2 million (approximately 0.2-0.4% savings)</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q7" value="B">
+                <span class="option-text">B) $5-8 million (approximately 1-1.6% savings)</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q7" value="C">
+                <span class="option-text">C) $15-25 million (approximately 3-5% savings, representing 40-60% cost reduction)</span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="q7" value="D">
+                <span class="option-text">D) $50-100 million (approximately 10-20% savings)</span>
+              </label>
+            </div>
+            <div class="feedback" id="fb-7"></div>
+          </div>
+          <div class="quiz-actions">
+            <button type="button" class="btn btn-primary quiz-submit-btn" onclick="gradeQuiz()">Submit Answers</button>
+            <button type="button" class="btn btn-secondary" onclick="resetQuiz()">Reset</button>
+          </div>
+          <div class="quiz-results" id="quizResults"></div>
+        </div>
+      </div><script>window.__quizAnswers = ["A","B","B","B","B","B","B","C"]; window.__quizExplanations = ["RLUSD differentiates itself through enterprise-specific design emphasizing regulatory clarity, institutional custody solutions, and seamless integration with existing payment infrastructure, rather than focusing on consumer trading or DeFi use cases.","Correspondent banking's multi-day settlement cycles create windows of counterparty exposure between initiation and final settlement. This settlement risk is a fundamental limitation that Real-Time Gross Settlement via RLUSD addresses through near-instant finality.","Payment service providers and money transfer operators traditionally pre-fund nostro accounts in multiple currencies to serve various remittance corridors—often 20-50+ currency pairs globally. RLUSD enables these providers to hold stablecoin balances as a bridge asset and convert to local currencies on-demand through liquidity networks, dramatically improving capital efficiency by eliminating the need for simultaneous pre-funding across dozens of currency pairs.","RLUSD achieves transaction finality in 3-5 seconds on-chain, representing approximately a 10,000x speed improvement over traditional cross-border payments that typically settle in 2-5 business days through correspondent banking networks.","RLUSD maintains a 1:1 peg with the US dollar through full reserve backing consisting of US dollar deposits, short-term US government treasuries, and cash equivalents. This reserve structure aligns with proposed stablecoin standards and is fundamental to RLUSD's regulatory positioning and institutional credibility.","Blockchain-based settlement provides complete transaction transparency with every RLUSD transfer permanently recorded on-ledger. This enables automated real-time reconciliation of payments to invoices and creates immutable transaction histories that simplify regulatory reporting and audits. However, institutions still retain responsibility for AML/KYC customer due diligence.","Traditional payment systems use SWIFT, ISO 20022, and proprietary APIs with standardized message formats, while RLUSD settles on-ledger through smart contracts and cryptographic signatures with JSON data structures. The integration challenge involves mapping traditional payment instructions (e.g., SWIFT MT103 messages) to blockchain transactions while maintaining compliance controls, audit trails, and operational workflows that treasury teams expect. Middleware or integration platforms—such as those provided by Ripple or third-party vendors—abstract this complexity by translating between payment messaging standards and blockchain APIs.","Correspondent banking fees typically range from 3-7% of transaction value when including FX spreads and intermediary charges. RLUSD can reduce costs by 40-60% in high-volume corridors. For $500 million in annual cross-border payments at traditional 3-7% costs ($15-35 million), a 40-60% reduction yields approximately $15-25 million in savings."];</script>
+    </section>
+
+    <!-- Screen 9: Summary -->
+    <section class="screen" id="screen-9" data-index="9">
+      
+      <div class="screen-summary">
+        <h2>🎯 Module Summary</h2>
+        <div class="summary-content"><p>This module introduced RLUSD as a regulated, enterprise-grade stablecoin designed for institutional payment infrastructure. You explored how RLUSD integrates with existing payment systems, enabling Real-Time Gross Settlement that dramatically improves speed, cost, and transparency compared to traditional correspondent banking. The module examined institutional use cases across treasury operations, B2B payments, remittances, and securities settlement, while identifying the diverse stakeholder ecosystem required for successful adoption. Finally, you reviewed the regulatory framework positioning RLUSD within existing financial compliance requirements. Understanding these fundamentals prepares you to evaluate RLUSD&#39;s technical architecture and integration strategies in subsequent modules.</p>
+</div>
+        
+        <div class="objectives-review">
+          <h3>Learning Objectives — Review</h3>
+          <ul class="objectives-checklist">
+            
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Describe the fundamental characteristics and regulatory foundation of RLUSD</span>
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Explain how RLUSD fits within institutional payment infrastructure and settlement workflows</span>
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Identify key stakeholders and roles in stablecoin-based payment ecosystems</span>
+              </label>
+            </li>
+            <li>
+              <label class="checkbox-label">
+                <input type="checkbox">
+                <span>Compare traditional cross-border payment methods with stablecoin-enabled alternatives</span>
+              </label>
+            </li>
+          </ul>
+        </div>
+        <div class="completion-box">
+          <div class="completion-icon">🎉</div>
+          <h3>Module Complete!</h3>
+          <p>You have completed all sections of this module.</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" id="prevBtn" onclick="prev()">← Previous</button>
+      <span class="screen-counter" id="screenCounter">1 / 10</span>
+      <button class="btn btn-primary" id="nextBtn" onclick="next()">Next →</button>
+    </div>
+  </main>
+
+</div>
+
+<!-- ====== FOOTER ====== -->
+<footer class="course-footer">
+  <span></span>
+  
+</footer>
+
+
+<script>
+(function() {
+  const TOTAL = 10;
+  let current = 0;
+  const visited = new Set([0]);
+
+  function update() {
+    // Screens
+    document.querySelectorAll('.screen').forEach((el, i) => {
+      el.classList.toggle('active', i === current);
+    });
+
+    // Nav
+    document.querySelectorAll('.nav-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === current);
+      btn.classList.toggle('visited', visited.has(i) && i !== current);
+    });
+    document.querySelectorAll('.nav-check').forEach((el, i) => {
+      el.style.display = visited.has(i) && i !== current ? 'inline' : 'none';
+    });
+
+    // Buttons
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').textContent = current === TOTAL - 1 ? 'Finish ✓' : 'Next →';
+    document.getElementById('screenCounter').textContent = (current + 1) + ' / ' + TOTAL;
+
+    // Progress
+    const pct = Math.round((visited.size / TOTAL) * 100);
+    document.getElementById('progressPercent').textContent = pct;
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    // Scroll to top of content
+    document.getElementById('content').scrollTop = 0;
+    window.scrollTo(0, 0);
+  }
+
+  window.goTo = function(i) {
+    if (i >= 0 && i < TOTAL) { current = i; visited.add(i); update(); }
+  };
+  window.next = function() {
+    if (current < TOTAL - 1) { current++; visited.add(current); update(); }
+  };
+  window.prev = function() {
+    if (current > 0) { current--; update(); }
+  };
+  window.toggleSidebar = function() {
+    document.getElementById('sidebar').classList.toggle('open');
+  };
+
+  // Quiz grading
+  window.gradeQuiz = function() {
+    const answers = window.__quizAnswers || [];
+    const explanations = window.__quizExplanations || [];
+    let correct = 0;
+
+    answers.forEach((ans, i) => {
+      const selected = document.querySelector('input[name="q' + i + '"]:checked');
+      const fb = document.getElementById('fb-' + i);
+      const questionDiv = document.getElementById('qq-' + i);
+      const labels = questionDiv.querySelectorAll('.option-label');
+
+      labels.forEach(l => l.classList.remove('correct', 'incorrect'));
+
+      if (selected) {
+        const userAns = selected.value;
+        const isCorrect = userAns === ans;
+        if (isCorrect) {
+          correct++;
+          selected.closest('.option-label').classList.add('correct');
+          fb.className = 'feedback show correct';
+          fb.textContent = '✓ Correct!' + (explanations[i] ? ' ' + explanations[i] : '');
+        } else {
+          selected.closest('.option-label').classList.add('incorrect');
+          // Highlight correct answer
+          labels.forEach(l => {
+            const inp = l.querySelector('input');
+            if (inp && inp.value === ans) l.classList.add('correct');
+          });
+          fb.className = 'feedback show incorrect';
+          fb.textContent = '✗ Incorrect. The correct answer is ' + ans + '.' + (explanations[i] ? ' ' + explanations[i] : '');
+        }
+      } else {
+        fb.className = 'feedback show incorrect';
+        fb.textContent = 'No answer selected. The correct answer is ' + ans + '.';
+      }
+    });
+
+    const pct = Math.round((correct / answers.length) * 100);
+    const results = document.getElementById('quizResults');
+    results.className = 'quiz-results show ' + (pct >= 80 ? 'pass' : 'fail');
+    results.textContent = 'Score: ' + correct + '/' + answers.length + ' (' + pct + '%)' +
+      (pct >= 80 ? ' — Passed! ✓' : ' — Review the material and try again.');
+  };
+
+  window.resetQuiz = function() {
+    document.querySelectorAll('#quizForm input[type="radio"]').forEach(el => { el.checked = false; });
+    document.querySelectorAll('.feedback').forEach(el => { el.className = 'feedback'; });
+    document.querySelectorAll('.option-label').forEach(el => { el.classList.remove('correct', 'incorrect'); });
+    document.getElementById('quizResults').className = 'quiz-results';
+  };
+
+  // Initial state
+  update();
+})();
+</script>
+
+</body>
+</html>
